@@ -6,10 +6,10 @@ import { updateSession } from "@/lib/supabase/middleware";
 // new name. See node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md
 
 // Routes that require a signed-in user.
-const PROTECTED_PREFIXES = ["/user", "/admin"];
+const PROTECTED_PREFIXES = ["/admin"];
 
 // Routes only meant for signed-out visitors — bounce authenticated users away.
-const AUTH_ROUTES = ["/login", "/register", "/reset-password"];
+const AUTH_ROUTES = ["/login", "/reset-password"];
 
 export default async function proxy(request: NextRequest) {
   // Refresh the Supabase session cookie first — this must run on every
@@ -35,15 +35,16 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Admin-only area: signed in but not an admin gets sent back to their own dashboard.
+  // Admin-only area: signed in but not an admin gets bounced to the homepage
+  // — there's no other authenticated area left to send them to.
   if (pathname.startsWith("/admin") && isAuthenticated && role !== "admin") {
-    return NextResponse.redirect(new URL("/user/dashboard", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // Already signed in and trying to view login/register/reset — send them to
-  // the right place for their role instead.
+  // Already signed in and trying to view login/reset — admins go to their
+  // dashboard, anyone else (no non-admin area exists) goes home.
   if (isAuthRoute && isAuthenticated) {
-    const destination = role === "admin" ? "/admin/dashboard" : "/user/dashboard";
+    const destination = role === "admin" ? "/admin/dashboard" : "/";
     return NextResponse.redirect(new URL(destination, request.url));
   }
 

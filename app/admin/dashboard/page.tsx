@@ -10,19 +10,14 @@ import {
   Mail,
   MessageSquareQuote,
   Plus,
-  Shield,
   Tag,
-  TrendingUp,
-  UserPlus,
   Users,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContentStatusChart } from "@/components/dashboard/content-status-chart";
 import { SubmissionsChart } from "@/components/dashboard/submissions-chart";
-import { UserGrowthChart } from "@/components/dashboard/user-growth-chart";
 import { createClient } from "@/lib/supabase/server";
 
 function dayKey(date: Date) {
@@ -70,8 +65,6 @@ export default async function AdminOverviewPage() {
   fourteenDaysAgo.setHours(0, 0, 0, 0);
 
   const [
-    { count: totalUsers },
-    { count: totalAdmins },
     { count: totalHeroBanners },
     { count: activeHeroBanners },
     { count: totalProjects },
@@ -84,11 +77,7 @@ export default async function AdminOverviewPage() {
     { count: totalSubmissions },
     { data: recentSubmissionDates },
     { data: latestSubmissions },
-    { data: recentProfiles },
-    { data: allProfileDates },
   ] = await Promise.all([
-    supabase.from("profiles").select("*", { count: "exact", head: true }),
-    supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "admin"),
     supabase.from("hero_banners").select("*", { count: "exact", head: true }),
     supabase.from("hero_banners").select("*", { count: "exact", head: true }).eq("is_active", true),
     supabase.from("portfolio_projects").select("*", { count: "exact", head: true }),
@@ -105,12 +94,6 @@ export default async function AdminOverviewPage() {
       .select("id, full_name, email, message, created_at")
       .order("created_at", { ascending: false })
       .limit(5),
-    supabase
-      .from("profiles")
-      .select("id, full_name, email, role, created_at")
-      .order("created_at", { ascending: false })
-      .limit(5),
-    supabase.from("profiles").select("created_at").order("created_at", { ascending: true }),
   ]);
 
   const dayBuckets = new Map<string, number>();
@@ -127,39 +110,7 @@ export default async function AdminOverviewPage() {
   });
   const chartData = Array.from(dayBuckets, ([date, count]) => ({ date, count }));
 
-  // Cumulative total-users series for the last 30 days — each day's value is
-  // the running count of everyone who had signed up by end of that day.
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29);
-  thirtyDaysAgo.setHours(0, 0, 0, 0);
-
-  const profileDates = (allProfileDates ?? []).map((row) => row.created_at);
-  const baselineUsers = profileDates.filter((d) => new Date(d) < thirtyDaysAgo).length;
-
-  const growthBuckets = new Map<string, number>();
-  for (let i = 0; i < 30; i++) {
-    const d = new Date();
-    d.setDate(d.getDate() - (29 - i));
-    growthBuckets.set(dayKey(d), 0);
-  }
-  profileDates.forEach((created) => {
-    const key = created.slice(0, 10);
-    if (growthBuckets.has(key)) {
-      growthBuckets.set(key, (growthBuckets.get(key) ?? 0) + 1);
-    }
-  });
-  const growthData = Array.from(growthBuckets).reduce<{ date: string; total: number }[]>(
-    (acc, [date, additions]) => {
-      const previousTotal = acc.length > 0 ? acc[acc.length - 1].total : baselineUsers;
-      acc.push({ date, total: previousTotal + additions });
-      return acc;
-    },
-    []
-  );
-
   const stats = [
-    { label: "Total users", value: totalUsers ?? 0, icon: Users, href: "/admin/users" },
-    { label: "Admins", value: totalAdmins ?? 0, icon: Shield, href: "/admin/users" },
     {
       label: "Hero banners",
       value: totalHeroBanners ?? 0,
@@ -341,26 +292,6 @@ export default async function AdminOverviewPage() {
             <div className="flex items-center gap-3">
               <div
                 className="flex size-9 items-center justify-center rounded-lg"
-                style={{ backgroundColor: "color-mix(in oklch, var(--chart-3) 15%, transparent)" }}
-              >
-                <TrendingUp className="size-4.5" style={{ color: "var(--chart-3)" }} />
-              </div>
-              <div>
-                <CardTitle className="text-lg">User growth</CardTitle>
-                <CardDescription>Cumulative signups over the last 30 days.</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <UserGrowthChart data={growthData} />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div
-                className="flex size-9 items-center justify-center rounded-lg"
                 style={{ backgroundColor: "color-mix(in oklch, var(--chart-5) 15%, transparent)" }}
               >
                 <BarChart3 className="size-4.5" style={{ color: "var(--chart-5)" }} />
@@ -373,56 +304,6 @@ export default async function AdminOverviewPage() {
           </CardHeader>
           <CardContent>
             <ContentStatusChart data={contentSections} />
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div
-                className="flex size-9 items-center justify-center rounded-lg"
-                style={{ backgroundColor: "color-mix(in oklch, var(--chart-3) 15%, transparent)" }}
-              >
-                <UserPlus className="size-4.5" style={{ color: "var(--chart-3)" }} />
-              </div>
-              <div>
-                <CardTitle className="text-lg">Recent sign-ups</CardTitle>
-                <CardDescription>The latest 5 people to join.</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {!recentProfiles?.length ? (
-              <p className="text-sm text-muted-foreground">No sign-ups yet.</p>
-            ) : (
-              <div className="grid gap-4 sm:grid-cols-2">
-                {recentProfiles.map((profile) => (
-                  <div key={profile.id} className="flex items-center gap-3">
-                    <Avatar className="size-9 shrink-0">
-                      <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
-                        {initialsFor(profile.full_name ?? profile.email)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="truncate font-medium">{profile.full_name ?? profile.email}</p>
-                        <Badge variant={profile.role === "admin" ? "default" : "secondary"} className="shrink-0">
-                          {profile.role}
-                        </Badge>
-                      </div>
-                      <p className="truncate text-xs text-muted-foreground">
-                        {new Date(profile.created_at).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </CardContent>
         </Card>
 
@@ -464,7 +345,6 @@ export default async function AdminOverviewPage() {
           </CardContent>
         </Card>
       </div>
-
     </div>
   );
 }

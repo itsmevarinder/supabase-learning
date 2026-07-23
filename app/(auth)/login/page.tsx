@@ -50,8 +50,13 @@ function LoginForm() {
     }
 
     const isAdmin = data.user?.app_metadata?.role === "admin";
-    const destination = searchParams.get("from") ?? (isAdmin ? "/admin/dashboard" : "/user/dashboard");
-    router.push(destination);
+    if (!isAdmin) {
+      await supabase.auth.signOut();
+      setFormError("This account doesn't have admin access.");
+      return;
+    }
+
+    router.push(searchParams.get("from") ?? "/admin/dashboard");
     router.refresh();
   }
 
@@ -128,13 +133,6 @@ function LoginForm() {
           </Button>
         </form>
       </Form>
-
-      <p className="mt-8 text-center text-sm">
-        <span className="text-muted-foreground">Don&apos;t have an account?</span>{" "}
-        <Link href="/register" className="font-medium text-primary hover:underline">
-          Sign up
-        </Link>
-      </p>
     </div>
   );
 }

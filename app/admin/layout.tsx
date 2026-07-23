@@ -13,7 +13,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect("/login");
   }
   if (user.app_metadata?.role !== "admin") {
-    redirect("/user/dashboard");
+    redirect("/");
   }
 
   const userName = (user.user_metadata?.full_name as string | undefined) ?? user.email ?? "Admin";
@@ -21,7 +21,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <DashboardShell
-      variant="admin"
       roleLabel="Admin"
       userEmail={user.email ?? ""}
       userName={userName}

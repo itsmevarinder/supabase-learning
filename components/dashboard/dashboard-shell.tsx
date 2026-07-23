@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronsUpDown, CircleHelp, GalleryHorizontal, Info, LayoutDashboard, LogIn, LogOut, Mail, MessageSquareQuote, Settings, Image as ImageIcon, Tag, User, Users, Video } from "lucide-react";
+import { ChevronsUpDown, CircleHelp, GalleryHorizontal, Info, LayoutDashboard, LogIn, LogOut, Mail, MessageSquareQuote, Settings, Image as ImageIcon, Tag, Video } from "lucide-react";
 
 import {
   AlertDialog,
@@ -46,35 +46,21 @@ import { createClient } from "@/lib/supabase/client";
 
 // Nav items (including icon components) must live here, inside the Client
 // Component — icon components are function references, and Server Components
-// can only pass plain serializable data as props to Client Components. Layouts
-// pass a plain `variant` string instead and this file resolves the icons itself.
-const SECTIONS = {
-  admin: {
-    navItems: [
-      { href: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
-      { href: "/admin/users", label: "Users", icon: Users },
-      { href: "/admin/hero-banners", label: "Hero Banners", icon: GalleryHorizontal },
-      { href: "/admin/about", label: "About", icon: Info },
-      { href: "/admin/video", label: "Video", icon: Video },
-      { href: "/admin/portfolio", label: "Portfolio", icon: ImageIcon },
-      { href: "/admin/faqs", label: "FAQs", icon: CircleHelp },
-      { href: "/admin/pricing", label: "Pricing", icon: Tag },
-      { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },
-      { href: "/admin/contact-submissions", label: "Messages", icon: Mail },
-      { href: "/admin/settings", label: "Settings", icon: Settings },
-    ],
-  },
-  user: {
-    navItems: [
-      { href: "/user/dashboard", label: "Overview", icon: LayoutDashboard },
-      { href: "/user/profile", label: "Profile", icon: User },
-      { href: "/user/settings", label: "Settings", icon: Settings },
-    ],
-  },
-} as const;
+// can only pass plain serializable data as props to Client Components.
+const NAV_ITEMS = [
+  { href: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
+  { href: "/admin/hero-banners", label: "Hero Banners", icon: GalleryHorizontal },
+  { href: "/admin/about", label: "About", icon: Info },
+  { href: "/admin/video", label: "Video", icon: Video },
+  { href: "/admin/portfolio", label: "Portfolio", icon: ImageIcon },
+  { href: "/admin/faqs", label: "FAQs", icon: CircleHelp },
+  { href: "/admin/pricing", label: "Pricing", icon: Tag },
+  { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },
+  { href: "/admin/contact-submissions", label: "Messages", icon: Mail },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
+] as const;
 
 interface DashboardShellProps {
-  variant: keyof typeof SECTIONS;
   roleLabel: string;
   userEmail: string;
   userName: string;
@@ -101,7 +87,6 @@ function isNavItemActive(pathname: string, href: string) {
 }
 
 export function DashboardShell({
-  variant,
   roleLabel,
   userEmail,
   userName,
@@ -110,8 +95,7 @@ export function DashboardShell({
 }: DashboardShellProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { navItems } = SECTIONS[variant];
-  const activeItem = navItems.find((item) => isNavItemActive(pathname, item.href));
+  const activeItem = NAV_ITEMS.find((item) => isNavItemActive(pathname, item.href));
   const [signOutOpen, setSignOutOpen] = useState(false);
   const [loginButtonVisible, setLoginButtonVisible] = useState(showLoginButton ?? true);
   const [savingLoginToggle, setSavingLoginToggle] = useState(false);
@@ -159,7 +143,7 @@ export function DashboardShell({
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
-                {navItems.map((item) => (
+                {NAV_ITEMS.map((item) => (
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
                       isActive={isNavItemActive(pathname, item.href)}
