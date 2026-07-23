@@ -78,6 +78,28 @@
   animation: spin-linear 3s linear infinite;
 }
 
+@keyframes hero-dot-fill {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.hero-dot-fill {
+  transform-origin: left;
+  animation: hero-dot-fill 6s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-dot-fill {
+    animation: none;
+    transform: scaleX(1);
+  }
+}
+
 @keyframes gradient-drift {
   0%, 100% {
     background-position: 0% 50%;

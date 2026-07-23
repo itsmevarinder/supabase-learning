@@ -21,7 +21,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <div className="max-w-md">
             <h2 className="text-3xl font-bold leading-tight">Build better products, faster.</h2>
             <p className="mt-4 text-white/80">
-              Join thousands of teams already using MyLogo to plan, build, and ship their best work.
+              Join thousands of teams already using CMS to plan, build, and ship their best work.
             </p>
           </div>
         </div>

@@ -196,7 +196,7 @@ export default function Footer({ settings }: FooterProps) {
           {/* Bottom */}
           <div className="mt-10 flex flex-col items-center justify-between gap-5 border-t pt-8 text-sm text-muted-foreground md:flex-row">
             <p>
-              © {new Date().getFullYear()} MyLogo. All rights reserved.
+              © {new Date().getFullYear()} CMS. All rights reserved.
               <span className="ml-2 text-xs text-muted-foreground/70">
                 (For development purposes only)
               </span>

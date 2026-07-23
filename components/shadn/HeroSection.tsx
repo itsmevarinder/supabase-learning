@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Autoplay from "embla-carousel-autoplay";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -162,6 +163,8 @@ export default function HeroSection({ banners }: HeroSectionProps) {
 
   const container = useRef<HTMLElement>(null);
   const [api, setApi] = useState<CarouselApi>();
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [autoplayPlugin] = useState(() => Autoplay({ delay: 6000, stopOnInteraction: false }));
 
   const bgRefs = useRef<(HTMLDivElement | null)[]>([]);
   const badgeRefs = useRef<(HTMLSpanElement | null)[]>([]);
@@ -298,6 +301,7 @@ export default function HeroSection({ banners }: HeroSectionProps) {
 
       const handleSelect = (emblaApi: CarouselApi) => {
         if (!emblaApi) return;
+        setSelectedIndex(emblaApi.selectedScrollSnap());
         resetSlides();
         animateSlide(emblaApi.selectedScrollSnap());
       };
@@ -369,7 +373,7 @@ export default function HeroSection({ banners }: HeroSectionProps) {
 
   return (
     <section className="relative w-full" ref={container}>
-      <Carousel opts={{ loop: true }} setApi={setApi} className="w-full">
+      <Carousel opts={{ loop: true }} plugins={[autoplayPlugin]} setApi={setApi} className="w-full">
         <CarouselContent>
           {slides.map((slide, index) => (
             <CarouselItem key={index}>
@@ -501,6 +505,27 @@ export default function HeroSection({ banners }: HeroSectionProps) {
         {/* Navigation Arrows */}
         <CarouselPrevious className="left-6 border-white bg-white/20 text-white backdrop-blur hover:bg-white hover:text-black" />
         <CarouselNext className="right-6 border-white bg-white/20 text-white backdrop-blur hover:bg-white hover:text-black" />
+
+        {/* Dot indicators — the active one fills smoothly over the autoplay
+            delay, so it doubles as a progress indicator for the next slide. */}
+        <div className="absolute inset-x-0 bottom-8 z-10 flex justify-center gap-2.5">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => api?.scrollTo(index)}
+              aria-label={`Go to slide ${index + 1}`}
+              aria-current={selectedIndex === index}
+              className={`relative h-2 overflow-hidden rounded-full bg-white/30 transition-[width] duration-300 ${
+                selectedIndex === index ? "w-10" : "w-2 hover:bg-white/50"
+              }`}
+            >
+              {selectedIndex === index && (
+                <span key={selectedIndex} className="hero-dot-fill absolute inset-0 rounded-full bg-white" />
+              )}
+            </button>
+          ))}
+        </div>
       </Carousel>
     </section>
   );
