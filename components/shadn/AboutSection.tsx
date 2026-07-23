@@ -160,12 +160,12 @@ export default function AboutSection({ about }: AboutSectionProps) {
 
             <div
               ref={floatingImageRef}
-              className="absolute left-0 -top-15 z-10 hidden overflow-hidden rounded-2xl border-4 border-background shadow-2xl sm:block"
+              className="absolute left-0 -top-15 z-10 overflow-hidden rounded-2xl border-4 border-background shadow-2xl"
             >
               <HoverDistortImage
                 image={imageUrl2}
                 alt="About — detail"
-                className="h-50 w-100 rounded-xl"
+                className="sm:h-50 sm:w-100 w-full max-w-50 sm:max-w-full rounded-xl"
               />
             </div>
 
