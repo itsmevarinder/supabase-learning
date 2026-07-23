@@ -7,6 +7,7 @@ import type { PortfolioProjectRow } from "@/components/shadn/PortfolioSection";
 import type { PricingPlanRow } from "@/components/shadn/PricingSection";
 import type { SiteSettings } from "@/types/site-settings";
 import type { TestimonialRow } from "@/components/shadn/TestimonialSection";
+import type { VideoSectionRow } from "@/components/shadn/VideoSection";
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -153,6 +154,21 @@ export async function getAboutSection(): Promise<AboutSectionRow | null> {
 
   if (error) {
     console.error("Failed to load about_section:", error.message);
+    return null;
+  }
+
+  return data;
+}
+
+// The single video_section row — the YouTube link + copy for the homepage
+// video showcase. Returns null (VideoSection renders nothing) rather than
+// throwing if the query fails.
+export async function getVideoSection(): Promise<VideoSectionRow | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("video_section").select("*").eq("id", 1).single();
+
+  if (error) {
+    console.error("Failed to load video_section:", error.message);
     return null;
   }
 

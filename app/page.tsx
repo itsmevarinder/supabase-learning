@@ -2,6 +2,7 @@ import Header from "@/components/shadn/header";
 import HeroSection from "@/components/shadn/HeroSection";
 import TrustedBy from "@/components/shadn/TrustedBy";
 import AboutSection from "@/components/shadn/AboutSection";
+import VideoSection from "@/components/shadn/VideoSection";
 import PortfolioSection from "@/components/shadn/PortfolioSection";
 import FAQSection from "@/components/shadn/Accordion";
 import PricingSection from "@/components/shadn/PricingSection";
@@ -10,10 +11,10 @@ import ContactSection from "@/components/shadn/Contact";
 import CtaBanner from "@/components/shadn/CtaBanner";
 import Footer from "@/components/shadn/footer";
 import ScrollFlipBackground from "@/components/shadn/ScrollFlipBackground";
-import { getAboutSection, getFaqs, getHeroBanners, getPortfolioProjects, getPricingPlans, getSiteSettings, getTestimonials } from "@/lib/supabase/server";
+import { getAboutSection, getFaqs, getHeroBanners, getPortfolioProjects, getPricingPlans, getSiteSettings, getTestimonials, getVideoSection } from "@/lib/supabase/server";
 
 const Page = async () => {
-   const [heroBanners, portfolioProjects, pricingPlans, siteSettings, testimonials, faqs, aboutSection] = await Promise.all([
+   const [heroBanners, portfolioProjects, pricingPlans, siteSettings, testimonials, faqs, aboutSection, videoSection] = await Promise.all([
       getHeroBanners(),
       getPortfolioProjects(),
       getPricingPlans(),
@@ -21,6 +22,7 @@ const Page = async () => {
       getTestimonials(),
       getFaqs(),
       getAboutSection(),
+      getVideoSection(),
    ]);
 
    return (
@@ -34,6 +36,7 @@ const Page = async () => {
          <FAQSection faqs={faqs} />
          <PricingSection plans={pricingPlans} />
          <TestimonialSection testimonials={testimonials} />
+         <VideoSection video={videoSection} />
          <ContactSection settings={siteSettings} />
          <CtaBanner />
          <Footer settings={siteSettings} />

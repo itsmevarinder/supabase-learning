@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronsUpDown, CircleHelp, GalleryHorizontal, Info, LayoutDashboard, LogIn, LogOut, Mail, MessageSquareQuote, Settings, Image as ImageIcon, Tag, User, Users } from "lucide-react";
+import { ChevronsUpDown, CircleHelp, GalleryHorizontal, Info, LayoutDashboard, LogIn, LogOut, Mail, MessageSquareQuote, Settings, Image as ImageIcon, Tag, User, Users, Video } from "lucide-react";
 
 import {
   AlertDialog,
@@ -55,6 +55,7 @@ const SECTIONS = {
       { href: "/admin/users", label: "Users", icon: Users },
       { href: "/admin/hero-banners", label: "Hero Banners", icon: GalleryHorizontal },
       { href: "/admin/about", label: "About", icon: Info },
+      { href: "/admin/video", label: "Video", icon: Video },
       { href: "/admin/portfolio", label: "Portfolio", icon: ImageIcon },
       { href: "/admin/faqs", label: "FAQs", icon: CircleHelp },
       { href: "/admin/pricing", label: "Pricing", icon: Tag },
