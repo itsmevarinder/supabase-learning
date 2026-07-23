@@ -7,19 +7,21 @@ import AudioSection from "@/components/shadn/AudioSection";
 import PortfolioSection from "@/components/shadn/PortfolioSection";
 import GallerySection from "@/components/shadn/GallerySection";
 import FAQSection from "@/components/shadn/Accordion";
-import PricingSection from "@/components/shadn/PricingSection";
+import DonateSection from "@/components/shadn/DonateSection";
 import TestimonialSection from "@/components/shadn/TestimonialSection";
 import EventsSection from "@/components/shadn/EventsSection";
 import ContactSection from "@/components/shadn/Contact";
 import Footer from "@/components/shadn/footer";
 import ScrollFlipBackground from "@/components/shadn/ScrollFlipBackground";
-import { getAboutSection, getAudioTracks, getEvents, getFaqs, getGalleryItems, getHeroBanners, getPortfolioProjects, getPricingPlans, getSiteSettings, getTestimonials, getVideoSection } from "@/lib/supabase/server";
+import QRCode from "qrcode";
+import { getAboutSection, getAudioSection, getAudioTracks, getDonateSection, getEvents, getEventsSection, getFaqs, getGalleryItems, getHeroBanners, getPortfolioProjects, getSiteSettings, getTestimonials, getVideoSection } from "@/lib/supabase/server";
+import { buildUpiPaymentString } from "@/lib/upi";
 
 const Page = async () => {
-   const [heroBanners, portfolioProjects, pricingPlans, siteSettings, testimonials, faqs, aboutSection, videoSection, events, galleryItems, audioTracks] = await Promise.all([
+   const [heroBanners, portfolioProjects, donateSection, siteSettings, testimonials, faqs, aboutSection, videoSection, events, galleryItems, audioTracks, eventsSection, audioSection] = await Promise.all([
       getHeroBanners(),
       getPortfolioProjects(),
-      getPricingPlans(),
+      getDonateSection(),
       getSiteSettings(),
       getTestimonials(),
       getFaqs(),
@@ -28,7 +30,13 @@ const Page = async () => {
       getEvents(),
       getGalleryItems(),
       getAudioTracks(),
+      getEventsSection(),
+      getAudioSection(),
    ]);
+
+   const donateQrCodeDataUrl = donateSection?.phone_number
+      ? await QRCode.toDataURL(buildUpiPaymentString(donateSection.phone_number, "Aurora Donation"))
+      : null;
 
    return (
       <main className="overflow-x-clip">
@@ -39,11 +47,11 @@ const Page = async () => {
          <AboutSection about={aboutSection} />
          <PortfolioSection projects={portfolioProjects} />
          <GallerySection items={galleryItems} />
-         <EventsSection events={events} />
-         <AudioSection tracks={audioTracks} />
-         <PricingSection plans={pricingPlans} />
+         <DonateSection donate={donateSection} qrCodeDataUrl={donateQrCodeDataUrl} />
          <FAQSection faqs={faqs} />
+         <AudioSection tracks={audioTracks} backgroundImageUrl={audioSection?.background_image_url} />
          <VideoSection video={videoSection} />
+         <EventsSection events={events} backgroundImageUrl={eventsSection?.background_image_url} />
          <TestimonialSection testimonials={testimonials} />
          <ContactSection settings={siteSettings} />
          <Footer settings={siteSettings} />

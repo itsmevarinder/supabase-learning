@@ -33,6 +33,7 @@ const ABOUT_SECTION_BUCKET = "about-section";
 function defaultsFromAbout(about: AboutSectionRow | null): AboutSectionFormData {
   return {
     imageUrl: about?.image_url ?? "",
+    imageUrl2: about?.image_url_2 ?? "",
     eyebrowText: about?.eyebrow_text ?? "About Us",
     title: about?.title ?? "Building Digital Experiences That Inspire",
     description:
@@ -57,6 +58,8 @@ export function AboutSectionForm({ about }: AboutSectionFormProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploading2, setUploading2] = useState(false);
+  const [uploadError2, setUploadError2] = useState<string | null>(null);
 
   const form = useForm<AboutSectionFormData>({
     resolver: zodResolver(aboutSectionSchema),
@@ -64,14 +67,9 @@ export function AboutSectionForm({ about }: AboutSectionFormProps) {
   });
 
   const imageUrl = useWatch({ control: form.control, name: "imageUrl" });
+  const imageUrl2 = useWatch({ control: form.control, name: "imageUrl2" });
 
-  async function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    setUploadError(null);
-
+  async function uploadImage(file: File) {
     const supabase = createClient();
     const extension = file.name.match(/\.[^.]+$/)?.[0] ?? "";
     const path = `${Date.now()}-${slugify(file.name.replace(/\.[^.]+$/, ""))}${extension}`;
@@ -81,16 +79,46 @@ export function AboutSectionForm({ about }: AboutSectionFormProps) {
       upsert: false,
     });
 
-    if (error) {
-      setUploadError(error.message);
-      setUploading(false);
-      return;
-    }
+    if (error) return { error: error.message, url: null };
 
     const { data } = supabase.storage.from(ABOUT_SECTION_BUCKET).getPublicUrl(path);
-    form.setValue("imageUrl", data.publicUrl, { shouldValidate: true });
+    return { error: null, url: data.publicUrl };
+  }
+
+  async function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setUploadError(null);
+
+    const result = await uploadImage(file);
     setUploading(false);
     event.target.value = "";
+
+    if (result.error) {
+      setUploadError(result.error);
+      return;
+    }
+    form.setValue("imageUrl", result.url!, { shouldValidate: true });
+  }
+
+  async function handleImage2Upload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploading2(true);
+    setUploadError2(null);
+
+    const result = await uploadImage(file);
+    setUploading2(false);
+    event.target.value = "";
+
+    if (result.error) {
+      setUploadError2(result.error);
+      return;
+    }
+    form.setValue("imageUrl2", result.url!, { shouldValidate: true });
   }
 
   async function onSubmit(values: AboutSectionFormData) {
@@ -102,6 +130,7 @@ export function AboutSectionForm({ about }: AboutSectionFormProps) {
       .from("about_section")
       .update({
         image_url: values.imageUrl || null,
+        image_url_2: values.imageUrl2 || null,
         eyebrow_text: values.eyebrowText,
         title: values.title,
         description: values.description,
@@ -127,19 +156,36 @@ export function AboutSectionForm({ about }: AboutSectionFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-5">
-        <div className="space-y-3">
-          <FormLabel>Image</FormLabel>
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div className="space-y-3">
+            <FormLabel>Main image</FormLabel>
 
-          <div>
-            <Input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
-            {uploading && <p className="mt-1 text-sm text-muted-foreground">Uploading…</p>}
-            {uploadError && <p className="mt-1 text-sm text-destructive">{uploadError}</p>}
+            <div>
+              <Input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+              {uploading && <p className="mt-1 text-sm text-muted-foreground">Uploading…</p>}
+              {uploadError && <p className="mt-1 text-sm text-destructive">{uploadError}</p>}
+            </div>
+
+            {imageUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={imageUrl} alt="Preview" className="h-32 w-52 rounded-xl border object-cover" />
+            )}
           </div>
 
-          {imageUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={imageUrl} alt="Preview" className="h-32 w-52 rounded-xl border object-cover" />
-          )}
+          <div className="space-y-3">
+            <FormLabel>Floating image (overlaps the main image)</FormLabel>
+
+            <div>
+              <Input type="file" accept="image/*" onChange={handleImage2Upload} disabled={uploading2} />
+              {uploading2 && <p className="mt-1 text-sm text-muted-foreground">Uploading…</p>}
+              {uploadError2 && <p className="mt-1 text-sm text-destructive">{uploadError2}</p>}
+            </div>
+
+            {imageUrl2 && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={imageUrl2} alt="Preview" className="h-32 w-52 rounded-xl border object-cover" />
+            )}
+          </div>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">

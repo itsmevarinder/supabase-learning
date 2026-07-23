@@ -20,6 +20,7 @@ const DEFAULT_FEATURES = [
 export interface AboutSectionRow {
   id: number;
   image_url: string | null;
+  image_url_2: string | null;
   eyebrow_text: string;
   title: string;
   description: string;
@@ -34,6 +35,7 @@ interface AboutSectionProps {
 
 export default function AboutSection({ about }: AboutSectionProps) {
   const imageUrl = about?.image_url || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&q=80";
+  const imageUrl2 = about?.image_url_2 || "https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=80";
   const eyebrowText = about?.eyebrow_text ?? "About Us";
   const title = about?.title ?? "Building Digital Experiences That Inspire";
   const description =
@@ -46,6 +48,7 @@ export default function AboutSection({ about }: AboutSectionProps) {
   const section = useRef<HTMLElement>(null);
   const imageWrapperRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
+  const floatingImageRef = useRef<HTMLDivElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
   const badgeNumberRef = useRef<HTMLHeadingElement>(null);
   const eyebrowRef = useRef<HTMLSpanElement>(null);
@@ -76,6 +79,7 @@ export default function AboutSection({ about }: AboutSectionProps) {
           },
         })
         .from(imageWrapperRef.current, { x: -60, opacity: 0, duration: 0.9, ease: EASE.out })
+        .from(floatingImageRef.current, { scale: 0.7, opacity: 0, rotate: -6, duration: 0.7, ease: EASE.bounce }, "-=0.5")
         .from(badgeRef.current, { scale: 0, opacity: 0, duration: 0.6, ease: EASE.bounce }, "-=0.4")
         .call(playCounter, undefined, "<")
         .from(eyebrowRef.current, { y: 16, opacity: 0, duration: 0.5, ease: EASE.soft }, "-=0.5")
@@ -101,6 +105,15 @@ export default function AboutSection({ about }: AboutSectionProps) {
 
       // Continuous ambient motion, plays indefinitely.
       gsap.to(imageWrapperRef.current, { y: -14, duration: 3.5, ease: "linear", yoyo: true, repeat: -1 });
+      gsap.to(floatingImageRef.current, {
+        y: 12,
+        rotate: -3,
+        duration: 3,
+        ease: "linear",
+        yoyo: true,
+        repeat: -1,
+        delay: 0.15,
+      });
       gsap.to(badgeRef.current, {
         y: 10,
         rotate: 2,
@@ -131,11 +144,12 @@ export default function AboutSection({ about }: AboutSectionProps) {
       <div className="container mx-auto px-6">
         <div className="grid items-center gap-16 lg:grid-cols-2">
           {/* Left Image */}
-          <div className="relative" ref={imageWrapperRef}>
+          <div className="relative pt-10 pl-10" ref={imageWrapperRef}>
             {/* Decorative Blur */}
-            <div className="about-blur absolute -left-8 -top-8 -z-10 h-64 w-64 rounded-full bg-primary/20 blur-3xl" />
+            <div className="about-blur absolute -left-8 top-2 -z-10 h-64 w-64 rounded-full bg-primary/20 blur-3xl" />
             <div className="about-blur absolute -bottom-10 -right-10 -z-10 h-72 w-72 rounded-full bg-amber-600/15 blur-3xl" />
 
+            {/* Main image */}
             <div ref={imageRef}>
               <HoverDistortImage
                 image={imageUrl}
@@ -145,8 +159,19 @@ export default function AboutSection({ about }: AboutSectionProps) {
             </div>
 
             <div
+              ref={floatingImageRef}
+              className="absolute left-0 -top-15 z-10 hidden overflow-hidden rounded-2xl border-4 border-background shadow-2xl sm:block"
+            >
+              <HoverDistortImage
+                image={imageUrl2}
+                alt="About — detail"
+                className="h-50 w-100 rounded-xl"
+              />
+            </div>
+
+            <div
               ref={badgeRef}
-              className="absolute -bottom-8 -right-3 rounded-2xl bg-primary p-6 text-white shadow-xl md:-right-8"
+              className="absolute -bottom-8 -right-3 z-10 rounded-2xl bg-primary p-6 text-white shadow-xl md:-right-8"
             >
               <h3 ref={badgeNumberRef} className="text-4xl font-bold">0+</h3>
               <p className="mt-1">Years Experience</p>

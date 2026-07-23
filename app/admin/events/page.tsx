@@ -13,14 +13,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DeleteEventButton } from "@/components/dashboard/delete-event-button";
-import { createClient } from "@/lib/supabase/server";
+import { SectionBackgroundForm } from "@/components/dashboard/section-background-form";
+import { createClient, getEventsSection } from "@/lib/supabase/server";
 
 export default async function AdminEventsPage() {
   const supabase = await createClient();
-  const { data: events, error } = await supabase
-    .from("events")
-    .select("id, title, event_date, event_time, location, is_active, sort_order")
-    .order("event_date", { ascending: true });
+  const [{ data: events, error }, eventsSection] = await Promise.all([
+    supabase
+      .from("events")
+      .select("id, title, event_date, event_time, location, is_active, sort_order")
+      .order("event_date", { ascending: true }),
+    getEventsSection(),
+  ]);
 
   return (
     <div className="space-y-8">
@@ -37,6 +41,18 @@ export default async function AdminEventsPage() {
           </Button>
         </Link>
       </div>
+
+      <Card>
+        <CardContent>
+          <SectionBackgroundForm
+            title="Section background"
+            description="The background photo behind the homepage events schedule."
+            table="events_section"
+            bucket="events-section"
+            imageUrl={eventsSection?.background_image_url ?? null}
+          />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardContent className="p-0">

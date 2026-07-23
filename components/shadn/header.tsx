@@ -27,7 +27,7 @@ const SERVICE_LINKS = [
 const NAV_LINKS = [
   { href: "#about", label: "About" },
   { href: "#portfolio", label: "Portfolio" },
-  { href: "#pricing", label: "Pricing" },
+  { href: "#donate", label: "Donate" },
   { href: "#contact", label: "Contact" },
 ];
 

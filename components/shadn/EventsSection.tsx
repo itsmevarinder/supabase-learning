@@ -61,10 +61,13 @@ function mapEventRow(row: EventRow): Event {
 
 interface EventsSectionProps {
   events?: EventRow[];
+  backgroundImageUrl?: string | null;
 }
 
-export default function EventsSection({ events: eventRows }: EventsSectionProps) {
+export default function EventsSection({ events: eventRows, backgroundImageUrl }: EventsSectionProps) {
   const events = (eventRows ?? []).map(mapEventRow);
+  const bgImage =
+    backgroundImageUrl || "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1600&q=80";
 
   const section = useRef<HTMLElement>(null);
   const eyebrowRef = useRef<HTMLSpanElement>(null);
@@ -107,31 +110,37 @@ export default function EventsSection({ events: eventRows }: EventsSectionProps)
   );
 
   return (
-    <section className="relative pb-24 mb-10" ref={section}>
+    <section className="relative isolate scroll-mt-28 overflow-hidden py-24" ref={section}>
+      <div className="absolute inset-0 -z-20">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={bgImage} alt="" className="h-full w-full object-cover" />
+      </div>
+      <div className="absolute inset-0 -z-10 bg-black/65" />
+
       <div className="container mx-auto px-6">
         <div className="mx-auto max-w-2xl text-center">
           <span
             ref={eyebrowRef}
-            className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary"
+            className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm"
           >
             Upcoming Events
           </span>
 
-          <h2 ref={titleRef} className="mt-6 text-4xl font-bold leading-tight lg:text-5xl">
+          <h2 ref={titleRef} className="mt-6 text-4xl font-bold leading-tight text-white lg:text-5xl">
             {splitWords("Join Us At Our Next Event")}
           </h2>
 
-          <p ref={paragraphRef} className="mt-6 leading-8 text-muted-foreground">
+          <p ref={paragraphRef} className="mt-6 leading-8 text-white/80">
             Workshops, meetups, and launches — see what we&apos;re hosting next and save your spot.
           </p>
         </div>
 
         {events.length === 0 ? (
-          <p className="mt-14 text-center text-muted-foreground">
+          <p className="mt-14 text-center text-white/70">
             No upcoming events right now — check back soon.
           </p>
         ) : (
-          <div className="mx-auto mt-16 max-w-5xl">
+          <div className="mx-auto mt-16 max-w-5xl rounded-3xl bg-black/20 p-8 backdrop-blur-md">
             {events.map((event, index) => {
               const color = ACCENT_COLORS[index % ACCENT_COLORS.length];
               return (
@@ -140,27 +149,27 @@ export default function EventsSection({ events: eventRows }: EventsSectionProps)
                   ref={(el) => {
                     rowRefs.current[index] = el;
                   }}
-                  className="group flex gap-6 border-b py-7 first:pt-0 last:border-0 last:pb-0"
+                  className="group flex gap-6 border-b border-white/15 py-7 first:pt-0 last:border-0 last:pb-0"
                 >
                   {/* Date */}
                   <div className="w-16 flex-col flex justify-center shrink-0 text-center">
                     <div className="text-3xl font-bold leading-none" style={{ color }}>
                       {event.day}
                     </div>
-                    <div className="mt-1.5 text-xs font-semibold tracking-wide text-muted-foreground">
+                    <div className="mt-1.5 text-xs font-semibold tracking-wide text-white/60">
                       {event.month}
                     </div>
                   </div>
 
                   {/* Divider */}
-                  <div className="w-px shrink-0" style={{ backgroundColor: `color-mix(in oklch, ${color} 35%, var(--border))` }} />
+                  <div className="w-px shrink-0" style={{ backgroundColor: `color-mix(in oklch, ${color} 45%, white)` }} />
 
                   {/* Details */}
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
                       <div className="min-w-0">
-                        <h3 className="text-lg font-semibold transition-colors">{event.title}</h3>
-                        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+                        <h3 className="text-lg font-semibold text-white transition-colors">{event.title}</h3>
+                        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/70">
                           <span>{event.weekday}</span>
                           {event.time && (
                             <span className="flex items-center gap-1">
@@ -185,22 +194,21 @@ export default function EventsSection({ events: eventRows }: EventsSectionProps)
                           className="hidden size-12 shrink-0 rounded-lg object-cover sm:block"
                         />
                       ) : (
-                        <div className="hidden size-12 shrink-0 items-center justify-center rounded-lg bg-muted sm:flex">
-                          <Calendar className="size-6 text-muted-foreground" style={{ color }} />
+                        <div className="hidden size-12 shrink-0 items-center justify-center rounded-lg bg-white/10 sm:flex">
+                          <Calendar className="size-6" style={{ color }} />
                         </div>
                       )}
                     </div>
 
                     <div className="mt-2 flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-                      <p className="max-w-xl leading-7 text-muted-foreground">{event.description}</p>
+                      <p className="max-w-xl leading-7 text-white/70">{event.description}</p>
 
                       {event.linkUrl && (
                         <a
                           href={event.linkUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex shrink-0 items-center gap-1 text-sm font-medium hover:underline"
-                          style={{ color }}
+                          className="flex shrink-0 text-white items-center gap-1 text-sm font-medium hover:underline"
                         >
                           Learn More
                           <ArrowUpRight className="size-3.5" />

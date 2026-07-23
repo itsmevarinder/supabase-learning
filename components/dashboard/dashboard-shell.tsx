@@ -4,7 +4,7 @@ import { useState, type ReactNode } from "react";
 import NextImage from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { CalendarDays, ChevronsUpDown, CircleHelp, GalleryHorizontal, Images, Info, LayoutDashboard, LogIn, LogOut, Mail, MessageSquareQuote, Music, Settings, Image as ImageIcon, Tag, Video } from "lucide-react";
+import { CalendarDays, ChevronsUpDown, CircleHelp, GalleryHorizontal, Heart, Images, Info, LayoutDashboard, LogIn, LogOut, Mail, MessageSquareQuote, Music, Settings, Image as ImageIcon, Video } from "lucide-react";
 
 import {
   AlertDialog,
@@ -57,7 +57,7 @@ const NAV_ITEMS = [
   { href: "/admin/portfolio", label: "Portfolio", icon: ImageIcon },
   { href: "/admin/gallery", label: "Gallery", icon: Images },
   { href: "/admin/faqs", label: "FAQs", icon: CircleHelp },
-  { href: "/admin/pricing", label: "Pricing", icon: Tag },
+  { href: "/admin/donate", label: "Donate", icon: Heart },
   { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },
   { href: "/admin/events", label: "Events", icon: CalendarDays },
   { href: "/admin/contact-submissions", label: "Messages", icon: Mail },

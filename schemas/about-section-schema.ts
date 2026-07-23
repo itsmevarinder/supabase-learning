@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const aboutSectionSchema = z.object({
   imageUrl: z.union([z.url("Enter a valid image URL"), z.literal("")]).optional(),
+  imageUrl2: z.union([z.url("Enter a valid image URL"), z.literal("")]).optional(),
   eyebrowText: z.string().min(1, "Eyebrow text is required"),
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),

@@ -27,6 +27,7 @@ export interface AudioTrackRow {
 
 interface AudioSectionProps {
   tracks?: AudioTrackRow[];
+  backgroundImageUrl?: string | null;
 }
 
 // Cycles through the site's own --chart-1..5 tokens (navy/gold/teal/wine/slate)
@@ -46,8 +47,10 @@ function formatTime(seconds: number) {
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 }
 
-export default function AudioSection({ tracks: trackRows }: AudioSectionProps) {
+export default function AudioSection({ tracks: trackRows, backgroundImageUrl }: AudioSectionProps) {
   const tracks = trackRows ?? [];
+  const bgImage =
+    backgroundImageUrl || "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=1600&q=80";
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -166,23 +169,29 @@ export default function AudioSection({ tracks: trackRows }: AudioSectionProps) {
   }
 
   return (
-    <section className="py-24" ref={section}>
+    <section className="relative isolate scroll-mt-28 overflow-hidden py-24" ref={section}>
+      <div className="absolute inset-0 -z-20">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={bgImage} alt="" className="h-full w-full object-cover" />
+      </div>
+      <div className="absolute inset-0 -z-10 bg-black/65" />
+
       <div className="container mx-auto px-6">
         <div className="grid items-center gap-16 lg:grid-cols-2">
           {/* Left — copy */}
           <div>
             <span
               ref={eyebrowRef}
-              className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary"
+              className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm"
             >
               Listen In
             </span>
 
-            <h2 ref={titleRef} className="mt-6 text-4xl font-bold leading-tight lg:text-5xl">
+            <h2 ref={titleRef} className="mt-6 text-4xl font-bold leading-tight text-white lg:text-5xl">
               {splitWords("Sounds From Our Studio")}
             </h2>
 
-            <p ref={paragraphRef} className="mt-6 leading-8 text-muted-foreground max-w-125">
+            <p ref={paragraphRef} className="mt-6 leading-8 text-white/80 max-w-125">
               Podcast episodes, interviews, and audio stories worth a listen — press play and
               listen right here, no app required.
             </p>
@@ -194,9 +203,9 @@ export default function AudioSection({ tracks: trackRows }: AudioSectionProps) {
                   ref={(el) => {
                     checklistRefs.current[index] = el;
                   }}
-                  className="flex items-center gap-3"
+                  className="flex items-center gap-3 text-white"
                 >
-                  <DrawIcon icon={item.icon} delay={index * 0.15} className="h-5 w-5 text-primary" />
+                  <DrawIcon icon={item.icon} delay={index * 0.15} className="h-5 w-5 text-white" />
                   <span>{item.label}</span>
                 </div>
               ))}
@@ -205,7 +214,7 @@ export default function AudioSection({ tracks: trackRows }: AudioSectionProps) {
 
           {/* Right — player */}
           {tracks.length === 0 ? (
-            <p className="text-muted-foreground">
+            <p className="text-white/70">
               Audio tracks will show up here once they&apos;re added.
             </p>
           ) : (
@@ -221,12 +230,12 @@ export default function AudioSection({ tracks: trackRows }: AudioSectionProps) {
                   ref={(el) => {
                     rowRefs.current[index] = el;
                   }}
-                  className="flex items-center gap-4 rounded-xl border p-4 transition-colors duration-300"
+                  className="flex items-center gap-4 rounded-xl border border-white/15 bg-white/10 p-4 backdrop-blur-md transition-colors duration-300"
                   style={
                     isActive
                       ? {
-                          borderColor: `color-mix(in oklch, ${color} 40%, var(--border))`,
-                          backgroundColor: `color-mix(in oklch, ${color} 6%, var(--card))`,
+                          borderColor: `color-mix(in oklch, ${color} 50%, white)`,
+                          backgroundColor: `color-mix(in oklch, ${color} 18%, white 10%)`,
                         }
                       : undefined
                   }
@@ -242,13 +251,13 @@ export default function AudioSection({ tracks: trackRows }: AudioSectionProps) {
                     ) : (
                       <div
                         className="flex size-12 items-center justify-center rounded-lg"
-                        style={{ backgroundColor: `color-mix(in oklch, ${color} 15%, transparent)` }}
+                        style={{ backgroundColor: `color-mix(in oklch, ${color} 25%, transparent)` }}
                       >
                         <Music className="size-5" style={{ color }} />
                       </div>
                     )}
                     <span
-                      className="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full bg-card text-[10px] font-bold shadow-sm"
+                      className="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full bg-white text-[10px] font-bold shadow-sm"
                       style={{ color }}
                     >
                       {index + 1}
@@ -271,7 +280,7 @@ export default function AudioSection({ tracks: trackRows }: AudioSectionProps) {
 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-baseline justify-between gap-3">
-                      <h3 className="truncate font-semibold">{track.title}</h3>
+                      <h3 className="truncate font-semibold text-white">{track.title}</h3>
                       <div className="flex shrink-0 items-center gap-2">
                         {isActive && (
                           <span className="flex h-3 items-end gap-0.5" aria-hidden="true">
@@ -287,16 +296,16 @@ export default function AudioSection({ tracks: trackRows }: AudioSectionProps) {
                             ))}
                           </span>
                         )}
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-xs text-white/70">
                           {isActive ? `${formatTime(currentTime)} / ${formatTime(duration)}` : ""}
                         </span>
                       </div>
                     </div>
                     {track.description && (
-                      <p className="truncate text-sm text-muted-foreground">{track.description}</p>
+                      <p className="truncate text-sm text-white/70">{track.description}</p>
                     )}
 
-                    <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-muted">
+                    <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/20">
                       <div
                         className="h-full rounded-full transition-[width] duration-150"
                         style={{ width: `${progress}%`, backgroundColor: color }}

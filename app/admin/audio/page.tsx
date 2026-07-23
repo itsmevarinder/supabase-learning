@@ -13,14 +13,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DeleteAudioTrackButton } from "@/components/dashboard/delete-audio-track-button";
-import { createClient } from "@/lib/supabase/server";
+import { SectionBackgroundForm } from "@/components/dashboard/section-background-form";
+import { createClient, getAudioSection } from "@/lib/supabase/server";
 
 export default async function AdminAudioPage() {
   const supabase = await createClient();
-  const { data: tracks, error } = await supabase
-    .from("audio_tracks")
-    .select("id, title, description, is_active, sort_order")
-    .order("sort_order", { ascending: true });
+  const [{ data: tracks, error }, audioSection] = await Promise.all([
+    supabase
+      .from("audio_tracks")
+      .select("id, title, description, is_active, sort_order")
+      .order("sort_order", { ascending: true }),
+    getAudioSection(),
+  ]);
 
   return (
     <div className="space-y-8">
@@ -37,6 +41,18 @@ export default async function AdminAudioPage() {
           </Button>
         </Link>
       </div>
+
+      <Card>
+        <CardContent>
+          <SectionBackgroundForm
+            title="Section background"
+            description="The background photo behind the homepage audio player."
+            table="audio_section"
+            bucket="audio-section"
+            imageUrl={audioSection?.background_image_url ?? null}
+          />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardContent className="p-0">

@@ -3,11 +3,11 @@ import { cookies } from "next/headers";
 import type { AboutSectionRow } from "@/components/shadn/AboutSection";
 import type { AudioTrackRow } from "@/components/shadn/AudioSection";
 import type { FaqRow } from "@/components/shadn/Accordion";
+import type { DonateSectionRow } from "@/components/shadn/DonateSection";
 import type { EventRow } from "@/components/shadn/EventsSection";
 import type { GalleryItemRow } from "@/components/shadn/GallerySection";
 import type { HeroBannerRow } from "@/components/shadn/HeroSection";
 import type { PortfolioProjectRow } from "@/components/shadn/PortfolioSection";
-import type { PricingPlanRow } from "@/components/shadn/PricingSection";
 import type { SiteSettings } from "@/types/site-settings";
 import type { TestimonialRow } from "@/components/shadn/TestimonialSection";
 import type { VideoSectionRow } from "@/components/shadn/VideoSection";
@@ -76,24 +76,6 @@ export async function getPortfolioProjects(): Promise<PortfolioProjectRow[]> {
   return data ?? [];
 }
 
-// All pricing_plans rows, in display order — used by the homepage's Pricing
-// section. Always exactly 3 (Starter/Pro/Enterprise), edited (not
-// added/removed) via the admin panel. Falls back to an empty array
-// (PricingSection has its own hardcoded fallback plans).
-export async function getPricingPlans(): Promise<PricingPlanRow[]> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("pricing_plans")
-    .select("*")
-    .order("sort_order", { ascending: true });
-
-  if (error) {
-    console.error("Failed to load pricing_plans:", error.message);
-    return [];
-  }
-
-  return data ?? [];
-}
 
 // The single site_settings row — contact info and social links shared by
 // the Footer and Contact sections. Returns null (both components have their
@@ -233,4 +215,57 @@ export async function getAudioTracks(): Promise<AudioTrackRow[]> {
   }
 
   return data ?? [];
+}
+
+// The single donate_section row — background image, copy, and UPI phone
+// number for the homepage Donate section. Returns null (DonateSection has
+// its own hardcoded fallback copy) rather than throwing if the query fails.
+export async function getDonateSection(): Promise<DonateSectionRow | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("donate_section").select("*").eq("id", 1).single();
+
+  if (error) {
+    console.error("Failed to load donate_section:", error.message);
+    return null;
+  }
+
+  return data;
+}
+
+// The single events_section row — just the background image behind the
+// homepage's Events schedule. Returns null (EventsSection falls back to its
+// own hardcoded image) rather than throwing if the query fails.
+export async function getEventsSection(): Promise<{ background_image_url: string | null } | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("events_section")
+    .select("background_image_url")
+    .eq("id", 1)
+    .single();
+
+  if (error) {
+    console.error("Failed to load events_section:", error.message);
+    return null;
+  }
+
+  return data;
+}
+
+// The single audio_section row — just the background image behind the
+// homepage's Audio player. Returns null (AudioSection falls back to its own
+// hardcoded image) rather than throwing if the query fails.
+export async function getAudioSection(): Promise<{ background_image_url: string | null } | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("audio_section")
+    .select("background_image_url")
+    .eq("id", 1)
+    .single();
+
+  if (error) {
+    console.error("Failed to load audio_section:", error.message);
+    return null;
+  }
+
+  return data;
 }

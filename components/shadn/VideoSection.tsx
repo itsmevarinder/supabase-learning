@@ -180,7 +180,7 @@ export default function VideoSection({ video }: VideoSectionProps) {
             </div>
           </div>
 
-          <div
+          {/* <div
             ref={badgeRef}
             className="absolute -bottom-6 left-6 flex items-center gap-3 rounded-2xl bg-card px-5 py-4 shadow-xl md:left-10"
           >
@@ -191,7 +191,7 @@ export default function VideoSection({ video }: VideoSectionProps) {
               <p className="font-semibold">Watch Video</p>
               <p className="text-xs text-muted-foreground">See our process</p>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>
