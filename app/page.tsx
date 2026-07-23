@@ -4,6 +4,7 @@ import TrustedBy from "@/components/shadn/TrustedBy";
 import AboutSection from "@/components/shadn/AboutSection";
 import VideoSection from "@/components/shadn/VideoSection";
 import PortfolioSection from "@/components/shadn/PortfolioSection";
+import GallerySection from "@/components/shadn/GallerySection";
 import FAQSection from "@/components/shadn/Accordion";
 import PricingSection from "@/components/shadn/PricingSection";
 import TestimonialSection from "@/components/shadn/TestimonialSection";
@@ -11,10 +12,10 @@ import EventsSection from "@/components/shadn/EventsSection";
 import ContactSection from "@/components/shadn/Contact";
 import Footer from "@/components/shadn/footer";
 import ScrollFlipBackground from "@/components/shadn/ScrollFlipBackground";
-import { getAboutSection, getEvents, getFaqs, getHeroBanners, getPortfolioProjects, getPricingPlans, getSiteSettings, getTestimonials, getVideoSection } from "@/lib/supabase/server";
+import { getAboutSection, getEvents, getFaqs, getGalleryItems, getHeroBanners, getPortfolioProjects, getPricingPlans, getSiteSettings, getTestimonials, getVideoSection } from "@/lib/supabase/server";
 
 const Page = async () => {
-   const [heroBanners, portfolioProjects, pricingPlans, siteSettings, testimonials, faqs, aboutSection, videoSection, events] = await Promise.all([
+   const [heroBanners, portfolioProjects, pricingPlans, siteSettings, testimonials, faqs, aboutSection, videoSection, events, galleryItems] = await Promise.all([
       getHeroBanners(),
       getPortfolioProjects(),
       getPricingPlans(),
@@ -24,6 +25,7 @@ const Page = async () => {
       getAboutSection(),
       getVideoSection(),
       getEvents(),
+      getGalleryItems(),
    ]);
 
    return (
@@ -34,6 +36,7 @@ const Page = async () => {
          <TrustedBy />
          <AboutSection about={aboutSection} />
          <PortfolioSection projects={portfolioProjects} />
+         <GallerySection items={galleryItems} />
          <EventsSection events={events} />
          <VideoSection video={videoSection} />
          <PricingSection plans={pricingPlans} />

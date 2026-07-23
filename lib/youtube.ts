@@ -12,7 +12,25 @@ export function getYouTubeThumbnail(url: string | null | undefined): string | nu
   return id ? `https://img.youtube.com/vi/${id}/maxresdefault.jpg` : null;
 }
 
-export function getYouTubeEmbedUrl(url: string | null | undefined): string | null {
+interface YouTubeEmbedOptions {
+  mute?: boolean;
+  loop?: boolean;
+}
+
+export function getYouTubeEmbedUrl(
+  url: string | null | undefined,
+  options: YouTubeEmbedOptions = {}
+): string | null {
   const id = getYouTubeId(url);
-  return id ? `https://www.youtube.com/embed/${id}?autoplay=1&rel=0` : null;
+  if (!id) return null;
+
+  const params = new URLSearchParams({ autoplay: "1", rel: "0" });
+  if (options.mute) params.set("mute", "1");
+  // YouTube only loops a single video when `playlist` is set to that same ID.
+  if (options.loop) {
+    params.set("loop", "1");
+    params.set("playlist", id);
+  }
+
+  return `https://www.youtube.com/embed/${id}?${params.toString()}`;
 }

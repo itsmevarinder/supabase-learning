@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import type { AboutSectionRow } from "@/components/shadn/AboutSection";
 import type { FaqRow } from "@/components/shadn/Accordion";
 import type { EventRow } from "@/components/shadn/EventsSection";
+import type { GalleryItemRow } from "@/components/shadn/GallerySection";
 import type { HeroBannerRow } from "@/components/shadn/HeroSection";
 import type { PortfolioProjectRow } from "@/components/shadn/PortfolioSection";
 import type { PricingPlanRow } from "@/components/shadn/PricingSection";
@@ -189,6 +190,25 @@ export async function getEvents(): Promise<EventRow[]> {
 
   if (error) {
     console.error("Failed to load events:", error.message);
+    return [];
+  }
+
+  return data ?? [];
+}
+
+// Active gallery items, in display order — used by the homepage's photo/video
+// gallery. Falls back to an empty array (GallerySection shows an empty-state
+// message) rather than throwing if the query fails.
+export async function getGalleryItems(): Promise<GalleryItemRow[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("gallery_items")
+    .select("*")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true });
+
+  if (error) {
+    console.error("Failed to load gallery_items:", error.message);
     return [];
   }
 
