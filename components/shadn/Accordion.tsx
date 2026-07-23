@@ -14,44 +14,27 @@ import {
 import { gsap, useGSAP, EASE, prefersReducedMotion } from "@/lib/gsap/config";
 import { scrollReveal } from "@/lib/gsap/reveal";
 
-const faqs = [
-  {
-    value: "item-1",
-    question: "How do I get started?",
-    answer:
-      "Simply create an account, choose a plan that fits your needs, and begin using our platform immediately.",
-  },
-  {
-    value: "item-2",
-    question: "Can I change my subscription later?",
-    answer:
-      "Yes. You can upgrade or downgrade your subscription at any time from your account settings.",
-  },
-  {
-    value: "item-3",
-    question: "Is customer support available?",
-    answer:
-      "Absolutely! Our support team is available 24/7 via email and live chat.",
-  },
-  {
-    value: "item-4",
-    question: "Is my data secure?",
-    answer:
-      "Yes. We use enterprise-grade security, SSL encryption, and regular backups to protect your information.",
-  },
-  {
-    value: "item-5",
-    question: "Can I cancel anytime?",
-    answer:
-      "Of course. There are no long-term contracts. You can cancel whenever you want.",
-  },
-  {
-    value: "item-6",
-    question: "Do you offer a free trial?",
-    answer:
-      "Yes! Every new customer gets a free trial so you can explore our platform before purchasing.",
-  },
-];
+export interface FaqRow {
+  id: string;
+  question: string;
+  answer: string;
+  is_active: boolean;
+  sort_order: number;
+}
+
+interface Faq {
+  value: string;
+  question: string;
+  answer: string;
+}
+
+function mapFaqRow(row: FaqRow): Faq {
+  return {
+    value: row.id,
+    question: row.question,
+    answer: row.answer,
+  };
+}
 
 const checklist = [
   { icon: CircleCheck, label: "24/7 Customer Support" },
@@ -60,7 +43,12 @@ const checklist = [
   { icon: Headphones, label: "Dedicated Support Team" },
 ];
 
-export default function FAQSection() {
+interface FAQSectionProps {
+  faqs?: FaqRow[];
+}
+
+export default function FAQSection({ faqs: faqRows }: FAQSectionProps) {
+  const faqs = (faqRows ?? []).map(mapFaqRow);
   const section = useRef<HTMLElement>(null);
   const eyebrowRef = useRef<HTMLSpanElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -154,7 +142,7 @@ export default function FAQSection() {
 
             <p ref={paragraphRef} className="mt-6 text-lg leading-8 text-muted-foreground">
               Find answers to the most common questions about our services.
-              Can't find what you're looking for? Our team is always ready to
+              Can&apos;t find what you&apos;re looking for? Our team is always ready to
               help.
             </p>
 
@@ -189,29 +177,33 @@ export default function FAQSection() {
 
           {/* Right Side */}
           <div>
-            <Accordion
-              defaultValue={["item-1"]}
-              className="space-y-4"
-            >
-              {faqs.map((faq, index) => (
-                <AccordionItem
-                  key={faq.value}
-                  value={faq.value}
-                  ref={(el) => {
-                    accordionItemRefs.current[index] = el;
-                  }}
-                  className="rounded-2xl border bg-white p-2 shadow-sm transition-all hover:shadow-lg"
-                >
-                  <AccordionTrigger className="px-5 py-4 text-left text-lg font-semibold">
-                    {faq.question}
-                  </AccordionTrigger>
+            {faqs.length === 0 ? (
+              <p className="text-muted-foreground">FAQs will show up here once they&apos;re added.</p>
+            ) : (
+              <Accordion
+                defaultValue={[faqs[0].value]}
+                className="space-y-4"
+              >
+                {faqs.map((faq, index) => (
+                  <AccordionItem
+                    key={faq.value}
+                    value={faq.value}
+                    ref={(el) => {
+                      accordionItemRefs.current[index] = el;
+                    }}
+                    className="rounded-2xl border bg-white p-2 shadow-sm transition-all hover:shadow-lg"
+                  >
+                    <AccordionTrigger className="px-5 py-4 text-left text-lg font-semibold">
+                      {faq.question}
+                    </AccordionTrigger>
 
-                  <AccordionContent className="px-5 pb-5 text-muted-foreground leading-7">
-                    {faq.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+                    <AccordionContent className="px-5 pb-5 text-muted-foreground leading-7">
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            )}
           </div>
         </div>
       </div>

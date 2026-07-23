@@ -10,14 +10,39 @@ import HoverDistortImage from "@/components/shadn/HoverDistortImage";
 import { gsap, useGSAP, EASE, prefersReducedMotion } from "@/lib/gsap/config";
 import { scrollParallax } from "@/lib/gsap/parallax";
 
-const features = [
+const DEFAULT_FEATURES = [
   "Experienced & Professional Team",
   "Fast Project Delivery",
   "Modern UI/UX Design",
   "24/7 Customer Support",
 ];
 
-export default function AboutSection() {
+export interface AboutSectionRow {
+  id: number;
+  image_url: string | null;
+  eyebrow_text: string;
+  title: string;
+  description: string;
+  years_experience: number;
+  button_text: string;
+  features: string[] | null;
+}
+
+interface AboutSectionProps {
+  about?: AboutSectionRow | null;
+}
+
+export default function AboutSection({ about }: AboutSectionProps) {
+  const imageUrl = about?.image_url || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&q=80";
+  const eyebrowText = about?.eyebrow_text ?? "About Us";
+  const title = about?.title ?? "Building Digital Experiences That Inspire";
+  const description =
+    about?.description ??
+    "We specialize in creating beautiful websites, scalable applications, and innovative digital products that help businesses grow faster and stand out in today's competitive market.";
+  const yearsExperience = about?.years_experience ?? 10;
+  const buttonText = about?.button_text ?? "Learn More";
+  const features = about?.features?.length ? about.features : DEFAULT_FEATURES;
+
   const section = useRef<HTMLElement>(null);
   const imageWrapperRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
@@ -36,7 +61,7 @@ export default function AboutSection() {
       // Counter is kicked off from a deferred timeline callback, so it
       // needs contextSafe() to be tracked/cleaned up by gsap's context.
       const playCounter = contextSafe!(() => {
-        animateCounter(badgeNumberRef.current, 10, { suffix: "+", duration: 1.2 });
+        animateCounter(badgeNumberRef.current, yearsExperience, { suffix: "+", duration: 1.2 });
       });
 
       // --- Cohesive entrance timeline — image slides in first, badge pops
@@ -113,7 +138,7 @@ export default function AboutSection() {
 
             <div ref={imageRef}>
               <HoverDistortImage
-                image="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&q=80"
+                image={imageUrl}
                 alt="About"
                 className="h-104 w-full rounded-3xl shadow-2xl"
               />
@@ -134,18 +159,15 @@ export default function AboutSection() {
               ref={eyebrowRef}
               className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary"
             >
-              About Us
+              {eyebrowText}
             </span>
 
             <h2 ref={titleRef} className="mt-6 text-5xl font-bold leading-tight">
-              {splitWords("Building Digital Experiences That Inspire")}
+              {splitWords(title)}
             </h2>
 
             <p ref={paragraphRef} className="mt-6 leading-8 text-muted-foreground">
-              We specialize in creating beautiful websites, scalable
-              applications, and innovative digital products that help
-              businesses grow faster and stand out in today's competitive
-              market.
+              {description}
             </p>
 
             <div className="mt-8 space-y-4">
@@ -164,7 +186,7 @@ export default function AboutSection() {
             </div>
 
             <Button ref={buttonRef} className="mt-10 rounded-full px-8 py-5">
-              Learn More
+              {buttonText}
             </Button>
           </div>
         </div>

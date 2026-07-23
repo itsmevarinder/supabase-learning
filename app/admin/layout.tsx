@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getSiteSettings } from "@/lib/supabase/server";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -17,9 +17,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   const userName = (user.user_metadata?.full_name as string | undefined) ?? user.email ?? "Admin";
+  const siteSettings = await getSiteSettings();
 
   return (
-    <DashboardShell variant="admin" roleLabel="Admin" userEmail={user.email ?? ""} userName={userName}>
+    <DashboardShell
+      variant="admin"
+      roleLabel="Admin"
+      userEmail={user.email ?? ""}
+      userName={userName}
+      showLoginButton={siteSettings?.show_login_button ?? true}
+    >
       {children}
     </DashboardShell>
   );

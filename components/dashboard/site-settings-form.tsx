@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { LogIn } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import {
   Form,
   FormControl,
@@ -39,6 +41,7 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
       instagramUrl: settings?.instagram_url ?? "",
       twitterUrl: settings?.twitter_url ?? "",
       linkedinUrl: settings?.linkedin_url ?? "",
+      showLoginButton: settings?.show_login_button ?? true,
     },
   });
 
@@ -58,6 +61,7 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
         instagram_url: values.instagramUrl || null,
         twitter_url: values.twitterUrl || null,
         linkedin_url: values.linkedinUrl || null,
+        show_login_button: values.showLoginButton,
       })
       .eq("id", 1);
 
@@ -193,6 +197,33 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
             )}
           />
         </div>
+
+        <FormField
+          control={form.control}
+          name="showLoginButton"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between gap-4 space-y-0 rounded-xl border bg-muted/30 px-4 py-3">
+              <div className="flex items-center gap-3">
+                <div
+                  className="flex size-9 shrink-0 items-center justify-center rounded-lg"
+                  style={{ backgroundColor: "color-mix(in oklch, var(--chart-3) 15%, transparent)" }}
+                >
+                  <LogIn className="size-4.5" style={{ color: "var(--chart-3)" }} />
+                </div>
+                <div>
+                  <FormLabel className="font-medium">Login button</FormLabel>
+                  <p className="text-sm text-muted-foreground">
+                    Show the Login button in the site header and mobile menu.
+                  </p>
+                </div>
+              </div>
+              <FormControl>
+                <Switch checked={field.value} onCheckedChange={field.onChange} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {status === "saved" && <p className="text-sm text-green-600">Saved.</p>}
         {status === "error" && errorMessage && <p className="text-sm text-destructive">{errorMessage}</p>}

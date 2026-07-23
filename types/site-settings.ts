@@ -8,4 +8,5 @@ export interface SiteSettings {
   instagram_url: string | null;
   twitter_url: string | null;
   linkedin_url: string | null;
+  show_login_button: boolean;
 }

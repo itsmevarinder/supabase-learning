@@ -1,5 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import type { AboutSectionRow } from "@/components/shadn/AboutSection";
+import type { FaqRow } from "@/components/shadn/Accordion";
 import type { HeroBannerRow } from "@/components/shadn/HeroSection";
 import type { PortfolioProjectRow } from "@/components/shadn/PortfolioSection";
 import type { PricingPlanRow } from "@/components/shadn/PricingSection";
@@ -121,4 +123,38 @@ export async function getTestimonials(): Promise<TestimonialRow[]> {
   }
 
   return data ?? [];
+}
+
+// Active FAQ rows, in display order — used by the homepage's FAQ accordion.
+// Falls back to an empty array (FAQSection shows an empty-state message)
+// rather than throwing if the query fails.
+export async function getFaqs(): Promise<FaqRow[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("faqs")
+    .select("*")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true });
+
+  if (error) {
+    console.error("Failed to load faqs:", error.message);
+    return [];
+  }
+
+  return data ?? [];
+}
+
+// The single about_section row — image + copy for the homepage About
+// section. Returns null (AboutSection has its own hardcoded fallback values)
+// rather than throwing if the query fails.
+export async function getAboutSection(): Promise<AboutSectionRow | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("about_section").select("*").eq("id", 1).single();
+
+  if (error) {
+    console.error("Failed to load about_section:", error.message);
+    return null;
+  }
+
+  return data;
 }

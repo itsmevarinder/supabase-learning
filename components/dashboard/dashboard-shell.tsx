@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronsUpDown, GalleryHorizontal, LayoutDashboard, LogOut, Mail, MessageSquareQuote, Settings, Image as ImageIcon, Tag, User, Users } from "lucide-react";
+import { ChevronsUpDown, CircleHelp, GalleryHorizontal, Info, LayoutDashboard, LogIn, LogOut, Mail, MessageSquareQuote, Settings, Image as ImageIcon, Tag, User, Users } from "lucide-react";
 
 import {
   AlertDialog,
@@ -26,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 import {
   Sidebar,
   SidebarContent,
@@ -53,7 +54,9 @@ const SECTIONS = {
       { href: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
       { href: "/admin/users", label: "Users", icon: Users },
       { href: "/admin/hero-banners", label: "Hero Banners", icon: GalleryHorizontal },
+      { href: "/admin/about", label: "About", icon: Info },
       { href: "/admin/portfolio", label: "Portfolio", icon: ImageIcon },
+      { href: "/admin/faqs", label: "FAQs", icon: CircleHelp },
       { href: "/admin/pricing", label: "Pricing", icon: Tag },
       { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },
       { href: "/admin/contact-submissions", label: "Messages", icon: Mail },
@@ -75,6 +78,9 @@ interface DashboardShellProps {
   userEmail: string;
   userName: string;
   children: ReactNode;
+  // Only passed by the admin layout — lets an admin flip the public site
+  // header's Login button on/off without leaving the dashboard.
+  showLoginButton?: boolean;
 }
 
 function initialsFor(name: string) {
@@ -93,17 +99,44 @@ function isNavItemActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function DashboardShell({ variant, roleLabel, userEmail, userName, children }: DashboardShellProps) {
+export function DashboardShell({
+  variant,
+  roleLabel,
+  userEmail,
+  userName,
+  children,
+  showLoginButton,
+}: DashboardShellProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { navItems } = SECTIONS[variant];
   const activeItem = navItems.find((item) => isNavItemActive(pathname, item.href));
   const [signOutOpen, setSignOutOpen] = useState(false);
+  const [loginButtonVisible, setLoginButtonVisible] = useState(showLoginButton ?? true);
+  const [savingLoginToggle, setSavingLoginToggle] = useState(false);
 
   async function handleSignOut() {
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/login");
+    router.refresh();
+  }
+
+  async function handleLoginToggle(checked: boolean) {
+    setLoginButtonVisible(checked);
+    setSavingLoginToggle(true);
+
+    const supabase = createClient();
+    const { error } = await supabase
+      .from("site_settings")
+      .update({ show_login_button: checked })
+      .eq("id", 1);
+
+    setSavingLoginToggle(false);
+    if (error) {
+      setLoginButtonVisible(!checked);
+      return;
+    }
     router.refresh();
   }
 
@@ -200,6 +233,18 @@ export function DashboardShell({ variant, roleLabel, userEmail, userName, childr
           <SidebarTrigger />
           <Separator orientation="vertical" className="h-full" />
           <span className="text-sm font-medium">{activeItem?.label ?? "Dashboard"}</span>
+
+          {showLoginButton !== undefined && (
+            <div className="ml-auto flex items-center gap-2">
+              <LogIn className="size-4 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">Login button</span>
+              <Switch
+                checked={loginButtonVisible}
+                onCheckedChange={handleLoginToggle}
+                disabled={savingLoginToggle}
+              />
+            </div>
+          )}
         </header>
         <main className="flex-1 p-6">{children}</main>
       </SidebarInset>

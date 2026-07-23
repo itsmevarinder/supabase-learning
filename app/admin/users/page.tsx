@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { DeleteUserButton } from "@/components/dashboard/delete-user-button";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/types/profile";
 
@@ -38,6 +39,7 @@ export default async function AdminUsersPage() {
                   <TableHead>Email</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead>Joined</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -51,6 +53,11 @@ export default async function AdminUsersPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>{new Date(profile.created_at).toLocaleDateString()}</TableCell>
+                    <TableCell className="text-right">
+                      {profile.role !== "admin" && (
+                        <DeleteUserButton id={profile.id} name={profile.full_name ?? profile.email} />
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

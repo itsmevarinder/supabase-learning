@@ -74,6 +74,7 @@ export function SubmissionsChart({ data }: SubmissionsChartProps) {
                 width={slotWidth}
                 height={CHART_HEIGHT}
                 fill="transparent"
+                pointerEvents="all"
                 onMouseEnter={() => setHovered(i)}
                 onMouseLeave={() => setHovered(null)}
               />

@@ -30,7 +30,11 @@ const NAV_LINKS = [
   { href: "#contact", label: "Contact" },
 ];
 
-export default function Header() {
+interface HeaderProps {
+  showLoginButton?: boolean;
+}
+
+export default function Header({ showLoginButton = true }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const pillRef = useRef<HTMLDivElement>(null);
@@ -164,9 +168,11 @@ export default function Header() {
 
             {/* Right Side */}
             <div className="hidden items-center gap-3 xl:flex">
-              <Link href="/login">
-                <Button variant="ghost" className="hover:px-6 py-5">Login</Button>
-              </Link>
+              {showLoginButton && (
+                <Link href="/login">
+                  <Button variant="ghost" className="hover:px-6 py-5">Login</Button>
+                </Link>
+              )}
 
               <a href="#contact">
                 <Button className="rounded-full px-6 py-5">Get Started</Button>
@@ -252,11 +258,13 @@ export default function Header() {
             </nav>
 
             <div className="mt-auto flex flex-col gap-3 border-t border-gray-100 pt-6">
-              <Link href="/login" onClick={closeDrawer}>
-                <Button variant="ghost" className="w-full rounded-full">
-                  Login
-                </Button>
-              </Link>
+              {showLoginButton && (
+                <Link href="/login" onClick={closeDrawer}>
+                  <Button variant="ghost" className="w-full rounded-full">
+                    Login
+                  </Button>
+                </Link>
+              )}
               <a href="#contact" onClick={closeDrawer}>
                 <Button className="w-full rounded-full">Get Started</Button>
               </a>
