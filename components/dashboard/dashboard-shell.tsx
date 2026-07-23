@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import NextImage from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { CalendarDays, ChevronsUpDown, CircleHelp, GalleryHorizontal, Images, Info, LayoutDashboard, LogIn, LogOut, Mail, MessageSquareQuote, Music, Settings, Image as ImageIcon, Tag, Video } from "lucide-react";
@@ -135,7 +136,7 @@ export function DashboardShell({
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" render={<Link href="/" className="flex items-center gap-3">
-                <img src="/logo.png" alt="" className="w-12 animate-spin-linear" />
+                <NextImage src="/logo.png" alt="" width={48} height={48} priority className="w-12 animate-spin-linear" />
                 <span className="truncate text-3xl font-semibold">Aurora</span>
               </Link>} />
             </SidebarMenuItem>
@@ -217,9 +218,8 @@ export function DashboardShell({
       </AlertDialog>
 
       <SidebarInset>
-        <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
+        <header className="flex h-14 shrink-0 items-center gap-4 border-b border-border px-4">
           <SidebarTrigger />
-          <Separator orientation="vertical" className="h-full" />
           <span className="text-sm font-medium">{activeItem?.label ?? "Dashboard"}</span>
 
           {showLoginButton !== undefined && (

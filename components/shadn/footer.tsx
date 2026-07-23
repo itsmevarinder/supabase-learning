@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   Mail,
@@ -61,7 +62,7 @@ export default function Footer({ settings }: FooterProps) {
                 href="/"
                 className="text-3xl font-bold tracking-tight"
               >
-                <img src="/logo.png" alt="" className="w-30 animate-spin-linear" />
+                <Image src="/logo.png" alt="" width={120} height={120} className="w-30 animate-spin-linear" />
               </Link>
 
               <p className="mt-5 leading-7 text-muted-foreground">

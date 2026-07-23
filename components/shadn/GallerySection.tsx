@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Maximize2, Play, X } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -71,6 +71,34 @@ function mapGalleryRow(row: GalleryItemRow): GalleryItem | null {
   };
 }
 
+// Uploaded video tiles autoplay muted as a live preview, but every one
+// decoding at once is expensive — especially on mobile Safari, which has real
+// limits on concurrent video decode. Only the tile actually on-screen plays;
+// the rest stay paused until scrolled into view.
+function GalleryVideoTile({ src, className }: { src: string; className?: string }) {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.25 }
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
+
+  return <video ref={videoRef} src={src} loop muted playsInline className={className} />;
+}
+
 interface GallerySectionProps {
   items?: GalleryItemRow[];
 }
@@ -105,13 +133,20 @@ export default function GallerySection({ items: itemRows }: GallerySectionProps)
         )
         .from(paragraphRef.current, { y: 20, opacity: 0, duration: 0.5, ease: EASE.soft }, "-=0.4");
 
-      scrollReveal(tileRefs.current, {
-        trigger: section.current,
-        direction: "up",
-        distance: 30,
-        duration: 0.5,
-        stagger: 0.06,
-        start: "top 80%",
+      // Each tile watches its OWN scroll position (not one shared trigger for
+      // the whole, possibly multi-row section) — matches every other grid in
+      // this codebase (Portfolio, Pricing, Events). A single tall shared
+      // trigger governing a stagger across spatially-separated tiles is what
+      // caused tiles to get stuck reversed/hidden even while on-screen.
+      tileRefs.current.forEach((tile, i) => {
+        scrollReveal(tile, {
+          trigger: tile,
+          direction: "up",
+          distance: 30,
+          duration: 0.5,
+          delay: (i % 4) * 0.06,
+          start: "top 92%",
+        });
       });
     },
     { scope: section }
@@ -180,12 +215,8 @@ export default function GallerySection({ items: itemRows }: GallerySectionProps)
                   />
                 ) : item.videoFileUrl ? (
                   // Uploaded video, no auto-derivable thumbnail — preview it inline instead.
-                  <video
+                  <GalleryVideoTile
                     src={item.videoFileUrl}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                 ) : (

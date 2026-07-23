@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Code2, Megaphone, Menu, Palette, Smartphone, X } from "lucide-react";
 
@@ -119,7 +120,7 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
           >
             {/* Logo */}
             <Link href="/" className="text-2xl font-bold tracking-tight">
-              <img src="/logo.png" alt="" className="w-12 animate-spin-linear" />
+              <Image src="/logo.png" alt="" width={48} height={48} priority className="w-12 animate-spin-linear" />
             </Link>
 
             {/* Navigation */}
@@ -210,7 +211,7 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
           >
             <div className="mb-6 flex items-center justify-between">
               <Link href="/" onClick={closeDrawer} className="text-2xl font-bold tracking-tight">
-                <img src="/logo.png" alt="" className="w-12 animate-spin-linear" />
+                <Image src="/logo.png" alt="" width={48} height={48} className="w-12 animate-spin-linear" />
               </Link>
               <button
                 type="button"

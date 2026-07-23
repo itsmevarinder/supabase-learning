@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -14,7 +15,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
         <div className="relative z-10 flex h-full flex-col justify-between p-12 text-white">
           <Link href="/" className="text-2xl font-bold tracking-tight">
-            <img src="/logo.png" alt="" className="w-22 animate-spin-linear" />
+            <Image src="/logo.png" alt="" width={88} height={88} priority className="w-22 animate-spin-linear" />
           </Link>
 
           <div className="max-w-md">
@@ -29,7 +30,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       {/* Right — form panel */}
       <div className="flex flex-col items-center justify-center px-4 py-12">
         <Link href="/" className="mb-8 text-2xl font-bold tracking-tight lg:hidden">
-          <img src="/logo.png" alt="" className="w-12 animate-spin-linear" />
+          <Image src="/logo.png" alt="" width={48} height={48} className="w-12 animate-spin-linear" />
         </Link>
         <div className="w-full max-w-md">{children}</div>
       </div>
