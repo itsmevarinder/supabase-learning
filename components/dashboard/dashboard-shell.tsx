@@ -151,7 +151,7 @@ export function DashboardShell({
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" render={<Link href="/" className="flex items-center gap-3">
                 <NextImage src="/logo.png" alt="" width={48} height={48} priority className="w-12 animate-spin-linear" />
-                <span className="truncate text-3xl font-semibold">Aurora</span>
+                <span className="truncate text-3xl font-semibold">CMS</span>
               </Link>} />
             </SidebarMenuItem>
           </SidebarMenu>

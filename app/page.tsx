@@ -13,6 +13,7 @@ import EventsSection from "@/components/shadn/EventsSection";
 import ContactSection from "@/components/shadn/Contact";
 import Footer from "@/components/shadn/footer";
 import ScrollFlipBackground from "@/components/shadn/ScrollFlipBackground";
+import SmoothScroll from "@/components/shadn/SmoothScroll";
 import QRCode from "qrcode";
 import { getAboutSection, getAudioSection, getAudioTracks, getDonateSection, getEvents, getEventsSection, getFaqs, getGalleryItems, getHeroBanners, getPortfolioProjects, getSiteSettings, getTestimonials, getVideoSection } from "@/lib/supabase/server";
 import { buildUpiPaymentString } from "@/lib/upi";
@@ -35,11 +36,12 @@ const Page = async () => {
    ]);
 
    const donateQrCodeDataUrl = donateSection?.phone_number
-      ? await QRCode.toDataURL(buildUpiPaymentString(donateSection.phone_number, "Aurora Donation"))
+      ? await QRCode.toDataURL(buildUpiPaymentString(donateSection.phone_number, "Test Donation"))
       : null;
 
    return (
       <main className="overflow-x-clip">
+         <SmoothScroll />
          <ScrollFlipBackground />
          <Header showLoginButton={siteSettings?.show_login_button ?? true} />
          <HeroSection banners={heroBanners} />

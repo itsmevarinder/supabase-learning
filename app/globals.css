@@ -105,11 +105,6 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  /* Section wash tints — slowly drifting aurora-style gradients (not flat
-     washes, not just corner glows) so text-heavy sections stop reading as
-     flat white. Each spans a small hue range so the drift is actually
-     visible as color movement. Alternated across sections; image-heavy
-     sections (About, Portfolio) stay clean. */
   .section-tint-indigo,
   .section-tint-fuchsia,
   .section-tint-cyan {

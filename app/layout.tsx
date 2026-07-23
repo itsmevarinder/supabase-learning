@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Aurora — The AI operating system for modern teams",
+  title: "CMS Dashboard",
   description:
-    "Aurora unifies your data, workflows, and AI agents into one intelligent operating system built for the teams shaping what's next.",
+    "A simple CMS built with Next.js and Supabase for managing content, events, testimonials, and more.",
 };
 
 export default function RootLayout({
