@@ -152,7 +152,7 @@ export default function PricingSection({ plans: planRows }: PricingSectionProps)
             Pricing
           </span>
 
-          <h2 ref={titleRef} className="mt-6 text-5xl font-bold">
+          <h2 ref={titleRef} className="mt-6 text-4xl lg:text-5xl font-bold">
             {splitWords("Simple & Transparent Pricing")}
           </h2>
 

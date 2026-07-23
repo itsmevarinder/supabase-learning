@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { CalendarDays, ChevronsUpDown, CircleHelp, GalleryHorizontal, Images, Info, LayoutDashboard, LogIn, LogOut, Mail, MessageSquareQuote, Settings, Image as ImageIcon, Tag, Video } from "lucide-react";
+import { CalendarDays, ChevronsUpDown, CircleHelp, GalleryHorizontal, Images, Info, LayoutDashboard, LogIn, LogOut, Mail, MessageSquareQuote, Music, Settings, Image as ImageIcon, Tag, Video } from "lucide-react";
 
 import {
   AlertDialog,
@@ -52,6 +52,7 @@ const NAV_ITEMS = [
   { href: "/admin/hero-banners", label: "Hero Banners", icon: GalleryHorizontal },
   { href: "/admin/about", label: "About", icon: Info },
   { href: "/admin/video", label: "Video", icon: Video },
+  { href: "/admin/audio", label: "Audio", icon: Music },
   { href: "/admin/portfolio", label: "Portfolio", icon: ImageIcon },
   { href: "/admin/gallery", label: "Gallery", icon: Images },
   { href: "/admin/faqs", label: "FAQs", icon: CircleHelp },

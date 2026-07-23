@@ -29,9 +29,6 @@ interface GalleryItem {
   title: string | null;
 }
 
-// Cycles through the site's own --chart-1..5 tokens so uploaded videos
-// (no auto-derivable thumbnail, unlike YouTube links) still get a distinct,
-// on-brand placeholder instead of one flat color.
 const PLACEHOLDER_COLORS = [
   "var(--chart-1)",
   "var(--chart-2)",
@@ -51,7 +48,6 @@ function mapGalleryRow(row: GalleryItemRow): GalleryItem | null {
       return { id: row.id, type: "video", thumbnail, embedUrl, videoFileUrl: null, fullImage: null, title: row.title };
     }
 
-    // Directly uploaded video file — no auto thumbnail available.
     return {
       id: row.id,
       type: "video",
@@ -134,7 +130,7 @@ export default function GallerySection({ items: itemRows }: GallerySectionProps)
   }
 
   return (
-    <section className="relative py-24" ref={section}>
+    <section className="relative pb-24 pt-8" ref={section}>
       <div className="pointer-events-none absolute -left-24 top-0 -z-10 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
       <div className="pointer-events-none absolute -right-24 bottom-1/3 -z-10 h-80 w-80 rounded-full bg-amber-600/10 blur-3xl" />
 

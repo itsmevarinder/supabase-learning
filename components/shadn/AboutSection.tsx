@@ -162,7 +162,7 @@ export default function AboutSection({ about }: AboutSectionProps) {
               {eyebrowText}
             </span>
 
-            <h2 ref={titleRef} className="mt-6 text-5xl font-bold leading-tight">
+            <h2 ref={titleRef} className="mt-6 text-4xl lg:text-5xl font-bold leading-tight">
               {splitWords(title)}
             </h2>
 

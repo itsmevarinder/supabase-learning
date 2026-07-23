@@ -121,7 +121,7 @@ export default function FAQSection({ faqs: faqRows }: FAQSectionProps) {
   );
 
   return (
-    <section className="section-tint-cyan relative pb-24" ref={section}>
+    <section className="section-tint-cyan relative py-24" ref={section}>
       <div className="faq-blur absolute -left-20 top-10 -z-10 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
       <div className="faq-blur absolute -right-20 bottom-0 -z-10 h-80 w-80 rounded-full bg-amber-600/15 blur-3xl" />
 

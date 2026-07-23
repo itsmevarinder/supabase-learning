@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { AboutSectionRow } from "@/components/shadn/AboutSection";
+import type { AudioTrackRow } from "@/components/shadn/AudioSection";
 import type { FaqRow } from "@/components/shadn/Accordion";
 import type { EventRow } from "@/components/shadn/EventsSection";
 import type { GalleryItemRow } from "@/components/shadn/GallerySection";
@@ -209,6 +210,25 @@ export async function getGalleryItems(): Promise<GalleryItemRow[]> {
 
   if (error) {
     console.error("Failed to load gallery_items:", error.message);
+    return [];
+  }
+
+  return data ?? [];
+}
+
+// Active audio tracks, in display order — used by the homepage's audio
+// player. Falls back to an empty array (AudioSection shows an empty-state
+// message) rather than throwing if the query fails.
+export async function getAudioTracks(): Promise<AudioTrackRow[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("audio_tracks")
+    .select("*")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true });
+
+  if (error) {
+    console.error("Failed to load audio_tracks:", error.message);
     return [];
   }
 

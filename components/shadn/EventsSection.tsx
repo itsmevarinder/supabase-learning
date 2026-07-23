@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { ArrowUpRight, Clock, MapPin } from "lucide-react";
+import { ArrowUpRight, Calendar, Clock, MapPin } from "lucide-react";
 
 import { splitWords } from "@/components/shadn/split-words";
 import { gsap, useGSAP, EASE } from "@/lib/gsap/config";
@@ -143,7 +143,7 @@ export default function EventsSection({ events: eventRows }: EventsSectionProps)
                   className="group flex gap-6 border-b py-7 first:pt-0 last:border-0 last:pb-0"
                 >
                   {/* Date */}
-                  <div className="w-16 shrink-0 text-center">
+                  <div className="w-16 flex-col flex justify-center shrink-0 text-center">
                     <div className="text-3xl font-bold leading-none" style={{ color }}>
                       {event.day}
                     </div>
@@ -177,13 +177,17 @@ export default function EventsSection({ events: eventRows }: EventsSectionProps)
                         </div>
                       </div>
 
-                      {event.image && (
+                      {event.image ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={event.image}
                           alt=""
                           className="hidden size-12 shrink-0 rounded-lg object-cover sm:block"
                         />
+                      ) : (
+                        <div className="hidden size-12 shrink-0 items-center justify-center rounded-lg bg-muted sm:flex">
+                          <Calendar className="size-6 text-muted-foreground" style={{ color }} />
+                        </div>
                       )}
                     </div>
 

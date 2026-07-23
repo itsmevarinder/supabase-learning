@@ -3,6 +3,7 @@ import HeroSection from "@/components/shadn/HeroSection";
 import TrustedBy from "@/components/shadn/TrustedBy";
 import AboutSection from "@/components/shadn/AboutSection";
 import VideoSection from "@/components/shadn/VideoSection";
+import AudioSection from "@/components/shadn/AudioSection";
 import PortfolioSection from "@/components/shadn/PortfolioSection";
 import GallerySection from "@/components/shadn/GallerySection";
 import FAQSection from "@/components/shadn/Accordion";
@@ -12,10 +13,10 @@ import EventsSection from "@/components/shadn/EventsSection";
 import ContactSection from "@/components/shadn/Contact";
 import Footer from "@/components/shadn/footer";
 import ScrollFlipBackground from "@/components/shadn/ScrollFlipBackground";
-import { getAboutSection, getEvents, getFaqs, getGalleryItems, getHeroBanners, getPortfolioProjects, getPricingPlans, getSiteSettings, getTestimonials, getVideoSection } from "@/lib/supabase/server";
+import { getAboutSection, getAudioTracks, getEvents, getFaqs, getGalleryItems, getHeroBanners, getPortfolioProjects, getPricingPlans, getSiteSettings, getTestimonials, getVideoSection } from "@/lib/supabase/server";
 
 const Page = async () => {
-   const [heroBanners, portfolioProjects, pricingPlans, siteSettings, testimonials, faqs, aboutSection, videoSection, events, galleryItems] = await Promise.all([
+   const [heroBanners, portfolioProjects, pricingPlans, siteSettings, testimonials, faqs, aboutSection, videoSection, events, galleryItems, audioTracks] = await Promise.all([
       getHeroBanners(),
       getPortfolioProjects(),
       getPricingPlans(),
@@ -26,6 +27,7 @@ const Page = async () => {
       getVideoSection(),
       getEvents(),
       getGalleryItems(),
+      getAudioTracks(),
    ]);
 
    return (
@@ -38,9 +40,10 @@ const Page = async () => {
          <PortfolioSection projects={portfolioProjects} />
          <GallerySection items={galleryItems} />
          <EventsSection events={events} />
-         <VideoSection video={videoSection} />
+         <AudioSection tracks={audioTracks} />
          <PricingSection plans={pricingPlans} />
          <FAQSection faqs={faqs} />
+         <VideoSection video={videoSection} />
          <TestimonialSection testimonials={testimonials} />
          <ContactSection settings={siteSettings} />
          <Footer settings={siteSettings} />

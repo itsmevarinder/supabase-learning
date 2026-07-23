@@ -108,7 +108,7 @@ export default function VideoSection({ video }: VideoSectionProps) {
   if (!thumbnail || !embedUrl) return null;
 
   return (
-    <section className="relative pb-24" ref={section}>
+    <section className="relative py-24" ref={section}>
       <div
         ref={(el) => {
           blurRefs.current[0] = el;
@@ -141,8 +141,8 @@ export default function VideoSection({ video }: VideoSectionProps) {
         </div>
 
         <div ref={tileRef} className="relative mx-auto container mt-16 w-full">
-          <div className="rounded-[calc(1.5rem+4px)] bg-linear-to-br from-primary/40 via-primary/10 to-transparent p-1 shadow-2xl transition-transform duration-500 hover:-translate-y-1">
-            <div className="relative aspect-video overflow-hidden rounded-3xl">
+          <div className="rounded-2xl md:rounded-[calc(1.5rem+4px)] bg-linear-to-br from-primary/40 via-primary/10 to-transparent p-1 shadow-2xl transition-transform duration-500 hover:-translate-y-1">
+            <div className="relative aspect-video overflow-hidden rounded-2xl md:rounded-3xl">
               {playing ? (
                 <iframe
                   src={embedUrl}
