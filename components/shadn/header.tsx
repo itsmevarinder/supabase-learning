@@ -116,34 +116,39 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
         <div className="container mx-auto px-6">
           <div
             ref={pillRef}
-            className="flex h-16 items-center justify-between rounded-full border border-gray-200 bg-white/90 px-6 shadow-xl backdrop-blur-xl"
+            className="flex h-17 items-center justify-between rounded-full border bg-card/80 px-6 shadow-xl backdrop-blur-xl"
           >
             {/* Logo */}
-            <Link href="/" className="text-2xl font-bold tracking-tight">
+            <Link href="/" className="flex items-center gap-2 text-2xl font-bold tracking-tight">
               <Image src="/logo.png" alt="" width={48} height={48} priority className="w-12 animate-spin-linear" />
             </Link>
 
             {/* Navigation */}
             <div className="hidden xl:block">
               <NavigationMenu>
-                <NavigationMenuList className="gap-2">
+                <NavigationMenuList className="gap-1">
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="rounded-full">
+                    <NavigationMenuTrigger className="rounded-full font-medium text-foreground/80 data-[state=open]:bg-primary/10 data-[state=open]:text-primary">
                       Services
                     </NavigationMenuTrigger>
 
                     <NavigationMenuContent>
-                      <div className="grid w-full grid-cols-2 gap-3 p-5">
+                      <div className="grid w-full grid-cols-2 gap-2 p-4">
                         {SERVICE_LINKS.map((service) => (
                           <NavigationMenuLink
                             key={service.title}
                             render={
                               <a
                                 href={service.href}
-                                className="rounded-full flex-col items-start gap-2 p-4 transition hover:bg-muted"
+                                className="group flex items-start gap-3 rounded-2xl p-3 transition-colors hover:bg-primary/5"
                               >
-                                <h4 className="font-semibold">{service.title}</h4>
-                                <p className="mt-1 text-sm text-muted-foreground">{service.description}</p>
+                                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+                                  <service.icon className="size-4.5" />
+                                </span>
+                                <span>
+                                  <h4 className="font-semibold">{service.title}</h4>
+                                  <p className="mt-0.5 text-sm text-muted-foreground">{service.description}</p>
+                                </span>
                               </a>
                             }
                           />
@@ -156,7 +161,10 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
                     <NavigationMenuItem key={link.href}>
                       <NavigationMenuLink className="rounded-full"
                         render={
-                          <a href={link.href} className="rounded-full px-4 py-2 font-medium hover:bg-muted">
+                          <a
+                            href={link.href}
+                            className="rounded-full px-4 py-2 font-medium text-foreground/80 transition-colors hover:bg-primary/10 hover:text-primary"
+                          >
                             {link.label}
                           </a>
                         }
@@ -186,7 +194,7 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
               onClick={() => setIsOpen(true)}
               aria-label="Open menu"
               aria-expanded={isOpen}
-              className="rounded-lg border p-2 xl:hidden"
+              className="rounded-lg border p-2 transition-colors hover:bg-primary/10 hover:text-primary xl:hidden"
             >
               <Menu className="h-5 w-5" />
             </button>
@@ -206,7 +214,7 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
 
           {/* Panel — floating rounded card (full height), not a flush-edge rectangle */}
           <div
-            className={`absolute inset-y-0 right-0 flex w-full flex-col overflow-y-auto border border-gray-200 bg-white/95 p-6 shadow-2xl backdrop-blur-xl transition-all duration-300 ease-in-out ${isOpen ? "translate-x-0 opacity-100" : "translate-x-6 opacity-0"
+            className={`absolute inset-y-0 right-0 flex w-full flex-col overflow-y-auto border bg-card/95 p-6 shadow-2xl backdrop-blur-xl transition-all duration-300 ease-in-out ${isOpen ? "translate-x-0 opacity-100" : "translate-x-6 opacity-0"
               }`}
           >
             <div className="mb-6 flex items-center justify-between">
@@ -217,7 +225,7 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
                 type="button"
                 onClick={closeDrawer}
                 aria-label="Close menu"
-                className="rounded-full border border-gray-200 p-2 transition hover:bg-muted"
+                className="rounded-full border p-2 transition-colors hover:bg-primary/10 hover:text-primary"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -232,9 +240,9 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
                   key={service.title}
                   href={service.href}
                   onClick={closeDrawer}
-                  className="group flex items-center gap-3 rounded-2xl px-3 py-3 transition hover:bg-muted"
+                  className="group flex items-center gap-3 rounded-2xl px-3 py-3 transition-colors hover:bg-primary/5"
                 >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:bg-primary group-hover:text-white">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
                     <DrawIcon icon={service.icon} delay={index * 0.15} className="h-5 w-5" />
                   </span>
                   <span>
@@ -244,21 +252,21 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
                 </a>
               ))}
 
-              <div className="my-4 border-t border-gray-100" />
+              <div className="my-4 border-t" />
 
               {NAV_LINKS.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
                   onClick={closeDrawer}
-                  className="rounded-2xl px-3 py-3 font-medium transition hover:bg-muted"
+                  className="rounded-2xl px-3 py-3 font-medium transition-colors hover:bg-primary/10 hover:text-primary"
                 >
                   {link.label}
                 </a>
               ))}
             </nav>
 
-            <div className="mt-auto flex flex-col gap-3 border-t border-gray-100 pt-6">
+            <div className="mt-auto flex flex-col gap-3 border-t pt-6">
               {showLoginButton && (
                 <Link href="/login" onClick={closeDrawer}>
                   <Button variant="ghost" className="w-full rounded-full">

@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type Ref } from "react";
 import { ChevronLeft, ChevronRight, Maximize2, Play, X } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { splitWords } from "@/components/shadn/split-words";
-import { gsap, useGSAP, EASE } from "@/lib/gsap/config";
+import { gsap, useGSAP, EASE, prefersReducedMotion } from "@/lib/gsap/config";
 import { scrollReveal } from "@/lib/gsap/reveal";
 import { getYouTubeEmbedUrl, getYouTubeId, getYouTubeThumbnail } from "@/lib/youtube";
 
@@ -99,6 +99,159 @@ function GalleryVideoTile({ src, className }: { src: string; className?: string 
   return <video ref={videoRef} src={src} loop muted playsInline className={className} />;
 }
 
+interface GalleryTileProps {
+  item: GalleryItem;
+  index: number;
+  color: string;
+  onOpen: () => void;
+  ref?: Ref<HTMLButtonElement>;
+}
+
+// One self-contained tile: its own scroll-triggered entrance (per-item
+// trigger, never a shared one — see the note in the main entrance timeline
+// below for why), plus a cursor-driven 3D tilt + spotlight glare on hover,
+// and — for videos only — a continuous soft pulse ring so they read as
+// "alive" even before you touch them.
+function GalleryTile({ item, index, color, onOpen, ref }: GalleryTileProps) {
+  const tileRef = useRef<HTMLButtonElement | null>(null);
+  const mediaRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLSpanElement>(null);
+
+  useGSAP(
+    () => {
+      scrollReveal(tileRef.current, {
+        trigger: tileRef.current,
+        direction: "up",
+        distance: 36,
+        scale: 0.88,
+        rotation: index % 2 === 0 ? -3 : 3,
+        duration: 0.6,
+        delay: (index % 4) * 0.07,
+        start: "top 92%",
+      });
+
+      if (item.type === "video") {
+        gsap.to(ringRef.current, {
+          scale: 1.7,
+          opacity: 0,
+          duration: 1.8,
+          ease: "power1.out",
+          repeat: -1,
+        });
+      }
+
+      if (prefersReducedMotion()) return;
+
+      const tile = tileRef.current;
+      if (!tile) return;
+
+      const rotateX = gsap.quickTo(tile, "rotateX", { duration: 0.5, ease: "power3.out" });
+      const rotateY = gsap.quickTo(tile, "rotateY", { duration: 0.5, ease: "power3.out" });
+      const mediaX = gsap.quickTo(mediaRef.current, "x", { duration: 0.6, ease: "power3.out" });
+      const mediaY = gsap.quickTo(mediaRef.current, "y", { duration: 0.6, ease: "power3.out" });
+      const glowOpacity = gsap.quickTo(glowRef.current, "opacity", { duration: 0.25 });
+
+      function handleMove(event: MouseEvent) {
+        const rect = tile!.getBoundingClientRect();
+        const px = (event.clientX - rect.left) / rect.width;
+        const py = (event.clientY - rect.top) / rect.height;
+        rotateY((px - 0.5) * 18);
+        rotateX(-(py - 0.5) * 18);
+        mediaX(-(px - 0.5) * 20);
+        mediaY(-(py - 0.5) * 20);
+        glowRef.current?.style.setProperty("--x", `${px * 100}%`);
+        glowRef.current?.style.setProperty("--y", `${py * 100}%`);
+        glowOpacity(1);
+      }
+
+      function handleLeave() {
+        rotateX(0);
+        rotateY(0);
+        mediaX(0);
+        mediaY(0);
+        glowOpacity(0);
+      }
+
+      tile.addEventListener("mousemove", handleMove);
+      tile.addEventListener("mouseleave", handleLeave);
+      return () => {
+        tile.removeEventListener("mousemove", handleMove);
+        tile.removeEventListener("mouseleave", handleLeave);
+      };
+    },
+    { scope: tileRef, dependencies: [item.type, index] }
+  );
+
+  return (
+    <div style={{ perspective: "800px" }}>
+      <button
+        ref={(el) => {
+          tileRef.current = el;
+          if (typeof ref === "function") ref(el);
+          else if (ref) ref.current = el;
+        }}
+        type="button"
+        onClick={onOpen}
+        aria-label={item.type === "video" ? "Play video" : "View image"}
+        className="group relative w-full overflow-hidden rounded-2xl bg-muted shadow-sm transition-shadow duration-300 transform-3d will-change-transform hover:shadow-2xl"
+      >
+        <div ref={mediaRef} className="relative inset-0 scale-110">
+          {item.thumbnail ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={item.thumbnail}
+              alt={item.title ?? ""}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : item.videoFileUrl ? (
+            // Uploaded video, no auto-derivable thumbnail — preview it inline instead.
+            <GalleryVideoTile
+              src={item.videoFileUrl}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <div
+              className="flex h-full w-full items-center justify-center"
+              style={{ backgroundColor: `color-mix(in oklch, ${color} 15%, transparent)` }}
+            >
+              <Play className="size-8" style={{ color }} />
+            </div>
+          )}
+        </div>
+
+        {/* Cursor-following spotlight glare */}
+        <div
+          ref={glowRef}
+          className="pointer-events-none absolute inset-0 opacity-0"
+          style={{
+            background: "radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.35), transparent 55%)",
+          }}
+        />
+
+        <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-300 group-hover:bg-black/40">
+          {item.type === "video" ? (
+            <span className="relative flex size-11 items-center justify-center">
+              <span ref={ringRef} className="absolute inset-0 rounded-full bg-primary/70" />
+              <span className="relative flex size-11 scale-90 items-center justify-center rounded-full bg-primary text-white opacity-0 shadow-lg transition-all duration-300 group-hover:scale-100 group-hover:opacity-100">
+                <Play className="size-4.5 translate-x-0.5 fill-white" />
+              </span>
+            </span>
+          ) : (
+            <Maximize2 className="size-6 scale-90 text-white opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-100" />
+          )}
+        </div>
+
+        {item.title && (
+          <span className="absolute inset-x-0 bottom-0 translate-y-full bg-linear-to-t from-black/70 to-transparent p-3 text-left text-xs font-medium text-white transition-transform duration-300 group-hover:translate-y-0">
+            {item.title}
+          </span>
+        )}
+      </button>
+    </div>
+  );
+}
+
 interface GallerySectionProps {
   items?: GalleryItemRow[];
 }
@@ -111,7 +264,6 @@ export default function GallerySection({ items: itemRows }: GallerySectionProps)
   const eyebrowRef = useRef<HTMLSpanElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const paragraphRef = useRef<HTMLParagraphElement>(null);
-  const tileRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   useGSAP(
     () => {
@@ -133,24 +285,29 @@ export default function GallerySection({ items: itemRows }: GallerySectionProps)
         )
         .from(paragraphRef.current, { y: 20, opacity: 0, duration: 0.5, ease: EASE.soft }, "-=0.4");
 
-      // Each tile watches its OWN scroll position (not one shared trigger for
-      // the whole, possibly multi-row section) — matches every other grid in
-      // this codebase (Portfolio, Pricing, Events). A single tall shared
-      // trigger governing a stagger across spatially-separated tiles is what
-      // caused tiles to get stuck reversed/hidden even while on-screen.
-      tileRefs.current.forEach((tile, i) => {
-        scrollReveal(tile, {
-          trigger: tile,
-          direction: "up",
-          distance: 30,
-          duration: 0.5,
-          delay: (i % 4) * 0.06,
-          start: "top 92%",
+      if (prefersReducedMotion()) return;
+
+      // Continuous ambient drift on the decorative backdrop blurs.
+      const blurCircles = section.current.querySelectorAll<HTMLElement>(".gallery-blur");
+      if (blurCircles.length) {
+        gsap.to(blurCircles, {
+          scale: 1.2,
+          duration: 6,
+          ease: "linear",
+          yoyo: true,
+          repeat: -1,
+          stagger: { each: 1.5, from: "random" },
         });
-      });
+      }
     },
     { scope: section }
   );
+
+  // Per-tile entrance and hover animations live inside GalleryTile itself —
+  // each watches its OWN scroll position (not one shared trigger for the
+  // whole, possibly multi-row section). A single tall shared trigger
+  // governing a stagger across spatially-separated tiles is what previously
+  // caused tiles to get stuck reversed/hidden even while on-screen.
 
   const activeItem = activeIndex !== null ? items[activeIndex] : null;
 
@@ -166,8 +323,8 @@ export default function GallerySection({ items: itemRows }: GallerySectionProps)
 
   return (
     <section className="relative pb-24 pt-8" ref={section}>
-      <div className="pointer-events-none absolute -left-24 top-0 -z-10 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
-      <div className="pointer-events-none absolute -right-24 bottom-1/3 -z-10 h-80 w-80 rounded-full bg-amber-600/10 blur-3xl" />
+      <div className="gallery-blur pointer-events-none absolute -left-24 top-0 -z-10 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
+      <div className="gallery-blur pointer-events-none absolute -right-24 bottom-1/3 -z-10 h-80 w-80 rounded-full bg-amber-600/10 blur-3xl" />
 
       <div className="container mx-auto px-6">
         <div className="mx-auto w-full text-center">
@@ -192,60 +349,16 @@ export default function GallerySection({ items: itemRows }: GallerySectionProps)
             Gallery items will show up here once they&apos;re added.
           </p>
         ) : (
-          <div className="mx-auto mt-16 grid container grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {items.map((item, index) => {
-              const color = PLACEHOLDER_COLORS[index % PLACEHOLDER_COLORS.length];
-              return (
-              <button
+          <div className="mx-auto mt-16 columns-2 space-y-2.5 lg:columns-3 xl:columns-4">
+            {items.map((item, index) => (
+              <GalleryTile
                 key={item.id}
-                type="button"
-                ref={(el) => {
-                  tileRefs.current[index] = el;
-                }}
-                onClick={() => setActiveIndex(index)}
-                aria-label={item.type === "video" ? "Play video" : "View image"}
-                className="group relative aspect-square overflow-hidden rounded-xl bg-muted shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-              >
-                {item.thumbnail ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={item.thumbnail}
-                    alt={item.title ?? ""}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                ) : item.videoFileUrl ? (
-                  // Uploaded video, no auto-derivable thumbnail — preview it inline instead.
-                  <GalleryVideoTile
-                    src={item.videoFileUrl}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                ) : (
-                  <div
-                    className="flex h-full w-full items-center justify-center"
-                    style={{ backgroundColor: `color-mix(in oklch, ${color} 15%, transparent)` }}
-                  >
-                    <Play className="size-8" style={{ color }} />
-                  </div>
-                )}
-
-                <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-300 group-hover:bg-black/40">
-                  {item.type === "video" ? (
-                    <span className="flex size-11 scale-90 items-center justify-center rounded-full bg-primary text-white opacity-0 shadow-lg transition-all duration-300 group-hover:scale-100 group-hover:opacity-100">
-                      <Play className="size-4.5 translate-x-0.5 fill-white" />
-                    </span>
-                  ) : (
-                    <Maximize2 className="size-6 scale-90 text-white opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-100" />
-                  )}
-                </div>
-
-                {item.title && (
-                  <span className="absolute inset-x-0 bottom-0 translate-y-full bg-linear-to-t from-black/70 to-transparent p-3 text-left text-xs font-medium text-white transition-transform duration-300 group-hover:translate-y-0">
-                    {item.title}
-                  </span>
-                )}
-              </button>
-              );
-            })}
+                item={item}
+                index={index}
+                color={PLACEHOLDER_COLORS[index % PLACEHOLDER_COLORS.length]}
+                onOpen={() => setActiveIndex(index)}
+              />
+            ))}
           </div>
         )}
       </div>

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { splitWords } from "@/components/shadn/split-words";
 import HoverDistortImage from "@/components/shadn/HoverDistortImage";
 import DrawIcon from "@/components/shadn/DrawIcon";
-import { gsap, useGSAP, EASE, prefersReducedMotion, isFinePointer } from "@/lib/gsap/config";
+import { gsap, useGSAP, ScrollTrigger, EASE, prefersReducedMotion, isFinePointer } from "@/lib/gsap/config";
 import { scrollReveal } from "@/lib/gsap/reveal";
 import { attachMagneticHover } from "@/lib/gsap/magnetic";
 
@@ -66,6 +66,8 @@ export default function PortfolioSection({ projects: projectRows }: PortfolioSec
   const projects = (projectRows ?? []).map(mapProjectRow);
 
   const section = useRef<HTMLElement>(null);
+  const leftColRef = useRef<HTMLDivElement>(null);
+  const rightColRef = useRef<HTMLDivElement>(null);
   const eyebrowRef = useRef<HTMLSpanElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
@@ -111,6 +113,24 @@ export default function PortfolioSection({ projects: projectRows }: PortfolioSec
         });
       });
 
+  
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 1024px)", () => {
+        const left = leftColRef.current;
+        const right = rightColRef.current;
+        if (!left || !right) return;
+
+        const st = ScrollTrigger.create({
+          trigger: right,
+          start: "top 145px",
+          end: () => `+=${right.offsetHeight - left.offsetHeight}`,
+          pin: left,
+          pinSpacing: false,
+        });
+
+        return () => st.kill();
+      });
+
       if (reduced) return;
 
       // --- Continuous ambient glow behind the grid and the CTA button ---
@@ -131,9 +151,7 @@ export default function PortfolioSection({ projects: projectRows }: PortfolioSec
         gsap.to(ctaGlow, { scale: 1.25, opacity: 0.5, duration: 1.6, ease: "linear", yoyo: true, repeat: -1 });
       }
 
-      // --- Interactive 3D tilt + glare sweep, driven by pointer position —
-      // fine-pointer only, since touch has no real "hover" and constantly
-      // recomputing 3D transforms on scroll/drag is wasted work on mobile. ---
+
       tiltEnabledRef.current = isFinePointer();
       if (tiltEnabledRef.current) {
         cards.forEach((card, i) => {
@@ -146,12 +164,13 @@ export default function PortfolioSection({ projects: projectRows }: PortfolioSec
         });
       }
 
-      // --- Magnetic hover on the bottom CTA ---
+
       const detachMagnetic = attachMagneticHover(ctaRef.current, { strength: 0.35 });
 
       return () => {
         tiltFnsRef.current = [];
         detachMagnetic();
+        mm.revert();
       };
     },
     { scope: section }
@@ -203,98 +222,97 @@ export default function PortfolioSection({ projects: projectRows }: PortfolioSec
         <div className="portfolio-blur absolute -left-16 top-0 -z-10 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
         <div className="portfolio-blur absolute -right-16 bottom-0 -z-10 h-80 w-80 rounded-full bg-amber-600/15 blur-3xl" />
 
-        {/* Heading */}
-        <div className="mx-auto mb-16 max-w-3xl text-center">
-          <span
-            ref={eyebrowRef}
-            className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary"
-          >
-            Our Portfolio
-          </span>
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.6fr)] lg:items-start lg:px-10">
 
-          <h2 ref={titleRef} className="mt-6 text-4xl lg:text-5xl font-bold">
-            {splitWords("Featured Projects")}
-          </h2>
-
-          <p ref={subRef} className="mt-5 text-lg text-muted-foreground">
-            Explore some of our recent work crafted with creativity,
-            innovation, and attention to detail.
-          </p>
-        </div>
-
-        {/* Projects */}
-        {projects.length === 0 ? (
-          <p className="mx-auto max-w-md text-center text-muted-foreground">
-            Projects will show up here once they&apos;re added.
-          </p>
-        ) : (
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3 perspective-[1000px]">
-          {projects.map((project, index) => (
-            <div
-              key={index}
-              ref={(el) => {
-                cardRefs.current[index] = el;
-              }}
-              onPointerMove={(event) => handlePointerMove(event, index)}
-              onPointerLeave={() => handlePointerLeave(index)}
-              className="group overflow-hidden rounded-3xl border bg-background shadow-sm transition-shadow duration-300 hover:shadow-2xl will-change-transform"
+          <div ref={leftColRef}>
+            <span
+              ref={eyebrowRef}
+              className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary"
             >
-              {/* Image */}
-              <div className="relative h-72 overflow-hidden">
-                <HoverDistortImage
-                  image={project.image}
-                  alt={project.title}
-                  className="h-full w-full"
-                />
+              Our Portfolio
+            </span>
 
-                {/* Glare sweep, follows the pointer */}
-                <div
-                  ref={(el) => {
-                    glareRefs.current[index] = el;
-                  }}
-                  className="pointer-events-none absolute inset-0 opacity-0"
-                  style={GLARE_STYLE}
-                />
+            <h2 ref={titleRef} className="mt-6 text-4xl lg:text-5xl font-bold leading-tight">
+              {splitWords("Featured Projects")}
+            </h2>
 
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/40" />
+            <p ref={subRef} className="mt-5 text-lg text-muted-foreground">
+              Explore some of our recent work crafted with creativity,
+              innovation, and attention to detail.
+            </p>
 
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100">
-                  <Button className="rounded-full">
-                    View Project
-                  </Button>
+            <div className="relative mt-10 inline-block">
+              <span className="cta-glow pointer-events-none absolute left-1/2 top-1/2 -z-10 h-16 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/30 opacity-30 blur-2xl" />
+              <Button ref={ctaRef} className="rounded-full px-8 py-5">
+                View All Projects
+              </Button>
+            </div>
+          </div>
+
+          {projects.length === 0 ? (
+            <p className="text-muted-foreground">
+              Projects will show up here once they&apos;re added.
+            </p>
+          ) : (
+          <div ref={rightColRef} className="flex flex-col gap-6 perspective-[1000px]">
+            {projects.map((project, index) => (
+              <div
+                key={index}
+                ref={(el) => {
+                  cardRefs.current[index] = el;
+                }}
+                onPointerMove={(event) => handlePointerMove(event, index)}
+                onPointerLeave={() => handlePointerLeave(index)}
+                className="group overflow-hidden rounded-3xl border bg-background shadow-sm transition-shadow duration-300 hover:shadow-2xl will-change-transform"
+              >
+                {/* Image */}
+                <div className="relative h-80 overflow-hidden">
+                  <HoverDistortImage
+                    image={project.image}
+                    alt={project.title}
+                    className="h-full w-full"
+                  />
+
+                  <div
+                    ref={(el) => {
+                      glareRefs.current[index] = el;
+                    }}
+                    className="pointer-events-none absolute inset-0 opacity-0"
+                    style={GLARE_STYLE}
+                  />
+
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/40" />
+
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100">
+                    <Button className="rounded-full">
+                      View Project
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-6">
+                  <span className="text-sm font-medium text-primary">
+                    {project.category}
+                  </span>
+
+                  <h3 className="mt-2 text-2xl font-semibold">
+                    {project.title}
+                  </h3>
+
+                  <Link
+                    href={project.link}
+                    className="mt-5 inline-flex items-center gap-2 font-medium text-primary"
+                  >
+                    Learn More
+                    <DrawIcon icon={ArrowRight} delay={index * 0.12} className="h-4 w-4" />
+                  </Link>
                 </div>
               </div>
-
-              {/* Content */}
-              <div className="p-6">
-                <span className="text-sm font-medium text-primary">
-                  {project.category}
-                </span>
-
-                <h3 className="mt-2 text-2xl font-semibold">
-                  {project.title}
-                </h3>
-
-                <Link
-                  href={project.link}
-                  className="mt-5 inline-flex items-center gap-2 font-medium text-primary"
-                >
-                  Learn More
-                  <DrawIcon icon={ArrowRight} delay={index * 0.12} className="h-4 w-4" />
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-        )}
-
-        {/* Bottom CTA */}
-        <div className="relative mt-16 text-center">
-          <span className="cta-glow pointer-events-none absolute left-1/2 top-1/2 -z-10 h-20 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/30 opacity-30 blur-2xl" />
-          <Button ref={ctaRef} className="rounded-full px-8 py-5">
-            View All Projects
-          </Button>
+            ))}
+          </div>
+          )}
         </div>
       </div>
     </section>
