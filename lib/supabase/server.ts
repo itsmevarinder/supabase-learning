@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { AboutSectionRow } from "@/components/shadn/AboutSection";
 import type { FaqRow } from "@/components/shadn/Accordion";
+import type { EventRow } from "@/components/shadn/EventsSection";
 import type { HeroBannerRow } from "@/components/shadn/HeroSection";
 import type { PortfolioProjectRow } from "@/components/shadn/PortfolioSection";
 import type { PricingPlanRow } from "@/components/shadn/PricingSection";
@@ -173,4 +174,23 @@ export async function getVideoSection(): Promise<VideoSectionRow | null> {
   }
 
   return data;
+}
+
+// Active events, in date order — used by the homepage's events schedule.
+// Falls back to an empty array (EventsSection shows an empty-state message)
+// rather than throwing if the query fails.
+export async function getEvents(): Promise<EventRow[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("events")
+    .select("*")
+    .eq("is_active", true)
+    .order("event_date", { ascending: true });
+
+  if (error) {
+    console.error("Failed to load events:", error.message);
+    return [];
+  }
+
+  return data ?? [];
 }

@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronsUpDown, CircleHelp, GalleryHorizontal, Info, LayoutDashboard, LogIn, LogOut, Mail, MessageSquareQuote, Settings, Image as ImageIcon, Tag, Video } from "lucide-react";
+import { CalendarDays, ChevronsUpDown, CircleHelp, GalleryHorizontal, Info, LayoutDashboard, LogIn, LogOut, Mail, MessageSquareQuote, Settings, Image as ImageIcon, Tag, Video } from "lucide-react";
 
 import {
   AlertDialog,
@@ -56,6 +56,7 @@ const NAV_ITEMS = [
   { href: "/admin/faqs", label: "FAQs", icon: CircleHelp },
   { href: "/admin/pricing", label: "Pricing", icon: Tag },
   { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },
+  { href: "/admin/events", label: "Events", icon: CalendarDays },
   { href: "/admin/contact-submissions", label: "Messages", icon: Mail },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ] as const;
