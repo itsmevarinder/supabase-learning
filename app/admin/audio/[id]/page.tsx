@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AudioTrackForm } from "@/components/dashboard/audio-track-form";
+import { PageHeader } from "@/components/dashboard/page-header";
 import { createClient } from "@/lib/supabase/server";
 
 interface EditAudioTrackPageProps {
@@ -22,18 +23,20 @@ export default async function EditAudioTrackPage({ params }: EditAudioTrackPageP
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold">Edit Audio Track</h1>
-          <p className="text-muted-foreground">{track.title}</p>
+      <PageHeader>
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold">Edit Audio Track</h1>
+            <p className="text-muted-foreground">{track.title}</p>
+          </div>
+          <Link href="/admin/audio">
+            <Button variant="ghost" className="-ml-4">
+              <ArrowLeft />
+              Back to Audio
+            </Button>
+          </Link>
         </div>
-        <Link href="/admin/audio">
-          <Button variant="ghost" className="-ml-4">
-            <ArrowLeft />
-            Back to Audio
-          </Button>
-        </Link>
-      </div>
+      </PageHeader>
 
       <Card>
         <CardHeader>

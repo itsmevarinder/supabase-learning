@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Globe, KeyRound, User, type LucideIcon } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/dashboard/page-header";
 import { PasswordForm } from "@/components/dashboard/password-form";
 import { ProfileForm } from "@/components/dashboard/profile-form";
 import { SiteSettingsForm } from "@/components/dashboard/site-settings-form";
@@ -62,10 +63,10 @@ export default async function AdminSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <PageHeader>
         <h1 className="text-2xl font-bold">Settings</h1>
         <p className="text-muted-foreground">Manage your own account.</p>
-      </div>
+      </PageHeader>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <PolishedCard color="var(--chart-1)">

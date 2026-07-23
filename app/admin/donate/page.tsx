@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DonateSectionForm } from "@/components/dashboard/donate-section-form";
+import { PageHeader } from "@/components/dashboard/page-header";
 import { getDonateSection } from "@/lib/supabase/server";
 
 export default async function AdminDonatePage() {
@@ -7,12 +8,12 @@ export default async function AdminDonatePage() {
 
   return (
     <div className="space-y-8">
-      <div>
+      <PageHeader>
         <h1 className="text-2xl font-bold">Donate Section</h1>
         <p className="text-muted-foreground">
           The background, copy, and UPI phone number used to generate the QR code shown when a visitor clicks Donate.
         </p>
-      </div>
+      </PageHeader>
 
       <Card>
         <CardHeader>

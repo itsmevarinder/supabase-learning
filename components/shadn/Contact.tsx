@@ -50,6 +50,10 @@ interface ContactSectionProps {
 }
 
 export default function ContactSection({ settings }: ContactSectionProps) {
+  const backgroundImageUrl =
+    settings?.contact_background_image_url ||
+    "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&q=80";
+
   const contactInfo = [
     { icon: Phone, label: "Phone", value: settings?.contact_phone || "+1 (234) 567-8900" },
     { icon: Mail, label: "Email", value: settings?.contact_email || "hello@company.com" },
@@ -167,7 +171,7 @@ export default function ContactSection({ settings }: ContactSectionProps) {
               </h2>
 
               <p ref={paragraphRef} className="mt-4 leading-7 text-muted-foreground">
-                We'd love to hear about your ideas. Fill out the form and
+                We&apos;d love to hear about your ideas. Fill out the form and
                 our team will get back to you within one business day.
               </p>
 
@@ -227,24 +231,31 @@ export default function ContactSection({ settings }: ContactSectionProps) {
             </div>
 
             {/* Right Side */}
-            <div className="relative overflow-hidden rounded-b-[32px] bg-primary p-8 text-white lg:rounded-bl-none lg:rounded-tr-[32px] lg:p-14">
+            <div className="relative isolate overflow-hidden rounded-b-[32px] p-8 text-white lg:rounded-bl-none lg:rounded-tr-[32px] lg:p-14">
+              {/* Background image */}
+              <div className="absolute inset-0 -z-20">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={backgroundImageUrl} alt="" className="h-full w-full object-cover" />
+              </div>
+              <div className="absolute inset-0 -z-10 bg-primary/60" />
+
               {/* Background Blur */}
               <div className="contact-blur absolute -right-20 top-0 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
               <div className="contact-blur absolute -bottom-24 -left-20 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
 
               <div className="relative z-10">
                 <span className="rounded-full bg-white/15 px-4 py-2 text-sm backdrop-blur">
-                  Let's Connect
+                  Let&apos;s Connect
                 </span>
 
                 <h2 className="mt-6 text-4xl font-bold leading-tight">
                   Have an Idea?
                   <br />
-                  Let's Make It Reality.
+                  Let&apos;s Make It Reality.
                 </h2>
 
                 <p className="mt-6 leading-8 text-white/80">
-                  Whether you're launching a startup, redesigning your
+                  Whether you&apos;re launching a startup, redesigning your
                   website, or building a custom application, our team is
                   ready to help you achieve your goals.
                 </p>

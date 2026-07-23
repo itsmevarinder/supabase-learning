@@ -10,6 +10,7 @@ export const siteSettingsSchema = z.object({
   twitterUrl: z.string().optional(),
   linkedinUrl: z.string().optional(),
   showLoginButton: z.boolean(),
+  contactBackgroundImageUrl: z.string().optional(),
 });
 
 export type SiteSettingsFormData = z.infer<typeof siteSettingsSchema>;

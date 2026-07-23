@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DeleteTestimonialButton } from "@/components/dashboard/delete-testimonial-button";
+import { PageHeader } from "@/components/dashboard/page-header";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function AdminTestimonialsPage() {
@@ -24,19 +25,21 @@ export default async function AdminTestimonialsPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Testimonials</h1>
-          <p className="text-muted-foreground">
-            Reviews shown in the homepage testimonials carousel. Inactive ones are kept but hidden.
-          </p>
+      <PageHeader>
+        <div className="flex justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Testimonials</h1>
+            <p className="text-muted-foreground">
+              Reviews shown in the homepage testimonials carousel. Inactive ones are kept but hidden.
+            </p>
+          </div>
+          <Link href="/admin/testimonials/add-testimonial">
+            <Button className="rounded-full px-6 py-5">
+              Add <Plus />
+            </Button>
+          </Link>
         </div>
-        <Link href="/admin/testimonials/add-testimonial">
-          <Button className="rounded-full px-6 py-5">
-            Add <Plus />
-          </Button>
-        </Link>
-      </div>
+      </PageHeader>
 
       <Card>
         <CardContent className="p-0">

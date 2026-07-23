@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DeleteGalleryItemButton } from "@/components/dashboard/delete-gallery-item-button";
+import { PageHeader } from "@/components/dashboard/page-header";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function AdminGalleryPage() {
@@ -24,19 +25,21 @@ export default async function AdminGalleryPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Gallery</h1>
-          <p className="text-muted-foreground">
-            Photos and videos shown in the homepage gallery. Inactive ones are kept but hidden.
-          </p>
+      <PageHeader>
+        <div className="flex justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Gallery</h1>
+            <p className="text-muted-foreground">
+              Photos and videos shown in the homepage gallery. Inactive ones are kept but hidden.
+            </p>
+          </div>
+          <Link href="/admin/gallery/add-item">
+            <Button className="rounded-full px-6 py-5">
+              Add <Plus />
+            </Button>
+          </Link>
         </div>
-        <Link href="/admin/gallery/add-item">
-          <Button className="rounded-full px-6 py-5">
-            Add <Plus />
-          </Button>
-        </Link>
-      </div>
+      </PageHeader>
 
       <Card>
         <CardContent className="p-0">

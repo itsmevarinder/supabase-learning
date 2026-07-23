@@ -4,7 +4,7 @@ import { useState, type ReactNode } from "react";
 import NextImage from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { CalendarDays, ChevronsUpDown, CircleHelp, GalleryHorizontal, Heart, Images, Info, LayoutDashboard, LogIn, LogOut, Mail, MessageSquareQuote, Music, Settings, Image as ImageIcon, Video } from "lucide-react";
+import { CalendarDays, ChevronDown, ChevronsUpDown, CircleHelp, GalleryHorizontal, Heart, Images, Info, LayoutDashboard, Layers, LogIn, LogOut, Mail, MessageSquareQuote, Music, Settings, Image as ImageIcon, Video } from "lucide-react";
 
 import {
   AlertDialog,
@@ -39,6 +39,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarProvider,
   SidebarRail,
   SidebarTrigger,
@@ -52,16 +55,20 @@ const NAV_ITEMS = [
   { href: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/hero-banners", label: "Hero Banners", icon: GalleryHorizontal },
   { href: "/admin/about", label: "About", icon: Info },
-  { href: "/admin/video", label: "Video", icon: Video },
-  { href: "/admin/audio", label: "Audio", icon: Music },
   { href: "/admin/portfolio", label: "Portfolio", icon: ImageIcon },
-  { href: "/admin/gallery", label: "Gallery", icon: Images },
   { href: "/admin/faqs", label: "FAQs", icon: CircleHelp },
   { href: "/admin/donate", label: "Donate", icon: Heart },
   { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },
   { href: "/admin/events", label: "Events", icon: CalendarDays },
   { href: "/admin/contact-submissions", label: "Messages", icon: Mail },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
+] as const;
+
+// Grouped in their own collapsible "Media" accordion instead of flat nav
+// items, since they're all upload-heavy homepage sections.
+const MEDIA_NAV_ITEMS = [
+  { href: "/admin/video", label: "Video", icon: Video },
+  { href: "/admin/audio", label: "Audio", icon: Music },
+  { href: "/admin/gallery", label: "Gallery", icon: Images },
 ] as const;
 
 interface DashboardShellProps {
@@ -99,10 +106,17 @@ export function DashboardShell({
 }: DashboardShellProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const activeItem = NAV_ITEMS.find((item) => isNavItemActive(pathname, item.href));
+  const activeItem =
+    NAV_ITEMS.find((item) => isNavItemActive(pathname, item.href)) ??
+    MEDIA_NAV_ITEMS.find((item) => isNavItemActive(pathname, item.href));
   const [signOutOpen, setSignOutOpen] = useState(false);
   const [loginButtonVisible, setLoginButtonVisible] = useState(showLoginButton ?? true);
   const [savingLoginToggle, setSavingLoginToggle] = useState(false);
+  const mediaActive = MEDIA_NAV_ITEMS.some((item) => isNavItemActive(pathname, item.href));
+  const [mediaToggled, setMediaToggled] = useState(false);
+  // Forced open whenever a child route is active, regardless of the user's
+  // own toggle state — derived, so no effect/cascading-render needed.
+  const mediaOpen = mediaToggled || mediaActive;
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -147,7 +161,61 @@ export function DashboardShell({
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
-                {NAV_ITEMS.map((item) => (
+                {NAV_ITEMS.slice(0, 3).map((item) => (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton
+                      isActive={isNavItemActive(pathname, item.href)}
+                      tooltip={item.label}
+                      render={
+                        <Link href={item.href}>
+                          <item.icon />
+                          <span>{item.label}</span>
+                        </Link>
+                      }
+                    />
+                  </SidebarMenuItem>
+                ))}
+
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    tooltip="Media"
+                    isActive={mediaActive}
+                    onClick={() => setMediaToggled((open) => !open)}
+                    aria-expanded={mediaOpen}
+                  >
+                    <Layers />
+                    <span>Media</span>
+                    <ChevronDown
+                      className={`ml-auto size-4 shrink-0 text-muted-foreground transition-transform duration-200 ${mediaOpen ? "rotate-180" : ""}`}
+                    />
+                  </SidebarMenuButton>
+
+                  <div
+                    className={`grid overflow-hidden transition-all duration-200 ease-out ${mediaOpen ? "pt-3" : "pt-0"
+                      }`}
+                    style={{ gridTemplateRows: mediaOpen ? "1fr" : "0fr" }}
+                  >
+                    <div className="overflow-hidden">
+                      <SidebarMenuSub>
+                        {MEDIA_NAV_ITEMS.map((item) => (
+                          <SidebarMenuSubItem key={item.href}>
+                            <SidebarMenuSubButton
+                              isActive={isNavItemActive(pathname, item.href)}
+                              render={
+                                <Link href={item.href} className="h-8">
+                                  <item.icon />
+                                  <span>{item.label}</span>
+                                </Link>
+                              }
+                            />
+                          </SidebarMenuSubItem>
+                        ))}
+                      </SidebarMenuSub>
+                    </div>
+                  </div>
+                </SidebarMenuItem>
+
+                {NAV_ITEMS.slice(3).map((item) => (
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
                       isActive={isNavItemActive(pathname, item.href)}
@@ -191,6 +259,11 @@ export function DashboardShell({
                   </div>
                 </DropdownMenuLabel>
               </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem render={<Link href="/admin/settings" />}>
+                <Settings />
+                Settings
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setSignOutOpen(true)}>
                 <LogOut />

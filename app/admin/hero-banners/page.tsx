@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DeleteHeroBannerButton } from "@/components/dashboard/delete-hero-banner-button";
+import { PageHeader } from "@/components/dashboard/page-header";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function AdminHeroBannersPage() {
@@ -24,17 +25,19 @@ export default async function AdminHeroBannersPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Hero Banners</h1>
-          <p className="text-muted-foreground">
-            Slides shown in the homepage hero carousel. Inactive banners are kept but hidden.
-          </p>
+      <PageHeader>
+        <div className="flex justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Hero Banners</h1>
+            <p className="text-muted-foreground">
+              Slides shown in the homepage hero carousel. Inactive banners are kept but hidden.
+            </p>
+          </div>
+          <Link href={`/admin/hero-banners/add-banners`}>
+            <Button className="rounded-full px-6 py-5">Add <Plus /></Button>
+          </Link>
         </div>
-        <Link href={`/admin/hero-banners/add-banners`}>
-          <Button className="rounded-full px-6 py-5">Add <Plus /></Button>
-        </Link>
-      </div>
+      </PageHeader>
 
       <Card>
         <CardContent className="p-0">

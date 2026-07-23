@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HeroBannerForm } from "@/components/dashboard/hero-banner-form";
+import { PageHeader } from "@/components/dashboard/page-header";
 import { createClient } from "@/lib/supabase/server";
 
 interface EditHeroBannerPageProps {
@@ -22,19 +23,21 @@ export default async function EditHeroBannerPage({ params }: EditHeroBannerPageP
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between">
-        <div>
-          <h1 className="mt-2 text-2xl font-bold">Edit Hero Banner</h1>
-          <p className="text-muted-foreground">{banner.title}</p>
-        </div>
-        <Link href="/admin/hero-banners">
-          <Button variant="ghost" className="-ml-4">
-            <ArrowLeft />
-            Back to Hero Banners
-          </Button>
-        </Link>
+      <PageHeader>
+        <div className="flex justify-between">
+          <div>
+            <h1 className="mt-2 text-2xl font-bold">Edit Hero Banner</h1>
+            <p className="text-muted-foreground">{banner.title}</p>
+          </div>
+          <Link href="/admin/hero-banners">
+            <Button variant="ghost" className="-ml-4">
+              <ArrowLeft />
+              Back to Hero Banners
+            </Button>
+          </Link>
 
-      </div>
+        </div>
+      </PageHeader>
 
       <Card>
         <CardHeader>

@@ -7,6 +7,7 @@ import {
   EyeOff,
   GalleryHorizontal,
   Heart,
+  Images,
   Image as ImageIcon,
   Mail,
   MessageSquareQuote,
@@ -17,6 +18,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContentStatusChart } from "@/components/dashboard/content-status-chart";
+import { PageHeader } from "@/components/dashboard/page-header";
 import { SubmissionsChart } from "@/components/dashboard/submissions-chart";
 import { createClient } from "@/lib/supabase/server";
 
@@ -69,6 +71,13 @@ export default async function AdminOverviewPage() {
     { count: activeHeroBanners },
     { count: totalProjects },
     { count: activeProjects },
+    { count: totalEvents },
+    { count: activeEvents },
+    { count: totalGalleryItems },
+    { count: activeGalleryItems },
+    { count: totalAudioTracks },
+    { count: activeAudioTracks },
+    { data: videoSection },
     { data: donateSection },
     { count: totalTestimonials },
     { count: activeTestimonials },
@@ -82,6 +91,13 @@ export default async function AdminOverviewPage() {
     supabase.from("hero_banners").select("*", { count: "exact", head: true }).eq("is_active", true),
     supabase.from("portfolio_projects").select("*", { count: "exact", head: true }),
     supabase.from("portfolio_projects").select("*", { count: "exact", head: true }).eq("is_active", true),
+    supabase.from("events").select("*", { count: "exact", head: true }),
+    supabase.from("events").select("*", { count: "exact", head: true }).eq("is_active", true),
+    supabase.from("gallery_items").select("*", { count: "exact", head: true }),
+    supabase.from("gallery_items").select("*", { count: "exact", head: true }).eq("is_active", true),
+    supabase.from("audio_tracks").select("*", { count: "exact", head: true }),
+    supabase.from("audio_tracks").select("*", { count: "exact", head: true }).eq("is_active", true),
+    supabase.from("video_section").select("is_active").eq("id", 1).single(),
     supabase.from("donate_section").select("phone_number").eq("id", 1).single(),
     supabase.from("testimonials").select("*", { count: "exact", head: true }),
     supabase.from("testimonials").select("*", { count: "exact", head: true }).eq("is_active", true),
@@ -126,13 +142,6 @@ export default async function AdminOverviewPage() {
       href: "/admin/portfolio",
     },
     {
-      label: "Donate QR",
-      value: donateSection?.phone_number ? "Live" : "Setup",
-      sub: donateSection?.phone_number ? "QR ready" : "Add a phone number",
-      icon: Heart,
-      href: "/admin/donate",
-    },
-    {
       label: "Testimonials",
       value: totalTestimonials ?? 0,
       sub: `${activeTestimonials ?? 0} active`,
@@ -145,6 +154,13 @@ export default async function AdminOverviewPage() {
       sub: `${activeFaqs ?? 0} active`,
       icon: CircleHelp,
       href: "/admin/faqs",
+    },
+    {
+      label: "Donate QR",
+      value: donateSection?.phone_number ? "Live" : "Setup",
+      sub: donateSection?.phone_number ? "QR ready" : "Add a phone number",
+      icon: Heart,
+      href: "/admin/donate",
     },
     {
       label: "Contact submissions",
@@ -161,34 +177,48 @@ export default async function AdminOverviewPage() {
     { label: "FAQs", total: totalFaqs ?? 0, active: activeFaqs ?? 0, href: "/admin/faqs" },
   ];
 
+  // The 4 media/events sections, shown in their own chart below the main
+  // stat tiles rather than as 4 more tiles. Video is a singleton (just an
+  // is_active flag, not a list) so it's represented as a 1-item total that's
+  // either fully "active" or fully "hidden" — same bar shape, still reads fine.
+  const mediaSections = [
+    { label: "Events", total: totalEvents ?? 0, active: activeEvents ?? 0, href: "/admin/events" },
+    { label: "Gallery", total: totalGalleryItems ?? 0, active: activeGalleryItems ?? 0, href: "/admin/gallery" },
+    { label: "Audio", total: totalAudioTracks ?? 0, active: activeAudioTracks ?? 0, href: "/admin/audio" },
+    { label: "Video", total: 1, active: videoSection?.is_active ? 1 : 0, href: "/admin/video" },
+  ];
+
   // Content that exists but is toggled off — easy to lose track of once a
   // section has more than a couple of rows.
-  const attentionItems = contentSections
+  const attentionItems = [...contentSections, ...mediaSections]
     .map((item) => ({ ...item, inactive: item.total - item.active }))
     .filter((item) => item.inactive > 0);
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Welcome back, {firstName}</h1>
-          <p className="text-muted-foreground">{today} — here&apos;s a snapshot of your workspace.</p>
-        </div>
+      <PageHeader>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium text-primary">{today}</p>
+            <h1 className="mt-1 text-2xl font-bold">Welcome back, {firstName}</h1>
+            <p className="text-muted-foreground">Here&apos;s a snapshot of your workspace.</p>
+          </div>
 
-        <div className="flex flex-wrap gap-2">
-          {QUICK_ACTIONS.map((action) => (
-            <Link key={action.href} href={action.href}>
-              <span className="inline-flex items-center gap-2 rounded-full border bg-card px-4 py-2 text-sm font-medium shadow-xs transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md">
-                <action.icon className="size-4 text-primary" />
-                {action.label}
-                <Plus className="size-3.5 text-muted-foreground" />
-              </span>
-            </Link>
-          ))}
+          <div className="flex flex-wrap gap-2">
+            {QUICK_ACTIONS.map((action) => (
+              <Link key={action.href} href={action.href}>
+                <span className="inline-flex items-center gap-2 rounded-full border bg-background px-4 py-2 text-sm font-medium shadow-xs transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md">
+                  <action.icon className="size-4 text-primary" />
+                  {action.label}
+                  <Plus className="size-3.5 text-muted-foreground" />
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      </PageHeader>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {stats.map((stat, index) => {
           const color = CHART_COLORS[index % CHART_COLORS.length];
           return (
@@ -318,24 +348,46 @@ export default async function AdminOverviewPage() {
             <div className="flex items-center gap-3">
               <div
                 className="flex size-9 items-center justify-center rounded-lg"
-                style={{ backgroundColor: "color-mix(in oklch, var(--chart-4) 15%, transparent)" }}
+                style={{ backgroundColor: "color-mix(in oklch, var(--chart-3) 15%, transparent)" }}
               >
-                <EyeOff className="size-4.5" style={{ color: "var(--chart-4)" }} />
+                <Images className="size-4.5" style={{ color: "var(--chart-3)" }} />
               </div>
               <div>
-                <CardTitle className="text-lg">Needs attention</CardTitle>
-                <CardDescription>Content that&apos;s hidden from the homepage.</CardDescription>
+                <CardTitle className="text-lg">Media &amp; events</CardTitle>
+                <CardDescription>Events, gallery, audio, and the video showcase.</CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {attentionItems.length === 0 ? (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <CircleCheckBig className="size-4.5 text-green-600" />
-                Everything is active. Nothing hidden right now.
-              </div>
-            ) : (
-              attentionItems.map((item) => (
+          <CardContent>
+            <ContentStatusChart data={mediaSections} />
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div
+              className="flex size-9 items-center justify-center rounded-lg"
+              style={{ backgroundColor: "color-mix(in oklch, var(--chart-4) 15%, transparent)" }}
+            >
+              <EyeOff className="size-4.5" style={{ color: "var(--chart-4)" }} />
+            </div>
+            <div>
+              <CardTitle className="text-lg">Needs attention</CardTitle>
+              <CardDescription>Content that&apos;s hidden from the homepage.</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {attentionItems.length === 0 ? (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <CircleCheckBig className="size-4.5 text-green-600" />
+              Everything is active. Nothing hidden right now.
+            </div>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2">
+              {attentionItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -346,11 +398,11 @@ export default async function AdminOverviewPage() {
                   </span>
                   <ArrowRight className="size-3.5 text-muted-foreground" />
                 </Link>
-              ))
-            )}
-          </CardContent>
-        </Card>
-      </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DeleteFaqButton } from "@/components/dashboard/delete-faq-button";
+import { PageHeader } from "@/components/dashboard/page-header";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function AdminFaqsPage() {
@@ -24,19 +25,21 @@ export default async function AdminFaqsPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">FAQs</h1>
-          <p className="text-muted-foreground">
-            Questions shown in the homepage FAQ accordion. Inactive ones are kept but hidden.
-          </p>
+      <PageHeader>
+        <div className="flex justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">FAQs</h1>
+            <p className="text-muted-foreground">
+              Questions shown in the homepage FAQ accordion. Inactive ones are kept but hidden.
+            </p>
+          </div>
+          <Link href="/admin/faqs/add-faq">
+            <Button className="rounded-full px-6 py-5">
+              Add <Plus />
+            </Button>
+          </Link>
         </div>
-        <Link href="/admin/faqs/add-faq">
-          <Button className="rounded-full px-6 py-5">
-            Add <Plus />
-          </Button>
-        </Link>
-      </div>
+      </PageHeader>
 
       <Card>
         <CardContent className="p-0">

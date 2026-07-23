@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EventForm } from "@/components/dashboard/event-form";
+import { PageHeader } from "@/components/dashboard/page-header";
 import { createClient } from "@/lib/supabase/server";
 
 interface EditEventPageProps {
@@ -22,18 +23,20 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold">Edit Event</h1>
-          <p className="text-muted-foreground">{event.title}</p>
+      <PageHeader>
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold">Edit Event</h1>
+            <p className="text-muted-foreground">{event.title}</p>
+          </div>
+          <Link href="/admin/events">
+            <Button variant="ghost" className="-ml-4">
+              <ArrowLeft />
+              Back to Events
+            </Button>
+          </Link>
         </div>
-        <Link href="/admin/events">
-          <Button variant="ghost" className="-ml-4">
-            <ArrowLeft />
-            Back to Events
-          </Button>
-        </Link>
-      </div>
+      </PageHeader>
 
       <Card>
         <CardHeader>

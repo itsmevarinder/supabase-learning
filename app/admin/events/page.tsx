@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DeleteEventButton } from "@/components/dashboard/delete-event-button";
+import { PageHeader } from "@/components/dashboard/page-header";
 import { SectionBackgroundForm } from "@/components/dashboard/section-background-form";
 import { createClient, getEventsSection } from "@/lib/supabase/server";
 
@@ -28,19 +29,21 @@ export default async function AdminEventsPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Events</h1>
-          <p className="text-muted-foreground">
-            Shown in the homepage events schedule. Inactive ones are kept but hidden.
-          </p>
+      <PageHeader>
+        <div className="flex justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Events</h1>
+            <p className="text-muted-foreground">
+              Shown in the homepage events schedule. Inactive ones are kept but hidden.
+            </p>
+          </div>
+          <Link href="/admin/events/add-event">
+            <Button className="rounded-full px-6 py-5">
+              Add <Plus />
+            </Button>
+          </Link>
         </div>
-        <Link href="/admin/events/add-event">
-          <Button className="rounded-full px-6 py-5">
-            Add <Plus />
-          </Button>
-        </Link>
-      </div>
+      </PageHeader>
 
       <Card>
         <CardContent>

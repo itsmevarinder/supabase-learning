@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { LogIn } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,16 @@ import { createClient } from "@/lib/supabase/client";
 import { siteSettingsSchema, type SiteSettingsFormData } from "@/schemas/site-settings-schema";
 import type { SiteSettings } from "@/types/site-settings";
 
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+const CONTACT_SECTION_BUCKET = "contact-section";
+
 interface SiteSettingsFormProps {
   settings: SiteSettings | null;
 }
@@ -29,6 +39,8 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "saved" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const form = useForm<SiteSettingsFormData>({
     resolver: zodResolver(siteSettingsSchema),
@@ -42,8 +54,39 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
       twitterUrl: settings?.twitter_url ?? "",
       linkedinUrl: settings?.linkedin_url ?? "",
       showLoginButton: settings?.show_login_button ?? true,
+      contactBackgroundImageUrl: settings?.contact_background_image_url ?? "",
     },
   });
+
+  const contactBackgroundImageUrl = useWatch({ control: form.control, name: "contactBackgroundImageUrl" });
+
+  async function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setUploadError(null);
+
+    const supabase = createClient();
+    const extension = file.name.match(/\.[^.]+$/)?.[0] ?? "";
+    const path = `${Date.now()}-${slugify(file.name.replace(/\.[^.]+$/, ""))}${extension}`;
+
+    const { error } = await supabase.storage.from(CONTACT_SECTION_BUCKET).upload(path, file, {
+      cacheControl: "3600",
+      upsert: false,
+    });
+
+    if (error) {
+      setUploadError(error.message);
+      setUploading(false);
+      return;
+    }
+
+    const { data } = supabase.storage.from(CONTACT_SECTION_BUCKET).getPublicUrl(path);
+    form.setValue("contactBackgroundImageUrl", data.publicUrl, { shouldValidate: true });
+    setUploading(false);
+    event.target.value = "";
+  }
 
   async function onSubmit(values: SiteSettingsFormData) {
     setStatus("idle");
@@ -62,6 +105,7 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
         twitter_url: values.twitterUrl || null,
         linkedin_url: values.linkedinUrl || null,
         show_login_button: values.showLoginButton,
+        contact_background_image_url: values.contactBackgroundImageUrl || null,
       })
       .eq("id", 1);
 
@@ -196,6 +240,25 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
               </FormItem>
             )}
           />
+        </div>
+
+        <div className="space-y-3">
+          <FormLabel>Contact section background image</FormLabel>
+
+          <div>
+            <Input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+            {uploading && <p className="mt-1 text-sm text-muted-foreground">Uploading…</p>}
+            {uploadError && <p className="mt-1 text-sm text-destructive">{uploadError}</p>}
+          </div>
+
+          {contactBackgroundImageUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={contactBackgroundImageUrl}
+              alt="Preview"
+              className="h-32 w-52 rounded-xl border object-cover"
+            />
+          )}
         </div>
 
         <FormField

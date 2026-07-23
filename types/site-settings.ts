@@ -9,4 +9,5 @@ export interface SiteSettings {
   twitter_url: string | null;
   linkedin_url: string | null;
   show_login_button: boolean;
+  contact_background_image_url: string | null;
 }

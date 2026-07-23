@@ -1,6 +1,7 @@
 import { Mail, Phone, Building2, Clock } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { PageHeader } from "@/components/dashboard/page-header";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function AdminContactSubmissionsPage() {
@@ -12,25 +13,27 @@ export default async function AdminContactSubmissionsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Contact Submissions</h1>
-        <p className="text-muted-foreground">
-          Everyone who&apos;s filled out the &ldquo;Start Your Next Project&rdquo; form.
-        </p>
-      </div>
+      <PageHeader>
+        <div>
+          <h1 className="text-2xl font-bold">Contact Submissions</h1>
+          <p className="text-muted-foreground">
+            Everyone who&apos;s filled out the &ldquo;Start Your Next Project&rdquo; form.
+          </p>
+        </div>
+      </PageHeader>
 
       {error ? (
         <p className="text-sm text-destructive">Couldn&apos;t load submissions: {error.message}</p>
       ) : !submissions?.length ? (
         <p className="text-sm text-muted-foreground">No submissions yet.</p>
       ) : (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {submissions.map((submission) => (
             <Card key={submission.id}>
-              <CardContent className="space-y-3 py-3">
+              <CardContent className="space-y-2 py-3">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
-                    <h3 className="text-lg font-semibold">{submission.full_name}</h3>
+                    <h3 className="text-lg font-semibold mb-3">{submission.full_name}</h3>
                     {submission.company && (
                       <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
                         <Building2 className="h-3.5 w-3.5" />
