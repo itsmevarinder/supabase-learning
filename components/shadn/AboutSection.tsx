@@ -1,0 +1,174 @@
+"use client";
+
+import { useRef } from "react";
+
+import { Button } from "@/components/ui/button";
+import MorphCheckIcon from "@/components/shadn/MorphCheckIcon";
+import { animateCounter } from "@/lib/animate-counter";
+import { splitWords } from "@/components/shadn/split-words";
+import HoverDistortImage from "@/components/shadn/HoverDistortImage";
+import { gsap, useGSAP, EASE, prefersReducedMotion } from "@/lib/gsap/config";
+import { scrollParallax } from "@/lib/gsap/parallax";
+
+const features = [
+  "Experienced & Professional Team",
+  "Fast Project Delivery",
+  "Modern UI/UX Design",
+  "24/7 Customer Support",
+];
+
+export default function AboutSection() {
+  const section = useRef<HTMLElement>(null);
+  const imageWrapperRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const badgeRef = useRef<HTMLDivElement>(null);
+  const badgeNumberRef = useRef<HTMLHeadingElement>(null);
+  const eyebrowRef = useRef<HTMLSpanElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const paragraphRef = useRef<HTMLParagraphElement>(null);
+  const featureRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useGSAP(
+    (_context, contextSafe) => {
+      const reduced = prefersReducedMotion();
+
+      // Counter is kicked off from a deferred timeline callback, so it
+      // needs contextSafe() to be tracked/cleaned up by gsap's context.
+      const playCounter = contextSafe!(() => {
+        animateCounter(badgeNumberRef.current, 10, { suffix: "+", duration: 1.2 });
+      });
+
+      // --- Cohesive entrance timeline — image slides in first, badge pops
+      // with its counter, then the text column cascades in below it.
+      // Replays every time the section scrolls into/out of view. ---
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: section.current,
+            start: "top 75%",
+            toggleActions: "restart reverse restart reverse",
+          },
+        })
+        .from(imageWrapperRef.current, { x: -60, opacity: 0, duration: 0.9, ease: EASE.out })
+        .from(badgeRef.current, { scale: 0, opacity: 0, duration: 0.6, ease: EASE.bounce }, "-=0.4")
+        .call(playCounter, undefined, "<")
+        .from(eyebrowRef.current, { y: 16, opacity: 0, duration: 0.5, ease: EASE.soft }, "-=0.5")
+        .from(
+          titleRef.current?.querySelectorAll<HTMLElement>(".word-inner") ?? [],
+          { y: 24, opacity: 0, duration: 0.5, stagger: 0.05, ease: EASE.out },
+          "-=0.3"
+        )
+        .from(paragraphRef.current, { y: 20, opacity: 0, duration: 0.5, ease: EASE.soft }, "-=0.35")
+        .from(
+          featureRefs.current,
+          { x: -20, opacity: 0, duration: 0.4, stagger: 0.12, ease: EASE.soft },
+          "-=0.25"
+        )
+        .from(buttonRef.current, { y: 16, opacity: 0, duration: 0.5, ease: EASE.bounce }, "-=0.2");
+
+      if (reduced) return;
+
+      // True scroll-scrubbed parallax on the image — a separate element
+      // from the continuous float below so the two never fight over the
+      // same transform.
+      scrollParallax(imageRef.current, { trigger: section.current, distance: 70 });
+
+      // Continuous ambient motion, plays indefinitely.
+      gsap.to(imageWrapperRef.current, { y: -14, duration: 3.5, ease: "linear", yoyo: true, repeat: -1 });
+      gsap.to(badgeRef.current, {
+        y: 10,
+        rotate: 2,
+        duration: 2.6,
+        ease: "linear",
+        yoyo: true,
+        repeat: -1,
+        delay: 0.3,
+      });
+
+      const blurCircles = section.current?.querySelectorAll<HTMLElement>(".about-blur");
+      if (blurCircles?.length) {
+        gsap.to(blurCircles, {
+          scale: 1.2,
+          duration: 5,
+          ease: "linear",
+          yoyo: true,
+          repeat: -1,
+          stagger: { each: 1.2, from: "random" },
+        });
+      }
+    },
+    { scope: section }
+  );
+
+  return (
+    <section id="about" className="scroll-mt-28 py-24" ref={section}>
+      <div className="container mx-auto px-6">
+        <div className="grid items-center gap-16 lg:grid-cols-2">
+          {/* Left Image */}
+          <div className="relative" ref={imageWrapperRef}>
+            {/* Decorative Blur */}
+            <div className="about-blur absolute -left-8 -top-8 -z-10 h-64 w-64 rounded-full bg-primary/20 blur-3xl" />
+            <div className="about-blur absolute -bottom-10 -right-10 -z-10 h-72 w-72 rounded-full bg-amber-600/15 blur-3xl" />
+
+            <div ref={imageRef}>
+              <HoverDistortImage
+                image="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&q=80"
+                alt="About"
+                className="h-104 w-full rounded-3xl shadow-2xl"
+              />
+            </div>
+
+            <div
+              ref={badgeRef}
+              className="absolute -bottom-8 -right-3 rounded-2xl bg-primary p-6 text-white shadow-xl md:-right-8"
+            >
+              <h3 ref={badgeNumberRef} className="text-4xl font-bold">0+</h3>
+              <p className="mt-1">Years Experience</p>
+            </div>
+          </div>
+
+          {/* Right Content */}
+          <div>
+            <span
+              ref={eyebrowRef}
+              className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary"
+            >
+              About Us
+            </span>
+
+            <h2 ref={titleRef} className="mt-6 text-5xl font-bold leading-tight">
+              {splitWords("Building Digital Experiences That Inspire")}
+            </h2>
+
+            <p ref={paragraphRef} className="mt-6 leading-8 text-muted-foreground">
+              We specialize in creating beautiful websites, scalable
+              applications, and innovative digital products that help
+              businesses grow faster and stand out in today's competitive
+              market.
+            </p>
+
+            <div className="mt-8 space-y-4">
+              {features.map((item, index) => (
+                <div
+                  key={item}
+                  ref={(el) => {
+                    featureRefs.current[index] = el;
+                  }}
+                  className="flex items-center gap-3"
+                >
+                  <MorphCheckIcon className="h-5 w-5 shrink-0 text-primary" delay={index * 0.4} />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+
+            <Button ref={buttonRef} className="mt-10 rounded-full px-8 py-5">
+              Learn More
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
