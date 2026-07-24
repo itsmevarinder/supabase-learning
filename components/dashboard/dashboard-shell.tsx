@@ -48,9 +48,6 @@ import {
 } from "@/components/ui/sidebar";
 import { createClient } from "@/lib/supabase/client";
 
-// Nav items (including icon components) must live here, inside the Client
-// Component — icon components are function references, and Server Components
-// can only pass plain serializable data as props to Client Components.
 const NAV_ITEMS = [
   { href: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/hero-banners", label: "Hero Banners", icon: GalleryHorizontal },
@@ -59,16 +56,14 @@ const NAV_ITEMS = [
   { href: "/admin/faqs", label: "FAQs", icon: CircleHelp },
   { href: "/admin/donate", label: "Donate", icon: Heart },
   { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },
-  { href: "/admin/events", label: "Events", icon: CalendarDays },
   { href: "/admin/contact-submissions", label: "Messages", icon: Mail },
 ] as const;
 
-// Grouped in their own collapsible "Media" accordion instead of flat nav
-// items, since they're all upload-heavy homepage sections.
 const MEDIA_NAV_ITEMS = [
   { href: "/admin/video", label: "Video", icon: Video },
   { href: "/admin/audio", label: "Audio", icon: Music },
   { href: "/admin/gallery", label: "Gallery", icon: Images },
+  { href: "/admin/events", label: "Events", icon: CalendarDays },
 ] as const;
 
 interface DashboardShellProps {
@@ -76,8 +71,6 @@ interface DashboardShellProps {
   userEmail: string;
   userName: string;
   children: ReactNode;
-  // Only passed by the admin layout — lets an admin flip the public site
-  // header's Login button on/off without leaving the dashboard.
   showLoginButton?: boolean;
 }
 
@@ -90,9 +83,7 @@ function initialsFor(name: string) {
     .join("");
 }
 
-// Active for the exact route AND any nested route beneath it (e.g.
-// "/admin/portfolio/add-project" should still highlight "Portfolio") — not
-// just an exact pathname match.
+
 function isNavItemActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
@@ -113,10 +104,10 @@ export function DashboardShell({
   const [loginButtonVisible, setLoginButtonVisible] = useState(showLoginButton ?? true);
   const [savingLoginToggle, setSavingLoginToggle] = useState(false);
   const mediaActive = MEDIA_NAV_ITEMS.some((item) => isNavItemActive(pathname, item.href));
-  const [mediaToggled, setMediaToggled] = useState(false);
-  // Forced open whenever a child route is active, regardless of the user's
-  // own toggle state — derived, so no effect/cascading-render needed.
-  const mediaOpen = mediaToggled || mediaActive;
+  // Starts open when first landing on a media route, but afterwards the
+  // user's own toggle always wins — previously `mediaToggled || mediaActive`
+  // meant the dropdown could never be collapsed while its route was active.
+  const [mediaOpen, setMediaOpen] = useState(mediaActive);
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -178,13 +169,13 @@ export function DashboardShell({
 
                 <SidebarMenuItem>
                   <SidebarMenuButton
-                    tooltip="Media"
+                    tooltip="Manage Media and Events"
                     isActive={mediaActive}
-                    onClick={() => setMediaToggled((open) => !open)}
+                    onClick={() => setMediaOpen((open) => !open)}
                     aria-expanded={mediaOpen}
                   >
                     <Layers />
-                    <span>Media</span>
+                    <span>Manage Media and Events</span>
                     <ChevronDown
                       className={`ml-auto size-4 shrink-0 text-muted-foreground transition-transform duration-200 ${mediaOpen ? "rotate-180" : ""}`}
                     />
@@ -196,13 +187,13 @@ export function DashboardShell({
                     style={{ gridTemplateRows: mediaOpen ? "1fr" : "0fr" }}
                   >
                     <div className="overflow-hidden">
-                      <SidebarMenuSub>
+                      <SidebarMenuSub className="py-3">
                         {MEDIA_NAV_ITEMS.map((item) => (
                           <SidebarMenuSubItem key={item.href}>
                             <SidebarMenuSubButton
                               isActive={isNavItemActive(pathname, item.href)}
                               render={
-                                <Link href={item.href} className="h-8">
+                                <Link href={item.href} className="h-8.5">
                                   <item.icon />
                                   <span>{item.label}</span>
                                 </Link>
