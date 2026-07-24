@@ -374,9 +374,9 @@ export default function HeroSection({ banners }: HeroSectionProps) {
   return (
     <section className="relative w-full" ref={container}>
       <Carousel opts={{ loop: true }} plugins={[autoplayPlugin]} setApi={setApi} className="w-full">
-        <CarouselContent>
+        <CarouselContent className="ml-0">
           {slides.map((slide, index) => (
-            <CarouselItem key={index}>
+            <CarouselItem key={index} className="pl-0">
               <div
                 className="relative flex h-screen overflow-hidden items-center justify-center pt-20"
                 onPointerDown={(event) => handlePointerDown(event, index)}

@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, type Ref } from "react";
+import Link from "next/link";
 import { ChevronLeft, ChevronRight, Maximize2, Play, X } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { splitWords } from "@/components/shadn/split-words";
 import { gsap, useGSAP, EASE, prefersReducedMotion } from "@/lib/gsap/config";
@@ -254,9 +256,12 @@ function GalleryTile({ item, index, color, onOpen, ref }: GalleryTileProps) {
 
 interface GallerySectionProps {
   items?: GalleryItemRow[];
+  /** When set, shows a "View All Gallery" button below the grid linking here
+   * — used on the homepage, which only shows a capped subset of items. */
+  viewAllHref?: string;
 }
 
-export default function GallerySection({ items: itemRows }: GallerySectionProps) {
+export default function GallerySection({ items: itemRows, viewAllHref }: GallerySectionProps) {
   const items = (itemRows ?? []).map(mapGalleryRow).filter((item): item is GalleryItem => item !== null);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
@@ -322,7 +327,7 @@ export default function GallerySection({ items: itemRows }: GallerySectionProps)
   }
 
   return (
-    <section className="relative pb-24 pt-8" ref={section}>
+    <section id="gallery" className="relative scroll-mt-28 pb-24 pt-8" ref={section}>
       <div className="gallery-blur pointer-events-none absolute -left-24 top-0 -z-10 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
       <div className="gallery-blur pointer-events-none absolute -right-24 bottom-1/3 -z-10 h-80 w-80 rounded-full bg-amber-600/10 blur-3xl" />
 
@@ -359,6 +364,14 @@ export default function GallerySection({ items: itemRows }: GallerySectionProps)
                 onOpen={() => setActiveIndex(index)}
               />
             ))}
+          </div>
+        )}
+
+        {viewAllHref && (
+          <div className="mt-12 text-center">
+            <Link href={viewAllHref}>
+              <Button className="rounded-full px-8 py-5">View All Gallery</Button>
+            </Link>
           </div>
         )}
       </div>

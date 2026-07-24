@@ -41,8 +41,8 @@ const Page = async () => {
          <HeroSection banners={heroBanners} />
          <TrustedBy />
          <AboutSection about={aboutSection} />
-         <PortfolioSection projects={portfolioProjects} />
-         <GallerySection items={galleryItems} />
+         <PortfolioSection projects={portfolioProjects.slice(0, 5)} />
+         <GallerySection items={galleryItems.slice(0, 12)} viewAllHref="/gallery" />
          <DonateSection donate={donateSection} />
          <FAQSection faqs={faqs} />
          <AudioSection tracks={audioTracks} backgroundImageUrl={audioSection?.background_image_url} />

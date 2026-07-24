@@ -5,6 +5,10 @@ export const portfolioProjectSchema = z.object({
   category: z.string().min(1, "Category is required"),
   imageUrl: z.url("Enter a valid image URL"),
   projectLink: z.string().optional(),
+  description: z.string().optional(),
+  clientName: z.string().optional(),
+  projectYear: z.string().optional(),
+  role: z.string().optional(),
   isActive: z.boolean(),
   sortOrder: z.number().int(),
 });

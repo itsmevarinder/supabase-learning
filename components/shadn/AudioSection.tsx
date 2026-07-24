@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CircleCheck, Clock, Headphones, Music, Pause, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight, CircleCheck, Clock, Headphones, Music, Pause, Play } from "lucide-react";
 
 import DrawIcon from "@/components/shadn/DrawIcon";
 import { splitWords } from "@/components/shadn/split-words";
@@ -40,6 +40,8 @@ const ACCENT_COLORS = [
   "var(--chart-5)",
 ];
 
+const TRACKS_PER_PAGE = 5;
+
 function formatTime(seconds: number) {
   if (!Number.isFinite(seconds)) return "0:00";
   const mins = Math.floor(seconds / 60);
@@ -55,6 +57,14 @@ export default function AudioSection({ tracks: trackRows, backgroundImageUrl }: 
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [page, setPage] = useState(0);
+
+  const totalPages = Math.ceil(tracks.length / TRACKS_PER_PAGE);
+  const pagedTracks = tracks.slice(page * TRACKS_PER_PAGE, page * TRACKS_PER_PAGE + TRACKS_PER_PAGE);
+
+  function goToPage(next: number) {
+    setPage(Math.min(Math.max(next, 0), totalPages - 1));
+  }
 
   const section = useRef<HTMLElement>(null);
   const eyebrowRef = useRef<HTMLSpanElement>(null);
@@ -219,7 +229,8 @@ export default function AudioSection({ tracks: trackRows, backgroundImageUrl }: 
             </p>
           ) : (
             <div className="space-y-3">
-              {tracks.map((track, index) => {
+              {pagedTracks.map((track, localIndex) => {
+              const index = page * TRACKS_PER_PAGE + localIndex;
               const color = ACCENT_COLORS[index % ACCENT_COLORS.length];
               const isActive = playingId === track.id;
               const progress = isActive && duration > 0 ? (currentTime / duration) * 100 : 0;
@@ -315,6 +326,45 @@ export default function AudioSection({ tracks: trackRows, backgroundImageUrl }: 
                 </div>
                 );
               })}
+            </div>
+          )}
+
+          {totalPages > 1 && (
+            <div className="mt-5 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => goToPage(page - 1)}
+                disabled={page === 0}
+                aria-label="Previous tracks"
+                className="flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10"
+              >
+                <ChevronLeft className="size-4" />
+              </button>
+
+              <div className="flex items-center gap-2">
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => goToPage(i)}
+                    aria-label={`Page ${i + 1}`}
+                    aria-current={page === i ? "true" : undefined}
+                    className={`size-2 rounded-full transition-all ${
+                      page === i ? "w-5 bg-white" : "bg-white/30 hover:bg-white/50"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => goToPage(page + 1)}
+                disabled={page === totalPages - 1}
+                aria-label="Next tracks"
+                className="flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10"
+              >
+                <ChevronRight className="size-4" />
+              </button>
             </div>
           )}
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { ArrowUpRight, Calendar, Clock, MapPin } from "lucide-react";
+import { useRef, useState } from "react";
+import { ArrowUpRight, Calendar, ChevronLeft, ChevronRight, Clock, MapPin } from "lucide-react";
 
 import { splitWords } from "@/components/shadn/split-words";
 import { gsap, useGSAP, EASE } from "@/lib/gsap/config";
@@ -43,6 +43,8 @@ const ACCENT_COLORS = [
   "var(--chart-5)",
 ];
 
+const EVENTS_PER_PAGE = 5;
+
 function mapEventRow(row: EventRow): Event {
   const date = new Date(`${row.event_date}T00:00:00`);
   return {
@@ -68,6 +70,14 @@ export default function EventsSection({ events: eventRows, backgroundImageUrl }:
   const events = (eventRows ?? []).map(mapEventRow);
   const bgImage =
     backgroundImageUrl || "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1600&q=80";
+
+  const [page, setPage] = useState(0);
+  const totalPages = Math.ceil(events.length / EVENTS_PER_PAGE);
+  const pagedEvents = events.slice(page * EVENTS_PER_PAGE, page * EVENTS_PER_PAGE + EVENTS_PER_PAGE);
+
+  function goToPage(next: number) {
+    setPage(Math.min(Math.max(next, 0), totalPages - 1));
+  }
 
   const section = useRef<HTMLElement>(null);
   const eyebrowRef = useRef<HTMLSpanElement>(null);
@@ -141,7 +151,8 @@ export default function EventsSection({ events: eventRows, backgroundImageUrl }:
           </p>
         ) : (
           <div className="mx-auto mt-16 max-w-5xl rounded-3xl bg-black/20 p-8 backdrop-blur-md">
-            {events.map((event, index) => {
+            {pagedEvents.map((event, localIndex) => {
+              const index = page * EVENTS_PER_PAGE + localIndex;
               const color = ACCENT_COLORS[index % ACCENT_COLORS.length];
               return (
                 <div
@@ -219,6 +230,45 @@ export default function EventsSection({ events: eventRows, backgroundImageUrl }:
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {totalPages > 1 && (
+          <div className="mx-auto mt-6 flex max-w-5xl items-center justify-between">
+            <button
+              type="button"
+              onClick={() => goToPage(page - 1)}
+              disabled={page === 0}
+              aria-label="Previous events"
+              className="flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10"
+            >
+              <ChevronLeft className="size-4" />
+            </button>
+
+            <div className="flex items-center gap-2">
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => goToPage(i)}
+                  aria-label={`Page ${i + 1}`}
+                  aria-current={page === i ? "true" : undefined}
+                  className={`size-2 rounded-full transition-all ${
+                    page === i ? "w-5 bg-white" : "bg-white/30 hover:bg-white/50"
+                  }`}
+                />
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => goToPage(page + 1)}
+              disabled={page === totalPages - 1}
+              aria-label="Next events"
+              className="flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10"
+            >
+              <ChevronRight className="size-4" />
+            </button>
           </div>
         )}
       </div>

@@ -21,28 +21,28 @@ export interface PortfolioProjectRow {
   category: string;
   image_url: string;
   project_link: string | null;
+  description: string | null;
+  client_name: string | null;
+  project_year: string | null;
+  role: string | null;
   is_active: boolean;
   sort_order: number;
+  created_at?: string;
 }
 
 interface PortfolioProject {
+  id: string;
   title: string;
   category: string;
   image: string;
-  link: string;
 }
 
 function mapProjectRow(row: PortfolioProjectRow): PortfolioProject {
-  const rawLink = row.project_link?.trim();
-  // Plain text typed into the link field (spaces and all) shouldn't turn
-  // into a URL-encoded mess like "Id%20earum%20quo" — treat it like a slug.
-  const link = rawLink ? rawLink.replace(/\s+/g, "-") : "#";
-
   return {
+    id: row.id,
     title: row.title,
     category: row.category,
     image: row.image_url,
-    link,
   };
 }
 
@@ -243,9 +243,11 @@ export default function PortfolioSection({ projects: projectRows }: PortfolioSec
 
             <div className="relative mt-10 inline-block">
               <span className="cta-glow pointer-events-none absolute left-1/2 top-1/2 -z-10 h-16 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/30 opacity-30 blur-2xl" />
-              <Button ref={ctaRef} className="rounded-full px-8 py-5">
-                View All Projects
-              </Button>
+              <Link href="/portfolio">
+                <Button ref={ctaRef} className="rounded-full px-8 py-5">
+                  View All Projects
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -285,9 +287,11 @@ export default function PortfolioSection({ projects: projectRows }: PortfolioSec
                   <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/40" />
 
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100">
-                    <Button className="rounded-full">
-                      View Project
-                    </Button>
+                    <Link href={`/portfolio/${project.id}`}>
+                      <Button className="rounded-full">
+                        View Project
+                      </Button>
+                    </Link>
                   </div>
                 </div>
 
@@ -302,7 +306,7 @@ export default function PortfolioSection({ projects: projectRows }: PortfolioSec
                   </h3>
 
                   <Link
-                    href={project.link}
+                    href={`/portfolio/${project.id}`}
                     className="mt-5 inline-flex items-center gap-2 font-medium text-primary"
                   >
                     Learn More

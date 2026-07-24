@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { createClient } from "@/lib/supabase/client";
 import { portfolioProjectSchema, type PortfolioProjectFormData } from "@/schemas/portfolio-project-schema";
 import type { PortfolioProjectRow } from "@/components/shadn/PortfolioSection";
@@ -37,6 +38,10 @@ function defaultsFromProject(project?: PortfolioProjectRow): PortfolioProjectFor
       category: "",
       imageUrl: "",
       projectLink: "#",
+      description: "",
+      clientName: "",
+      projectYear: "",
+      role: "",
       isActive: true,
       sortOrder: 0,
     };
@@ -47,6 +52,10 @@ function defaultsFromProject(project?: PortfolioProjectRow): PortfolioProjectFor
     category: project.category,
     imageUrl: project.image_url,
     projectLink: project.project_link ?? "#",
+    description: project.description ?? "",
+    clientName: project.client_name ?? "",
+    projectYear: project.project_year ?? "",
+    role: project.role ?? "",
     isActive: project.is_active,
     sortOrder: project.sort_order,
   };
@@ -110,6 +119,10 @@ export function PortfolioProjectForm({ project }: PortfolioProjectFormProps) {
       category: values.category,
       image_url: values.imageUrl,
       project_link: values.projectLink || null,
+      description: values.description || null,
+      client_name: values.clientName || null,
+      project_year: values.projectYear || null,
+      role: values.role || null,
       is_active: values.isActive,
       sort_order: values.sortOrder,
     };
@@ -184,6 +197,64 @@ export function PortfolioProjectForm({ project }: PortfolioProjectFormProps) {
               <FormLabel>Project link</FormLabel>
               <FormControl>
                 <Input placeholder="https://example.com or #" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="grid gap-5 sm:grid-cols-3">
+          <FormField
+            control={form.control}
+            name="clientName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Client</FormLabel>
+                <FormControl>
+                  <Input placeholder="Acme Inc." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="projectYear"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Year</FormLabel>
+                <FormControl>
+                  <Input placeholder="2026" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="role"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Our role</FormLabel>
+                <FormControl>
+                  <Input placeholder="Design & Development" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description (shown on the project&apos;s detail page)</FormLabel>
+              <FormControl>
+                <Textarea rows={6} placeholder="What the project involved, the approach, the outcome…" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
