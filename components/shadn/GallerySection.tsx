@@ -349,7 +349,7 @@ export default function GallerySection({ items: itemRows }: GallerySectionProps)
             Gallery items will show up here once they&apos;re added.
           </p>
         ) : (
-          <div className="mx-auto mt-16 columns-2 space-y-2.5 lg:columns-3 xl:columns-4">
+          <div className="mx-auto mt-16 columns-1 sm:columns-2 space-y-2.5 lg:columns-3 xl:columns-4">
             {items.map((item, index) => (
               <GalleryTile
                 key={item.id}

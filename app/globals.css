@@ -100,6 +100,32 @@
   }
 }
 
+@keyframes qr-scan-line {
+  0%, 100% {
+    top: 6%;
+    opacity: 0;
+  }
+
+  10%, 90% {
+    opacity: 1;
+  }
+
+  50% {
+    top: 94%;
+  }
+}
+
+.qr-scan-line {
+  animation: qr-scan-line 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qr-scan-line {
+    animation: none;
+    opacity: 0;
+  }
+}
+
 @keyframes gradient-drift {
   0%, 100% {
     background-position: 0% 50%;
