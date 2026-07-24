@@ -40,7 +40,7 @@ const ACCENT_COLORS = [
   "var(--chart-5)",
 ];
 
-const TRACKS_PER_PAGE = 5;
+const TRACKS_PER_PAGE = 4;
 
 function formatTime(seconds: number) {
   if (!Number.isFinite(seconds)) return "0:00";

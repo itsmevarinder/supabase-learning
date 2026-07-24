@@ -43,7 +43,7 @@ const ACCENT_COLORS = [
   "var(--chart-5)",
 ];
 
-const EVENTS_PER_PAGE = 5;
+const EVENTS_PER_PAGE = 4;
 
 function mapEventRow(row: EventRow): Event {
   const date = new Date(`${row.event_date}T00:00:00`);
