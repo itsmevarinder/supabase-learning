@@ -37,10 +37,10 @@ function mapFaqRow(row: FaqRow): Faq {
 }
 
 const checklist = [
-  { icon: CircleCheck, label: "Open to All, Always" },
-  { icon: ShieldCheck, label: "A Safe Place to Belong" },
-  { icon: Clock, label: "Prayer Requests Welcomed" },
-  { icon: Headphones, label: "A Caring Support Team" },
+  { icon: CircleCheck, label: "24/7 Customer Support" },
+  { icon: ShieldCheck, label: "100% Secure Platform" },
+  { icon: Clock, label: "Fast Response Time" },
+  { icon: Headphones, label: "Dedicated Support Team" },
 ];
 
 interface FAQSectionProps {
@@ -137,13 +137,13 @@ export default function FAQSection({ faqs: faqRows }: FAQSectionProps) {
             </span>
 
             <h2 ref={titleRef} className="mt-6 text-4xl font-bold leading-tight lg:text-5xl">
-              {splitWords("Questions About Our Church")}
+              {splitWords("Everything You Need To Know")}
             </h2>
 
             <p ref={paragraphRef} className="mt-6 text-lg leading-8 text-muted-foreground">
-              Find answers to common questions about our church, our beliefs,
-              and how to get involved. Can&apos;t find what you&apos;re looking for?
-              We&apos;d love to talk with you.
+              Find answers to the most common questions about our services.
+              Can&apos;t find what you&apos;re looking for? Our team is always ready to
+              help.
             </p>
 
             <div className="mt-10 space-y-5">
@@ -170,7 +170,7 @@ export default function FAQSection({ faqs: faqRows }: FAQSectionProps) {
             <div className="relative mt-10 inline-block">
               <span className="cta-glow pointer-events-none absolute left-1/2 top-1/2 -z-10 h-16 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/30 opacity-30 blur-2xl" />
               <Button className="rounded-full px-8 py-5">
-                Contact Us
+                Contact Support
               </Button>
             </div>
           </div>

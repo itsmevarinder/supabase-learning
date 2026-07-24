@@ -55,8 +55,8 @@ export default function Footer({ settings }: FooterProps) {
             </Link>
 
             <p className="mt-5 leading-7 text-muted-foreground">
-              A Christ-centered community devoted to worship, prayer, and
-              serving one another in faith and love.
+              We build modern digital experiences that help businesses
+              grow through innovation, creativity, and technology.
             </p>
 
             <div className="mt-8 flex gap-3">
@@ -74,7 +74,7 @@ export default function Footer({ settings }: FooterProps) {
             }}
             className="mt-8 border-t pt-5 text-center text-sm text-muted-foreground"
           >
-            <p>© {new Date().getFullYear()} Grace Community Church. All rights reserved.
+            <p>© {new Date().getFullYear()} CMS. All rights reserved.
               <span className="ml-2 text-xs text-muted-foreground/70">
                 (For development purposes only)
               </span>

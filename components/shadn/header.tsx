@@ -18,16 +18,16 @@ import DrawIcon from "@/components/shadn/DrawIcon";
 import { gsap, useGSAP, ScrollTrigger, prefersReducedMotion } from "@/lib/gsap/config";
 
 const SERVICE_LINKS = [
-  { href: "#services", title: "Sunday Worship", description: "Join us for uplifting worship and teaching each week.", icon: Code2 },
-  { href: "#services", title: "Bible Study", description: "Grow deeper in God's Word through small groups.", icon: Smartphone },
-  { href: "#services", title: "Youth Ministry", description: "Helping the next generation grow in faith.", icon: Palette },
-  { href: "#services", title: "Community Outreach", description: "Serving our neighbors with Christ's love.", icon: Megaphone },
+  { href: "#services", title: "Web Development", description: "Modern websites built with Next.js.", icon: Code2 },
+  { href: "#services", title: "Mobile Apps", description: "Android & iOS applications.", icon: Smartphone },
+  { href: "#services", title: "UI / UX Design", description: "Beautiful user experiences.", icon: Palette },
+  { href: "#services", title: "Digital Marketing", description: "Grow your online business.", icon: Megaphone },
 ];
 
 const NAV_LINKS = [
   { href: "#about", label: "About" },
-  { href: "#portfolio", label: "Ministries" },
-  { href: "#donate", label: "Give" },
+  { href: "#portfolio", label: "Portfolio" },
+  { href: "#donate", label: "Donate" },
   { href: "#contact", label: "Contact" },
 ];
 
@@ -172,7 +172,7 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
                 <NavigationMenuList className="gap-1">
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="rounded-full font-medium text-foreground/80 data-[state=open]:bg-primary/10 data-[state=open]:text-primary">
-                      Programs
+                      Services
                     </NavigationMenuTrigger>
 
                     <NavigationMenuContent>
@@ -238,7 +238,7 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
               )}
 
               <a href="#contact">
-                <Button className="rounded-full px-6 py-5">Join Us</Button>
+                <Button className="rounded-full px-6 py-5">Get Started</Button>
               </a>
             </div>
 
@@ -340,7 +340,7 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
                 </Link>
               )}
               <a href="#contact" onClick={closeDrawer}>
-                <Button className="w-full rounded-full">Join Us</Button>
+                <Button className="w-full rounded-full">Get Started</Button>
               </a>
             </div>
           </div>

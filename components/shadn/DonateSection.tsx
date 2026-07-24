@@ -38,7 +38,7 @@ export default function DonateSection({ donate }: DonateSectionProps) {
   const subtitle = donate?.subtitle ?? "Give Back Today";
   const description =
     donate?.description ??
-    "Your generosity helps us share the love of Christ, support our ministries, and serve those in need — every gift, big or small, makes a real difference.";
+    "Your generosity helps us keep building things that matter — every contribution, big or small, makes a real difference.";
   const buttonText = donate?.button_text || "Donate Now";
   const amount = donate?.default_amount || 1;
 

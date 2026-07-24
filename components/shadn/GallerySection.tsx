@@ -345,7 +345,7 @@ export default function GallerySection({ items: itemRows, viewAllHref }: Gallery
           </h2>
 
           <p ref={paragraphRef} className="mt-6 leading-8 text-muted-foreground">
-            A look at our church family — worship, fellowship, and life together in Christ.
+            A look behind the scenes — photos and videos from our work, our team, and our events.
           </p>
         </div>
 

@@ -229,23 +229,23 @@ export default function PortfolioSection({ projects: projectRows }: PortfolioSec
               ref={eyebrowRef}
               className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary"
             >
-              Our Ministries
+              Our Portfolio
             </span>
 
             <h2 ref={titleRef} className="mt-6 text-4xl lg:text-5xl font-bold leading-tight">
-              {splitWords("Featured Ministries")}
+              {splitWords("Featured Projects")}
             </h2>
 
             <p ref={subRef} className="mt-5 text-lg text-muted-foreground">
-              Explore the ministries and outreach programs where our church
-              family is actively serving and growing in faith.
+              Explore some of our recent work crafted with creativity,
+              innovation, and attention to detail.
             </p>
 
             <div className="relative mt-10 inline-block">
               <span className="cta-glow pointer-events-none absolute left-1/2 top-1/2 -z-10 h-16 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/30 opacity-30 blur-2xl" />
               <Link href="/portfolio">
                 <Button ref={ctaRef} className="rounded-full px-8 py-5">
-                  View All Ministries
+                  View All Projects
                 </Button>
               </Link>
             </div>
@@ -253,7 +253,7 @@ export default function PortfolioSection({ projects: projectRows }: PortfolioSec
 
           {projects.length === 0 ? (
             <p className="text-muted-foreground">
-              Ministries will show up here once they&apos;re added.
+              Projects will show up here once they&apos;re added.
             </p>
           ) : (
           <div ref={rightColRef} className="flex flex-col gap-6 perspective-[1000px]">
@@ -289,7 +289,7 @@ export default function PortfolioSection({ projects: projectRows }: PortfolioSec
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100">
                     <Link href={`/portfolio/${project.id}`}>
                       <Button className="rounded-full">
-                        View Ministry
+                        View Project
                       </Button>
                     </Link>
                   </div>

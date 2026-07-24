@@ -141,7 +141,7 @@ export default function EventsSection({ events: eventRows, backgroundImageUrl }:
           </h2>
 
           <p ref={paragraphRef} className="mt-6 leading-8 text-white/80">
-            Worship services, Bible studies, and community gatherings — see what&apos;s next and join us.
+            Workshops, meetups, and launches — see what we&apos;re hosting next and save your spot.
           </p>
         </div>
 
