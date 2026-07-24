@@ -27,7 +27,7 @@ export function SimilarProjectsSlider({ projects }: SimilarProjectsSliderProps) 
 
   return (
     <div className="mt-20">
-      <h2 className="text-2xl font-bold">Similar Projects</h2>
+      <h2 className="text-2xl font-bold">Similar Ministries</h2>
 
       <Carousel opts={{ align: "start", loop: projects.length > 4 }} className="mt-8 w-full">
         <CarouselContent className="-ml-4">
@@ -49,7 +49,7 @@ export function SimilarProjectsSlider({ projects }: SimilarProjectsSliderProps) 
                   <span className="text-sm font-medium text-primary">{project.category}</span>
                   <h3 className="mt-1 text-lg font-semibold">{project.title}</h3>
                   <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary">
-                    View project
+                    View ministry
                     <ArrowRight className="h-3.5 w-3.5" />
                   </span>
                 </div>

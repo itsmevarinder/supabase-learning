@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { getPortfolioProjects, getSiteSettings } from "@/lib/supabase/server";
 
 export const metadata = {
-  title: "All Projects — Portfolio",
-  description: "Every project we've shipped, in one place.",
+  title: "All Ministries — Grace Community Church",
+  description: "Every ministry and outreach we're involved in, in one place.",
 };
 
 export default async function AllProjectsPage() {
@@ -30,18 +30,18 @@ export default async function AllProjectsPage() {
 
           <div className="mx-auto mt-10 max-w-2xl border-b pb-16 text-center">
             <span className="inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-              Our Portfolio
+              Our Ministries
             </span>
 
-            <h1 className="mt-6 text-4xl font-bold leading-tight lg:text-5xl">All Projects</h1>
+            <h1 className="mt-6 text-4xl font-bold leading-tight lg:text-5xl">All Ministries</h1>
             <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">
-              Every project we&apos;ve crafted with creativity, innovation, and attention to detail.
+              Every ministry we&apos;re blessed to be part of, serving our church family and community.
             </p>
           </div>
 
           {projects.length === 0 ? (
             <p className="mt-12 text-center text-muted-foreground">
-              Projects will show up here once they&apos;re added.
+              Ministries will show up here once they&apos;re added.
             </p>
           ) : (
             <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -60,7 +60,7 @@ export default async function AllProjectsPage() {
                     />
                     <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/40" />
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100">
-                      <Button className="rounded-full">View Project</Button>
+                      <Button className="rounded-full">View Ministry</Button>
                     </div>
                   </div>
 

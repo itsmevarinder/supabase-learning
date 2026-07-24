@@ -7,8 +7,8 @@ import GallerySection from "@/components/shadn/GallerySection";
 import { getGalleryItems, getSiteSettings } from "@/lib/supabase/server";
 
 export const metadata = {
-  title: "All Gallery",
-  description: "Every photo and video in our gallery, in one place.",
+  title: "Gallery — Grace Community Church",
+  description: "Every photo and video from our church family, in one place.",
 };
 
 export default async function AllGalleryPage() {

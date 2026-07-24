@@ -128,7 +128,7 @@ export default function VideoSection({ video }: VideoSectionProps) {
             ref={eyebrowRef}
             className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary"
           >
-            Watch Our Story
+            Watch A Message
           </span>
 
           <h2 ref={titleRef} className="mt-6 text-4xl font-bold leading-tight lg:text-5xl">

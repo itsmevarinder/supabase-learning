@@ -4,14 +4,14 @@ import { useRef } from "react";
 import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap/config";
 
 const brands = [
-  "Nova Labs",
-  "Vertex Digital",
-  "Bright Peak",
-  "Northwind Studio",
-  "Cedar & Co",
-  "Lumen Works",
-  "Solstice Group",
-  "Anchor Point",
+  "Grace Mission Network",
+  "Hope Builders Alliance",
+  "Faith Outreach Coalition",
+  "Living Water Ministries",
+  "New Life Partners",
+  "Cornerstone Fellowship",
+  "Shepherd's Table",
+  "Bridge of Hope",
 ];
 
 export default function TrustedBy() {
@@ -38,7 +38,7 @@ export default function TrustedBy() {
     <section className="section-tint-indigo border-y py-10">
       <div className="container mx-auto md:px-6 px-4">
         <p className="mb-6 text-center text-sm font-semibold uppercase tracking-widest">
-          Trusted by teams at
+          In partnership with
         </p>
       </div>
 

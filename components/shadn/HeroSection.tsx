@@ -86,9 +86,9 @@ interface HeroSlide {
 }
 
 const DEFAULT_STATS: HeroStat[] = [
-  { target: 500, suffix: "+", label: "Projects Delivered" },
-  { target: 120, suffix: "+", label: "Team Members" },
-  { target: 98, suffix: "%", label: "Client Satisfaction" },
+  { target: 500, suffix: "+", label: "Lives Changed" },
+  { target: 120, suffix: "+", label: "Small Groups" },
+  { target: 98, suffix: "%", label: "Years of Ministry" },
 ];
 
 // Used when no active rows exist yet in `hero_banners` (fresh installs,
@@ -97,39 +97,39 @@ const FALLBACK_SLIDES: HeroSlide[] = [
   {
     image:
       "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1800&q=80",
-    badge: "✨ Trusted by 10,000+ Clients",
-    title: "Create Experiences That Inspire",
+    badge: "✨ Welcoming All Who Seek Christ",
+    title: "Encounter the Love of Jesus Christ",
     subtitle:
-      "Build beautiful digital products that engage customers and grow your business.",
-    primaryButtonText: "Get Started",
+      "Join a warm, welcoming community devoted to worship, prayer, and serving one another in Christ.",
+    primaryButtonText: "Join Us This Sunday",
     primaryButtonLink: "#contact",
-    secondaryButtonText: "Learn More",
+    secondaryButtonText: "Watch Online",
     secondaryButtonLink: "#about",
     stats: DEFAULT_STATS,
   },
   {
     image:
       "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1800&q=80",
-    badge: "🚀 Innovative Solutions",
-    title: "Turn Your Ideas Into Reality",
+    badge: "🙏 Growing in Faith Together",
+    title: "Walk Boldly in Faith and Hope",
     subtitle:
-      "Modern websites, scalable applications, and premium digital experiences.",
-    primaryButtonText: "Get Started",
+      "Discover practical, Scripture-centered teaching that speaks to everyday life.",
+    primaryButtonText: "Join Us This Sunday",
     primaryButtonLink: "#contact",
-    secondaryButtonText: "Learn More",
+    secondaryButtonText: "Watch Online",
     secondaryButtonLink: "#about",
     stats: DEFAULT_STATS,
   },
   {
     image:
       "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1800&q=80",
-    badge: "💡 Smart Digital Agency",
-    title: "We Design. We Develop. We Deliver.",
+    badge: "✝️ Christ-Centered Community",
+    title: "We Worship. We Grow. We Serve.",
     subtitle:
-      "Helping startups and enterprises build the next generation of digital products.",
-    primaryButtonText: "Get Started",
+      "From worship gatherings to community outreach, every ministry points to Jesus.",
+    primaryButtonText: "Join Us This Sunday",
     primaryButtonLink: "#contact",
-    secondaryButtonText: "Learn More",
+    secondaryButtonText: "Watch Online",
     secondaryButtonLink: "#about",
     stats: DEFAULT_STATS,
   },
@@ -146,9 +146,9 @@ function mapBannerToSlide(banner: HeroBannerRow): HeroSlide {
     badge: [banner.badge_emoji, banner.badge_text].filter(Boolean).join(" "),
     title: banner.title,
     subtitle: banner.description ?? "",
-    primaryButtonText: banner.primary_button_text || "Get Started",
+    primaryButtonText: banner.primary_button_text || "Join Us This Sunday",
     primaryButtonLink: banner.primary_button_link || "#contact",
-    secondaryButtonText: banner.secondary_button_text || "Learn More",
+    secondaryButtonText: banner.secondary_button_text || "Watch Online",
     secondaryButtonLink: banner.secondary_button_link || "#about",
     stats,
   };

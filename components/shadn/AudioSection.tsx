@@ -9,8 +9,8 @@ import { gsap, useGSAP, EASE, prefersReducedMotion } from "@/lib/gsap/config";
 import { scrollReveal } from "@/lib/gsap/reveal";
 
 const checklist = [
-  { icon: Headphones, label: "New Episodes Weekly" },
-  { icon: Clock, label: "Listen On-Demand, Anytime" },
+  { icon: Headphones, label: "New Messages Weekly" },
+  { icon: Clock, label: "Listen Anytime, Anywhere" },
   { icon: Music, label: "Free To Stream" },
   { icon: CircleCheck, label: "No Sign-Up Required" },
 ];
@@ -198,12 +198,12 @@ export default function AudioSection({ tracks: trackRows, backgroundImageUrl }: 
             </span>
 
             <h2 ref={titleRef} className="mt-6 text-4xl font-bold leading-tight text-white lg:text-5xl">
-              {splitWords("Sounds From Our Studio")}
+              {splitWords("Messages That Speak to the Heart")}
             </h2>
 
             <p ref={paragraphRef} className="mt-6 leading-8 text-white/80 max-w-125">
-              Podcast episodes, interviews, and audio stories worth a listen — press play and
-              listen right here, no app required.
+              Sunday messages, devotionals, and stories of faith worth a listen — press play
+              and listen right here, no app required.
             </p>
 
             <div className="mt-8 space-y-4">

@@ -15,6 +15,16 @@ interface ProjectDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
+export async function generateMetadata({ params }: ProjectDetailPageProps) {
+  const { id } = await params;
+  const supabase = await createClient();
+  const { data: project } = await supabase.from("portfolio_projects").select("title").eq("id", id).single();
+
+  return {
+    title: project ? `${project.title} — Grace Community Church` : "Ministry — Grace Community Church",
+  };
+}
+
 export default async function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   const { id } = await params;
 
@@ -62,7 +72,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
     (project.created_at
       ? new Date(project.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" })
       : null);
-  const statusLabel = isExternalUrl ? "Live" : "In portfolio";
+  const statusLabel = isExternalUrl ? "Active" : "Ongoing";
 
   return (
     <main className="overflow-x-clip">
@@ -75,7 +85,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
             className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to all projects
+            Back to all ministries
           </Link>
 
           <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
@@ -104,7 +114,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                 <CardContent className="space-y-5 p-6">
                   <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
                     <FolderKanban className="h-4 w-4" />
-                    Project details
+                    Ministry details
                   </div>
 
                   <div className="flex items-center justify-between border-t pt-4 text-sm">
@@ -114,7 +124,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
 
                   {project.client_name && (
                     <div className="flex items-center justify-between border-t pt-4 text-sm">
-                      <span className="text-muted-foreground">Client</span>
+                      <span className="text-muted-foreground">Partner</span>
                       <span className="font-medium">{project.client_name}</span>
                     </div>
                   )}
@@ -150,7 +160,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                       rel="noopener noreferrer"
                       className="flex items-center justify-between border-t pt-4 text-sm font-medium text-primary transition-colors hover:text-primary/80"
                     >
-                      Visit live site
+                      Visit website
                       <ExternalLink className="h-4 w-4" />
                     </a>
                   )}
@@ -167,16 +177,16 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
 
                   <div className="flex items-center gap-2 font-semibold">
                     <Image src="/logo.png" alt="" width={20} height={20} className="w-5" />
-                    Like what you see?
+                    Want to get involved?
                   </div>
 
                   <p className="text-sm text-muted-foreground">
-                    We&apos;d love to build something just as good for you.
+                    We&apos;d love to have you join this ministry or serve alongside our team.
                   </p>
 
                   <Link href="/#contact">
                     <Button className="w-full rounded-full">
-                      Start your project
+                      Get involved
                       <ArrowUpRight className="h-4 w-4" />
                     </Button>
                   </Link>

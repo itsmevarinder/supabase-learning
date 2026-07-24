@@ -28,20 +28,20 @@ import type { SiteSettings } from "@/types/site-settings";
 const processSteps = [
   {
     number: 1,
-    title: "Share Your Vision",
-    description: "Tell us about your business, goals, and project requirements.",
+    title: "Reach Out",
+    description: "Send us a message and let us know how we can pray for you or help you get connected.",
   },
   {
     number: 2,
-    title: "Free Consultation",
+    title: "We'll Connect With You",
     description:
-      "Our experts will discuss the best approach and recommend the right solution.",
+      "Our pastoral team will personally follow up to welcome you and answer any questions.",
   },
   {
     number: 3,
-    title: "Receive Your Proposal",
+    title: "Find Your Place Here",
     description:
-      "Get a transparent quotation with pricing, timeline, and project roadmap.",
+      "We'll help you find a ministry, small group, or service time that fits your life.",
   },
 ];
 
@@ -56,9 +56,9 @@ export default function ContactSection({ settings }: ContactSectionProps) {
 
   const contactInfo = [
     { icon: Phone, label: "Phone", value: settings?.contact_phone || "+1 (234) 567-8900" },
-    { icon: Mail, label: "Email", value: settings?.contact_email || "hello@company.com" },
+    { icon: Mail, label: "Email", value: settings?.contact_email || "hello@gracecommunity.church" },
     { icon: MapPin, label: "Office", value: settings?.office_address || "New York, United States" },
-    { icon: Clock, label: "Working Hours", value: settings?.working_hours || "Mon - Fri • 9:00 AM - 6:00 PM" },
+    { icon: Clock, label: "Service Times", value: settings?.working_hours || "Sundays 9:00 AM & 11:00 AM" },
   ];
 
   const section = useRef<HTMLElement>(null);
@@ -167,12 +167,13 @@ export default function ContactSection({ settings }: ContactSectionProps) {
               </span>
 
               <h2 ref={titleRef} className="mt-6 text-4xl font-bold">
-                {splitWords("Start Your Next Project")}
+                {splitWords("We'd Love To Connect With You")}
               </h2>
 
               <p ref={paragraphRef} className="mt-4 leading-7 text-muted-foreground">
-                We&apos;d love to hear about your ideas. Fill out the form and
-                our team will get back to you within one business day.
+                Have questions, need prayer, or want to get involved? Fill out
+                the form and someone from our church family will reach out
+                within one business day.
               </p>
 
               <form onSubmit={form.handleSubmit(onSubmit)} className="mt-10 space-y-5">
@@ -194,7 +195,7 @@ export default function ContactSection({ settings }: ContactSectionProps) {
                   </p>
                 </div>
 
-                <Input placeholder="Company Name"  {...form.register("company")}/>
+                <Input placeholder="Organization (optional)"  {...form.register("company")}/>
 
                 <div>
                   <Input  placeholder="Phone Number"  {...form.register("phone")}  />
@@ -205,7 +206,7 @@ export default function ContactSection({ settings }: ContactSectionProps) {
                 </div>
 
                 <div>
-                  <Textarea rows={6}  placeholder="Tell us about your project..."  {...form.register("message")} />
+                  <Textarea rows={6}  placeholder="Share your prayer request or message..."  {...form.register("message")} />
 
                   <p className="text-sm text-red-500">
                     {form.formState.errors.message?.message}
@@ -214,7 +215,7 @@ export default function ContactSection({ settings }: ContactSectionProps) {
 
                 {status === "sent" && (
                   <p className="text-sm text-green-600">
-                    Thanks! We&apos;ll get back to you within one business day.
+                    Thank you! We&apos;ll be in touch within one business day.
                   </p>
                 )}
                 {status === "error" && errorMessage && (
@@ -245,19 +246,19 @@ export default function ContactSection({ settings }: ContactSectionProps) {
 
               <div className="relative z-10">
                 <span className="rounded-full bg-white/15 px-4 py-2 text-sm backdrop-blur">
-                  Let&apos;s Connect
+                  We&apos;d Love To Meet You
                 </span>
 
                 <h2 className="mt-6 text-4xl font-bold leading-tight">
-                  Have an Idea?
+                  New Here?
                   <br />
-                  Let&apos;s Make It Reality.
+                  We&apos;d Love To Welcome You.
                 </h2>
 
                 <p className="mt-6 leading-8 text-white/80">
-                  Whether you&apos;re launching a startup, redesigning your
-                  website, or building a custom application, our team is
-                  ready to help you achieve your goals.
+                  Whether you&apos;re exploring faith for the first time or
+                  looking for a church home, our community is here to walk
+                  alongside you.
                 </p>
 
                 {/* Process */}

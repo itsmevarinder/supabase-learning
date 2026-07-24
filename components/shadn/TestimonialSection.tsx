@@ -160,15 +160,15 @@ export default function TestimonialSection({ testimonials: testimonialRows }: Te
             ref={eyebrowRef}
             className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary"
           >
-            Testimonials
+            Testimonies
           </span>
 
           <h2 ref={titleRef} className="mt-6 text-4xl lg:text-5xl font-bold">
-            {splitWords("What Our Clients Say")}
+            {splitWords("Stories of Faith")}
           </h2>
 
           <p ref={subRef} className="mt-4 text-muted-foreground">
-            Trusted by hundreds of happy customers around the world.
+            Hear how God is moving in the lives of our church family.
           </p>
         </div>
 
