@@ -39,7 +39,8 @@ function defaultsFromDonate(donate: DonateSectionRow | null): DonateSectionFormD
       donate?.description ??
       "Your generosity helps us keep building things that matter — every contribution, big or small, makes a real difference.",
     buttonText: donate?.button_text ?? "Donate Now",
-    phoneNumber: donate?.phone_number ?? "",
+    settlementNote: donate?.phone_number ?? "",
+    defaultAmount: donate?.default_amount ?? 1,
   };
 }
 
@@ -102,7 +103,8 @@ export function DonateSectionForm({ donate }: DonateSectionFormProps) {
         subtitle: values.subtitle,
         description: values.description || null,
         button_text: values.buttonText,
-        phone_number: values.phoneNumber || null,
+        phone_number: values.settlementNote || null,
+        default_amount: values.defaultAmount,
       })
       .eq("id", 1);
 
@@ -193,21 +195,45 @@ export function DonateSectionForm({ donate }: DonateSectionFormProps) {
 
           <FormField
             control={form.control}
-            name="phoneNumber"
+            name="defaultAmount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>UPI phone number</FormLabel>
+                <FormLabel>Default amount (₹)</FormLabel>
                 <FormControl>
-                  <Input placeholder="9876543210" {...field} />
+                  <Input
+                    type="number"
+                    min={1}
+                    value={field.value}
+                    onChange={(event) => field.onChange(event.target.valueAsNumber || 0)}
+                  />
                 </FormControl>
                 <p className="text-sm text-muted-foreground">
-                  Used to generate the QR code shown when a visitor clicks Donate.
+                  The QR code is generated for this exact amount — visitors don&apos;t choose one.
                 </p>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
+
+        <FormField
+          control={form.control}
+          name="settlementNote"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Settlement UPI ID (reference only)</FormLabel>
+              <FormControl>
+                <Input placeholder="9876543210@okhdfcbank" {...field} />
+              </FormControl>
+              <p className="text-sm text-muted-foreground">
+                For your own records only — donations always settle to whichever bank account is
+                linked to your Stripe account. Changing this field does not change where money is
+                received; to do that, update it in your Stripe dashboard.
+              </p>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {status === "saved" && <p className="text-sm text-green-600">Saved.</p>}
         {status === "error" && errorMessage && <p className="text-sm text-destructive">{errorMessage}</p>}

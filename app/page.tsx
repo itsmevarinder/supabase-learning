@@ -14,9 +14,7 @@ import ContactSection from "@/components/shadn/Contact";
 import Footer from "@/components/shadn/footer";
 import ScrollFlipBackground from "@/components/shadn/ScrollFlipBackground";
 import SmoothScroll from "@/components/shadn/SmoothScroll";
-import QRCode from "qrcode";
 import { getAboutSection, getAudioSection, getAudioTracks, getDonateSection, getEvents, getEventsSection, getFaqs, getGalleryItems, getHeroBanners, getPortfolioProjects, getSiteSettings, getTestimonials, getVideoSection } from "@/lib/supabase/server";
-import { buildUpiPaymentString } from "@/lib/upi";
 
 const Page = async () => {
    const [heroBanners, portfolioProjects, donateSection, siteSettings, testimonials, faqs, aboutSection, videoSection, events, galleryItems, audioTracks, eventsSection, audioSection] = await Promise.all([
@@ -35,10 +33,6 @@ const Page = async () => {
       getAudioSection(),
    ]);
 
-   const donateQrCodeDataUrl = donateSection?.phone_number
-      ? await QRCode.toDataURL(buildUpiPaymentString(donateSection.phone_number, "Test Donation"))
-      : null;
-
    return (
       <main className="overflow-x-clip">
          <SmoothScroll />
@@ -49,7 +43,7 @@ const Page = async () => {
          <AboutSection about={aboutSection} />
          <PortfolioSection projects={portfolioProjects} />
          <GallerySection items={galleryItems} />
-         <DonateSection donate={donateSection} qrCodeDataUrl={donateQrCodeDataUrl} />
+         <DonateSection donate={donateSection} />
          <FAQSection faqs={faqs} />
          <AudioSection tracks={audioTracks} backgroundImageUrl={audioSection?.background_image_url} />
          <VideoSection video={videoSection} />

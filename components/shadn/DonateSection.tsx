@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { HeartHandshake } from "lucide-react";
+import { HeartHandshake, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -23,14 +23,14 @@ export interface DonateSectionRow {
   description: string | null;
   button_text: string;
   phone_number: string | null;
+  default_amount: number | null;
 }
 
 interface DonateSectionProps {
   donate?: DonateSectionRow | null;
-  qrCodeDataUrl?: string | null;
 }
 
-export default function DonateSection({ donate, qrCodeDataUrl }: DonateSectionProps) {
+export default function DonateSection({ donate }: DonateSectionProps) {
   const backgroundImageUrl =
     donate?.background_image_url ||
     "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=1600&q=80";
@@ -40,8 +40,46 @@ export default function DonateSection({ donate, qrCodeDataUrl }: DonateSectionPr
     donate?.description ??
     "Your generosity helps us keep building things that matter — every contribution, big or small, makes a real difference.";
   const buttonText = donate?.button_text || "Donate Now";
+  const amount = donate?.default_amount || 1;
 
   const [qrOpen, setQrOpen] = useState(false);
+  const [qrImageUrl, setQrImageUrl] = useState<string | null>(null);
+  const [qrLoading, setQrLoading] = useState(false);
+  const [qrError, setQrError] = useState<string | null>(null);
+
+  async function openDonateDialog() {
+    setQrOpen(true);
+    if (qrImageUrl || qrLoading) return;
+
+    setQrLoading(true);
+    setQrError(null);
+
+    try {
+      const response = await fetch("/api/donate/stripe-qr", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setQrError(data.error ?? "Couldn't create the QR code. Please try again.");
+        return;
+      }
+      setQrImageUrl(data.imageUrl);
+    } catch {
+      setQrError("Couldn't create the QR code. Please try again.");
+    } finally {
+      setQrLoading(false);
+    }
+  }
+
+  function resetDonateDialog(open: boolean) {
+    setQrOpen(open);
+    if (!open) {
+      setQrImageUrl(null);
+      setQrError(null);
+    }
+  }
 
   const section = useRef<HTMLElement>(null);
   const subtitleRef = useRef<HTMLSpanElement>(null);
@@ -116,7 +154,7 @@ export default function DonateSection({ donate, qrCodeDataUrl }: DonateSectionPr
           <Button
             ref={buttonRef}
             size="lg"
-            onClick={() => setQrOpen(true)}
+            onClick={openDonateDialog}
             className="mt-10 rounded-full bg-white px-10 py-6 text-base text-black hover:bg-white/90"
           >
             <HeartHandshake className="h-5 w-5" />
@@ -125,9 +163,8 @@ export default function DonateSection({ donate, qrCodeDataUrl }: DonateSectionPr
         </div>
       </div>
 
-      <Dialog open={qrOpen} onOpenChange={setQrOpen }>
+      <Dialog open={qrOpen} onOpenChange={resetDonateDialog}>
         <DialogContent className="w-[calc(100%-30px)] max-w-4xl gap-0 overflow-hidden p-0">
-  
           <DialogHeader className="sr-only">
             <DialogTitle>Scan to Donate</DialogTitle>
             <DialogDescription>
@@ -161,13 +198,18 @@ export default function DonateSection({ donate, qrCodeDataUrl }: DonateSectionPr
               <div>
                 <h3 className="text-2xl font-semibold">Scan to Donate</h3>
                 <p className="mx-auto mt-2 max-w-56 text-sm text-muted-foreground">
-                  Scan this QR code with any UPI app to complete your donation.
+                  Scan this QR code with any UPI app to pay ₹{amount}.
                 </p>
               </div>
 
-              {qrCodeDataUrl ? (
-                <div className="relative h-70 w-70">
-
+              {qrLoading ? (
+                <div className="flex h-52 w-52 items-center justify-center">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : qrError ? (
+                <p className="text-sm text-destructive">{qrError}</p>
+              ) : qrImageUrl ? (
+                <div className="relative h-52 w-52">
                   <span className="absolute left-0 top-0 h-8 w-8 rounded-tl-2xl border-l-4 border-t-4 border-primary" />
                   <span className="absolute right-0 top-0 h-8 w-8 rounded-tr-2xl border-r-4 border-t-4 border-primary" />
                   <span className="absolute bottom-0 left-0 h-8 w-8 rounded-bl-2xl border-b-4 border-l-4 border-primary" />
@@ -175,17 +217,13 @@ export default function DonateSection({ donate, qrCodeDataUrl }: DonateSectionPr
 
                   <div className="absolute inset-3 overflow-hidden rounded-xl bg-white p-2 shadow-inner">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={qrCodeDataUrl} alt="Donation QR code" className="h-full w-full" />
+                    <img src={qrImageUrl} alt="Donation QR code" className="h-full w-full" />
                     <span className="qr-scan-line pointer-events-none absolute inset-x-2 h-0.5 rounded-full bg-primary/80 shadow-[0_0_10px_2px_var(--primary)]" />
                   </div>
                 </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  QR code isn&apos;t set up yet — add a phone number in the admin Donate section.
-                </p>
-              )}
+              ) : null}
 
-              <DialogClose render={<Button variant="default" className="w-full max-w-fit px-5 rounded-full">Close</Button>} />
+              <DialogClose render={<Button variant="outline" className="w-full rounded-full">Close</Button>} />
             </div>
           </div>
         </DialogContent>
