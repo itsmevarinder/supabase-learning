@@ -313,23 +313,6 @@ export default function ContactSection({ settings }: ContactSectionProps) {
                     })}
                   </div>
                 </div>
-
-                {/* Bottom Note */}
-                <div className="mt-8 rounded-2xl border border-white/20 p-5">
-                  <h4 className="font-semibold">
-                    ⚡ Quick Response Guarantee
-                  </h4>
-
-                  <p className="mt-2 text-sm leading-7 text-white/80">
-                    We usually respond to all enquiries within
-                    <span className="font-semibold text-white">
-                      {" "}
-                      24 business hours
-                    </span>
-                    . Our team is committed to providing prompt and
-                    professional assistance for every project.
-                  </p>
-                </div>
               </div>
             </div>
           </div>

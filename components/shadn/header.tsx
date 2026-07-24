@@ -37,9 +37,52 @@ interface HeaderProps {
 
 export default function Header({ showLoginButton = true }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const headerRef = useRef<HTMLElement>(null);
   const pillRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
+
+  const navLinkRefs = useRef(new Map<string, HTMLAnchorElement>());
+  const drawerLinkRefs = useRef(new Map<string, HTMLAnchorElement>());
+  
+  useEffect(() => {
+    const sectionIds = NAV_LINKS.map((link) => link.href.slice(1));
+    const sections = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-100px 0px -70% 0px", threshold: 0 }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
+  useGSAP(
+    () => {
+      if (!activeId || prefersReducedMotion()) return;
+
+      [navLinkRefs.current.get(activeId), drawerLinkRefs.current.get(activeId)]
+        .filter((el): el is HTMLAnchorElement => Boolean(el))
+        .forEach((el) => {
+          gsap.fromTo(
+            el,
+            { scale: 0.92 },
+            { scale: 1, duration: 0.4, ease: "back.out(2.5)", overwrite: true }
+          );
+        });
+    },
+    { dependencies: [activeId], scope: headerRef }
+  );
 
   useGSAP(() => {
     if (prefersReducedMotion()) return;
@@ -133,17 +176,17 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
                     </NavigationMenuTrigger>
 
                     <NavigationMenuContent>
-                      <div className="grid w-full grid-cols-2 gap-2 p-4">
+                      <div className="grid w-full grid-cols-1 gap-2">
                         {SERVICE_LINKS.map((service) => (
                           <NavigationMenuLink
                             key={service.title}
                             render={
                               <a
                                 href={service.href}
-                                className="group flex items-start gap-3 rounded-2xl p-3 transition-colors hover:bg-primary/5"
+                                className="group flex items-start gap-3 rounded-2xl px-3 py-2 transition-colors hover:bg-primary/5"
                               >
-                                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
-                                  <service.icon className="size-4.5" />
+                                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+                                  <service.icon className="size-3.5" />
                                 </span>
                                 <span>
                                   <h4 className="font-semibold">{service.title}</h4>
@@ -157,20 +200,31 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
                     </NavigationMenuContent>
                   </NavigationMenuItem>
 
-                  {NAV_LINKS.map((link) => (
-                    <NavigationMenuItem key={link.href}>
-                      <NavigationMenuLink className="rounded-full"
-                        render={
-                          <a
-                            href={link.href}
-                            className="rounded-full px-4 py-2 font-medium text-foreground/80 transition-colors hover:bg-primary/10 hover:text-primary"
-                          >
-                            {link.label}
-                          </a>
-                        }
-                      />
-                    </NavigationMenuItem>
-                  ))}
+                  {NAV_LINKS.map((link) => {
+                    const id = link.href.slice(1);
+                    const isActive = activeId === id;
+                    return (
+                      <NavigationMenuItem key={link.href}>
+                        <NavigationMenuLink className="rounded-full"
+                          render={
+                            <a
+                              ref={(el) => {
+                                if (el) navLinkRefs.current.set(id, el);
+                                else navLinkRefs.current.delete(id);
+                              }}
+                              href={link.href}
+                              aria-current={isActive ? "true" : undefined}
+                              className={`rounded-full px-4 py-2 font-medium transition-colors hover:bg-primary/10 hover:text-primary ${
+                                isActive ? "bg-primary/10 text-primary" : "text-foreground/80"
+                              }`}
+                            >
+                              {link.label}
+                            </a>
+                          }
+                        />
+                      </NavigationMenuItem>
+                    );
+                  })}
                 </NavigationMenuList>
               </NavigationMenu>
             </div>
@@ -254,16 +308,27 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
 
               <div className="my-4 border-t" />
 
-              {NAV_LINKS.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={closeDrawer}
-                  className="rounded-2xl px-3 py-3 font-medium transition-colors hover:bg-primary/10 hover:text-primary"
-                >
-                  {link.label}
-                </a>
-              ))}
+              {NAV_LINKS.map((link) => {
+                const id = link.href.slice(1);
+                const isActive = activeId === id;
+                return (
+                  <a
+                    key={link.href}
+                    ref={(el) => {
+                      if (el) drawerLinkRefs.current.set(id, el);
+                      else drawerLinkRefs.current.delete(id);
+                    }}
+                    href={link.href}
+                    onClick={closeDrawer}
+                    aria-current={isActive ? "true" : undefined}
+                    className={`rounded-2xl px-3 py-3 font-medium transition-colors hover:bg-primary/10 hover:text-primary ${
+                      isActive ? "bg-primary/10 text-primary" : ""
+                    }`}
+                  >
+                    {link.label}
+                  </a>
+                );
+              })}
             </nav>
 
             <div className="mt-auto flex flex-col gap-3 border-t pt-6">
