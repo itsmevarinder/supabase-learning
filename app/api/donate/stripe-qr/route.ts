@@ -42,6 +42,8 @@ export async function POST(request: Request) {
       },
       payment_method_options: { upi: { flow: "qr" } },
       confirm: true,
+
+      return_url: `${new URL(request.url).origin}/#donate`,
     } as Stripe.PaymentIntentCreateParams);
 
     const nextAction = paymentIntent.next_action as unknown as

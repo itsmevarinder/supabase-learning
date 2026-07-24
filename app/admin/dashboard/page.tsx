@@ -18,6 +18,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContentStatusChart } from "@/components/dashboard/content-status-chart";
+import { DonationsChart } from "@/components/dashboard/donations-chart";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { SubmissionsChart } from "@/components/dashboard/submissions-chart";
 import { createClient } from "@/lib/supabase/server";
@@ -66,6 +67,12 @@ export default async function AdminOverviewPage() {
   fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 13);
   fourteenDaysAgo.setHours(0, 0, 0, 0);
 
+  // 28 days back so the donations chart can compare this 14-day window
+  // against the previous one for a trend indicator.
+  const twentyEightDaysAgo = new Date();
+  twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 27);
+  twentyEightDaysAgo.setHours(0, 0, 0, 0);
+
   const [
     { count: totalHeroBanners },
     { count: activeHeroBanners },
@@ -86,6 +93,7 @@ export default async function AdminOverviewPage() {
     { count: totalSubmissions },
     { data: recentSubmissionDates },
     { data: latestSubmissions },
+    { data: recentDonations },
   ] = await Promise.all([
     supabase.from("hero_banners").select("*", { count: "exact", head: true }),
     supabase.from("hero_banners").select("*", { count: "exact", head: true }).eq("is_active", true),
@@ -109,7 +117,12 @@ export default async function AdminOverviewPage() {
       .from("contact_submissions")
       .select("id, full_name, email, message, created_at")
       .order("created_at", { ascending: false })
-      .limit(5),
+      .limit(2),
+    supabase
+      .from("donations")
+      .select("amount, created_at, status")
+      .eq("status", "captured")
+      .gte("created_at", twentyEightDaysAgo.toISOString()),
   ]);
 
   const dayBuckets = new Map<string, number>();
@@ -125,6 +138,29 @@ export default async function AdminOverviewPage() {
     }
   });
   const chartData = Array.from(dayBuckets, ([date, count]) => ({ date, count }));
+
+  // Donations: bucket the last 14 days for the chart, and separately sum the
+  // 14 days before that (days -27..-14) purely to compute a trend percentage.
+  const donationDayBuckets = new Map<string, number>();
+  for (let i = 0; i < 14; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - (13 - i));
+    donationDayBuckets.set(dayKey(d), 0);
+  }
+  let previousPeriodTotal = 0;
+  recentDonations?.forEach((row) => {
+    const key = row.created_at.slice(0, 10);
+    if (donationDayBuckets.has(key)) {
+      donationDayBuckets.set(key, (donationDayBuckets.get(key) ?? 0) + Number(row.amount));
+    } else {
+      previousPeriodTotal += Number(row.amount);
+    }
+  });
+  const donationsChartData = Array.from(donationDayBuckets, ([date, amount]) => ({ date, amount }));
+  const currentPeriodTotal = donationsChartData.reduce((sum, d) => sum + d.amount, 0);
+  const donationCount = recentDonations?.filter((row) => row.created_at.slice(0, 10) >= dayKey(fourteenDaysAgo)).length ?? 0;
+  const donationsTrendPercent =
+    previousPeriodTotal > 0 ? ((currentPeriodTotal - previousPeriodTotal) / previousPeriodTotal) * 100 : null;
 
   const stats = [
     {
@@ -286,7 +322,7 @@ export default async function AdminOverviewPage() {
               </div>
               <div>
                 <CardTitle className="text-lg">Recent submissions</CardTitle>
-                <CardDescription>The latest 5 messages.</CardDescription>
+                <CardDescription>The latest 2 messages.</CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -363,6 +399,31 @@ export default async function AdminOverviewPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div
+              className="flex size-9 items-center justify-center rounded-lg"
+              style={{ backgroundColor: "color-mix(in oklch, var(--chart-2) 15%, transparent)" }}
+            >
+              <Heart className="size-4.5" style={{ color: "var(--chart-2)" }} />
+            </div>
+            <div>
+              <CardTitle className="text-lg">Donations</CardTitle>
+              <CardDescription>UPI donations collected through the Donate section.</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <DonationsChart
+            data={donationsChartData}
+            totalAmount={currentPeriodTotal}
+            donationCount={donationCount}
+            trendPercent={donationsTrendPercent}
+          />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
