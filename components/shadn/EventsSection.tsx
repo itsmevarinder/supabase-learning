@@ -117,7 +117,7 @@ export default function EventsSection({ events: eventRows, backgroundImageUrl }:
       </div>
       <div className="absolute inset-0 -z-10 bg-black/65" />
 
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto md:px-6 px-4">
         <div className="mx-auto max-w-2xl text-center">
           <span
             ref={eyebrowRef}

@@ -36,7 +36,7 @@ export default function TrustedBy() {
 
   return (
     <section className="section-tint-indigo border-y py-10">
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto md:px-6 px-4">
         <p className="mb-6 text-center text-sm font-semibold uppercase tracking-widest">
           Trusted by teams at
         </p>

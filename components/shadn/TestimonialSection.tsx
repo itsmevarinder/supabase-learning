@@ -153,7 +153,7 @@ export default function TestimonialSection({ testimonials: testimonialRows }: Te
       <div className="testimonial-blur absolute -left-16 top-10 -z-10 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
       <div className="testimonial-blur absolute -right-16 bottom-0 -z-10 h-80 w-80 rounded-full bg-amber-600/15 blur-3xl" />
 
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto md:px-6 px-4">
         {/* Heading */}
         <div className="mx-auto mb-14 max-w-2xl text-center">
           <span

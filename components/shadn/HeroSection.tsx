@@ -410,7 +410,7 @@ export default function HeroSection({ banners }: HeroSectionProps) {
                 <div className="hero-blur absolute bottom-10 right-10 h-80 w-80 rounded-full bg-amber-600/15 blur-3xl" />
 
                 {/* Content */}
-                <div className="relative z-10 mx-auto max-w-4xl px-6 text-center text-white">
+                <div className="relative z-10 mx-auto max-w-4xl md:px-6 px-4 text-center text-white">
                   {/* Badge */}
                   <span
                     ref={(el) => {

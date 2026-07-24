@@ -7,7 +7,7 @@ export const donateSectionSchema = z.object({
   description: z.string().optional(),
   buttonText: z.string().min(1, "Button text is required"),
   settlementNote: z.string().optional(),
-  defaultAmount: z.number().min(1, "Enter an amount of at least 1"),
+  defaultAmount: z.number().min(50, "Stripe requires at least ₹50 for UPI payments"),
 });
 
 export type DonateSectionFormData = z.infer<typeof donateSectionSchema>;

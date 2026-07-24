@@ -202,13 +202,14 @@ export function DonateSectionForm({ donate }: DonateSectionFormProps) {
                 <FormControl>
                   <Input
                     type="number"
-                    min={1}
+                    min={50}
                     value={field.value}
                     onChange={(event) => field.onChange(event.target.valueAsNumber || 0)}
                   />
                 </FormControl>
                 <p className="text-sm text-muted-foreground">
                   The QR code is generated for this exact amount — visitors don&apos;t choose one.
+                  Stripe requires at least ₹50 for UPI payments.
                 </p>
                 <FormMessage />
               </FormItem>

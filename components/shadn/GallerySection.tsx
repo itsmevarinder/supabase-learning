@@ -326,7 +326,7 @@ export default function GallerySection({ items: itemRows }: GallerySectionProps)
       <div className="gallery-blur pointer-events-none absolute -left-24 top-0 -z-10 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
       <div className="gallery-blur pointer-events-none absolute -right-24 bottom-1/3 -z-10 h-80 w-80 rounded-full bg-amber-600/10 blur-3xl" />
 
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto md:px-6 px-4">
         <div className="mx-auto w-full text-center">
           <span
             ref={eyebrowRef}

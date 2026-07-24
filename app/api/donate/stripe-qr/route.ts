@@ -1,17 +1,17 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-// Stripe's UPI QR (payment_method_options.upi.flow: "qr") is tied to one
-// specific Payment Intent/amount — unlike Razorpay's reusable multi-use QR,
-// a fresh Payment Intent (and QR) is created for every donation attempt.
-interface UpiDisplayQrCode {
-  image_data_url: string;
+interface UpiQrCode {
+  qr_code?: {
+    image_url_png?: string;
+  };
 }
 
 export async function POST(request: Request) {
   const { amount } = await request.json();
 
-  if (typeof amount !== "number" || !Number.isFinite(amount) || amount < 1) {
+
+  if (typeof amount !== "number" || !Number.isFinite(amount) || amount < 50) {
     return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
   }
 
@@ -27,21 +27,33 @@ export async function POST(request: Request) {
       amount: Math.round(amount * 100), // rupees -> paise
       currency: "inr",
       payment_method_types: ["upi"],
-      payment_method_data: { type: "upi", billing_details: { name: "Donor" } },
+      payment_method_data: {
+        type: "upi",
+        billing_details: {
+          name: "Donor",
+          address: {
+            country: "IN",
+            line1: "NA",
+            city: "NA",
+            state: "NA",
+            postal_code: "110001",
+          },
+        },
+      },
       payment_method_options: { upi: { flow: "qr" } },
       confirm: true,
     } as Stripe.PaymentIntentCreateParams);
 
     const nextAction = paymentIntent.next_action as unknown as
-      | { upi_display_qr_code?: UpiDisplayQrCode }
+      | { upi_handle_redirect_or_display_qr_code?: UpiQrCode }
       | undefined;
-    const qrCode = nextAction?.upi_display_qr_code;
+    const imageUrl = nextAction?.upi_handle_redirect_or_display_qr_code?.qr_code?.image_url_png;
 
-    if (!qrCode?.image_data_url) {
+    if (!imageUrl) {
       return NextResponse.json({ error: "Couldn't create the QR code" }, { status: 500 });
     }
 
-    return NextResponse.json({ imageUrl: qrCode.image_data_url, paymentIntentId: paymentIntent.id });
+    return NextResponse.json({ imageUrl, paymentIntentId: paymentIntent.id });
   } catch (error) {
     console.error("Failed to create Stripe UPI payment intent:", error);
     return NextResponse.json({ error: "Couldn't create the QR code" }, { status: 500 });

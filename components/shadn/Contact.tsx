@@ -154,7 +154,7 @@ export default function ContactSection({ settings }: ContactSectionProps) {
 
   return (
     <section id="contact" className="scroll-mt-28 pb-24" ref={section}>
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto md:px-6 px-4">
         <div className="rounded-[32px] border bg-background shadow-xl">
           <div className="grid lg:grid-cols-2 self-start items-start">
             {/* Left Side - Form */}

@@ -135,7 +135,7 @@ export default function DonateSection({ donate }: DonateSectionProps) {
         </div>
         <div className="absolute inset-0 -z-10 bg-black/65" />
 
-        <div className="container relative mx-auto px-6 text-center text-white">
+        <div className="container relative mx-auto md:px-6 px-4 text-center text-white">
           <span
             ref={subtitleRef}
             className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur-sm"
@@ -223,7 +223,7 @@ export default function DonateSection({ donate }: DonateSectionProps) {
                 </div>
               ) : null}
 
-              <DialogClose render={<Button variant="outline" className="w-full rounded-full">Close</Button>} />
+              <DialogClose render={<Button variant="default" className="w-full px-6 max-w-fit rounded-full">Close</Button>} />
             </div>
           </div>
         </DialogContent>

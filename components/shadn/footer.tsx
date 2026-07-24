@@ -40,7 +40,7 @@ export default function Footer({ settings }: FooterProps) {
 
   return (
     <footer className="pb-5" ref={footer}>
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto md:px-6 px-4">
 
         {/* Main Footer */}
         <div className="rounded-[32px] border bg-background px-10 pb-5 pt-8 shadow-sm">

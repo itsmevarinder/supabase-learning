@@ -141,7 +141,7 @@ export default function AboutSection({ about }: AboutSectionProps) {
 
   return (
     <section id="about" className="scroll-mt-28 py-24" ref={section}>
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto md:px-6 px-4">
         <div className="grid items-center gap-16 lg:grid-cols-2">
           {/* Left Image */}
           <div className="relative pt-10 pl-10" ref={imageWrapperRef}>

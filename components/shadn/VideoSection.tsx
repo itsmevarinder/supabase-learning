@@ -122,7 +122,7 @@ export default function VideoSection({ video }: VideoSectionProps) {
         className="pointer-events-none absolute -right-16 bottom-0 -z-10 h-96 w-96 rounded-full bg-amber-600/10 blur-3xl"
       />
 
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto md:px-6 px-4">
         <div className="mx-auto max-w-2xl text-center">
           <span
             ref={eyebrowRef}

@@ -113,10 +113,10 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
       /> */}
 
       <header ref={headerRef} className="fixed inset-x-0 top-5 z-50">
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto md:px-6 px-4">
           <div
             ref={pillRef}
-            className="flex h-17 items-center justify-between rounded-full border bg-card/80 px-6 shadow-xl backdrop-blur-xl"
+            className="flex h-17 items-center justify-between rounded-full border bg-card/80 md:px-6 px-4 shadow-xl backdrop-blur-xl"
           >
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 text-2xl font-bold tracking-tight">

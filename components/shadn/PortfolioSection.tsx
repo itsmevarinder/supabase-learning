@@ -217,7 +217,7 @@ export default function PortfolioSection({ projects: projectRows }: PortfolioSec
 
   return (
     <section id="portfolio" className="scroll-mt-28 py-24" ref={section}>
-      <div className="container relative mx-auto px-6">
+      <div className="container relative mx-auto md:px-6 px-4">
         {/* Decorative Blur */}
         <div className="portfolio-blur absolute -left-16 top-0 -z-10 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
         <div className="portfolio-blur absolute -right-16 bottom-0 -z-10 h-80 w-80 rounded-full bg-amber-600/15 blur-3xl" />

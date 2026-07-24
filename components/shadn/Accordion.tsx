@@ -125,7 +125,7 @@ export default function FAQSection({ faqs: faqRows }: FAQSectionProps) {
       <div className="faq-blur absolute -left-20 top-10 -z-10 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
       <div className="faq-blur absolute -right-20 bottom-0 -z-10 h-80 w-80 rounded-full bg-amber-600/15 blur-3xl" />
 
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto md:px-6 px-4">
         <div className="grid items-center gap-16 lg:grid-cols-2">
           {/* Left Side */}
           <div>

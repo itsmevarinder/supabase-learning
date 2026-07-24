@@ -176,7 +176,7 @@ export default function AudioSection({ tracks: trackRows, backgroundImageUrl }: 
       </div>
       <div className="absolute inset-0 -z-10 bg-black/65" />
 
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto md:px-6 px-4">
         <div className="grid items-center gap-16 lg:grid-cols-2">
           {/* Left — copy */}
           <div>
