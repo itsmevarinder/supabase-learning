@@ -261,7 +261,7 @@ export default function ContactSection({ settings }: ContactSectionProps) {
                 </p>
 
                 {/* Process */}
-                <div className="mt-10 space-y-6">
+                <div className="mt-10 md:space-y-6 space-y-5">
                   {processSteps.map((step, index) => (
                     <div
                       key={step.number}

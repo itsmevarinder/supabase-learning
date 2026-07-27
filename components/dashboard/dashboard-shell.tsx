@@ -294,7 +294,7 @@ export function DashboardShell({
       </AlertDialog>
 
       <SidebarInset>
-        <header className="flex h-14 shrink-0 overflow-hidden bg-card rounded-tl-md rounded-tr-md items-center relative gap-4 border-b border-border px-4">
+        <header className="sticky top-0 z-30 flex h-14 shrink-0 overflow-hidden bg-card rounded-tl-md rounded-tr-md items-center gap-4 border-b border-border px-4">
           <span className="pointer-events-none absolute -right-10 -top-16 h-56 w-56 rounded-full bg-primary/10 blur-3xl" />
           <span className="pointer-events-none absolute -bottom-20 left-1/3 h-56 w-56 rounded-full bg-[color-mix(in_oklch,var(--chart-2),transparent_80%)] blur-3xl" />
           <SidebarTrigger />
@@ -312,7 +312,7 @@ export function DashboardShell({
             </div>
           )}
         </header>
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 md:p-6 py-5 px-4">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

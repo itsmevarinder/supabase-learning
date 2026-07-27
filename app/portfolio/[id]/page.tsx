@@ -99,7 +99,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
             </div>
 
             {/* Sidebar — project facts + a lead-gen CTA card, sticky on desktop */}
-            <aside className="space-y-6 lg:sticky lg:top-32">
+            <aside className="md:space-y-6 space-y-5 lg:sticky lg:top-32">
               <Card className="overflow-hidden rounded-3xl py-0">
                 <CardContent className="space-y-5 p-6">
                   <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">

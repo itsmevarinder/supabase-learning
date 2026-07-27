@@ -12,7 +12,7 @@ export default async function AdminContactSubmissionsPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="space-y-6">
+    <div className="md:space-y-6 space-y-5">
       <PageHeader>
         <div>
           <h1 className="text-2xl font-bold">Contact Submissions</h1>

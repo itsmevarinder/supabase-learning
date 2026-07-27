@@ -24,7 +24,7 @@ export default async function AdminTestimonialsPage() {
     .order("sort_order", { ascending: true });
 
   return (
-    <div className="space-y-8">
+    <div className="md:space-y-8 space-y-5">
       <PageHeader>
         <div className="flex items-center flex-wrap gap-4 justify-between">
           <div>

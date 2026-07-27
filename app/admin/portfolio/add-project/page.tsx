@@ -8,7 +8,7 @@ import { PortfolioProjectForm } from "@/components/dashboard/portfolio-project-f
 
 export default function AddPortfolioProjectPage() {
   return (
-    <div className="space-y-8">
+    <div className="md:space-y-8 space-y-5">
       <PageHeader>
         <div className="flex items-center flex-wrap gap-4 justify-between">
           <div>

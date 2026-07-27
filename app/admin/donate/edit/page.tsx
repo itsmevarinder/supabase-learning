@@ -11,7 +11,7 @@ export default async function EditDonateSectionPage() {
   const donate = await getDonateSection();
 
   return (
-    <div className="space-y-6">
+    <div className="md:space-y-6 space-y-5">
       <PageHeader>
         <div className="flex items-center flex-wrap gap-4 justify-between">
           <div>

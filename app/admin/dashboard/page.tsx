@@ -231,7 +231,7 @@ export default async function AdminOverviewPage() {
     .filter((item) => item.inactive > 0);
 
   return (
-    <div className="space-y-6">
+    <div className="md:space-y-6 space-y-5">
       <PageHeader>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>

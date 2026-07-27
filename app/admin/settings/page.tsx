@@ -62,7 +62,7 @@ export default async function AdminSettingsPage() {
   const siteSettings = await getSiteSettings();
 
   return (
-    <div className="space-y-6">
+    <div className="md:space-y-6 space-y-5">
       <PageHeader>
         <h1 className="text-2xl font-bold">Settings</h1>
         <p className="text-muted-foreground">Manage your own account.</p>

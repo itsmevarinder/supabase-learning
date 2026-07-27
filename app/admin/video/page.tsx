@@ -7,7 +7,7 @@ export default async function AdminVideoPage() {
   const video = await getVideoSection();
 
   return (
-    <div className="space-y-8">
+    <div className="md:space-y-8 space-y-5">
       <PageHeader>
         <div>
           <h1 className="text-2xl font-bold">Video Section</h1>
