@@ -164,19 +164,6 @@ export default async function AdminOverviewPage() {
       icon: CircleHelp,
       href: "/admin/faqs",
     },
-    {
-      label: "Donate QR",
-      value: donateSection?.phone_number ? "Live" : "Setup",
-      sub: donateSection?.phone_number ? "QR ready" : "Add a phone number",
-      icon: Heart,
-      href: "/admin/donate",
-    },
-    {
-      label: "Contact submissions",
-      value: totalSubmissions ?? 0,
-      icon: Mail,
-      href: "/admin/contact-submissions",
-    },
   ];
 
   const contentSections = [
@@ -221,7 +208,7 @@ export default async function AdminOverviewPage() {
         </div>
       </PageHeader>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {stats.map((stat, index) => {
           const color = CHART_COLORS[index % CHART_COLORS.length];
           return (

@@ -50,6 +50,7 @@ export default async function AdminNewsletterHistoryPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Subject</TableHead>
+                  <TableHead>Message</TableHead>
                   <TableHead>Sent</TableHead>
                   <TableHead>Date</TableHead>
                 </TableRow>
@@ -57,8 +58,11 @@ export default async function AdminNewsletterHistoryPage() {
               <TableBody>
                 {sends.map((send) => (
                   <TableRow key={send.id}>
-                    <TableCell className="font-medium">{send.subject}</TableCell>
-                    <TableCell>
+                    <TableCell className="font-medium align-top">{send.subject}</TableCell>
+                    <TableCell className="max-w-sm align-top whitespace-pre-wrap text-muted-foreground">
+                      {send.message ?? "—"}
+                    </TableCell>
+                    <TableCell className="align-top">
                       <span className="mr-2">
                         {send.sent_count}/{send.total_count}
                       </span>
@@ -66,7 +70,7 @@ export default async function AdminNewsletterHistoryPage() {
                         <Badge variant="secondary">{send.failed_count} failed</Badge>
                       )}
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell className="align-top text-muted-foreground">
                       {new Date(send.created_at).toLocaleString()}
                     </TableCell>
                   </TableRow>

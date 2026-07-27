@@ -100,6 +100,7 @@ export async function POST(request: Request) {
 
   await supabase.from("newsletter_sends").insert({
     subject,
+    message,
     sent_count: sent,
     failed_count: failed,
     total_count: subscribers.length,
