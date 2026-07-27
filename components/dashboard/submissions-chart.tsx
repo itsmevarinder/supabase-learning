@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 interface DayCount {
-  date: string; // "YYYY-MM-DD"
+  date: string;
   count: number;
 }
 
@@ -15,9 +15,6 @@ const CHART_HEIGHT = 160;
 const BAR_MAX_WIDTH = 20;
 
 function formatDayLabel(dateStr: string) {
-  // Fixed locale, not the runtime default — the server (Node) and the
-  // browser can report different default locales, which formats the same
-  // date differently ("Jul 9" vs "9 Jul") and breaks SSR hydration.
   const date = new Date(`${dateStr}T00:00:00`);
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }

@@ -20,10 +20,6 @@ export default function TrustedBy() {
   useGSAP(
     () => {
       if (prefersReducedMotion() || !trackRef.current) return;
-
-      // Track holds the brand list duplicated exactly once, so shifting it
-      // by 50% of its own width brings the second copy into the first
-      // copy's starting position — a seamless, continuously-playing loop.
       gsap.to(trackRef.current, {
         xPercent: -50,
         duration: 25,

@@ -8,9 +8,6 @@ import { ProfileForm } from "@/components/dashboard/profile-form";
 import { SiteSettingsForm } from "@/components/dashboard/site-settings-form";
 import { createClient, getSiteSettings } from "@/lib/supabase/server";
 
-// Same treatment as the dashboard's stat tiles — a colored top border plus a
-// soft corner glow in that same color, so the settings cards read as part of
-// one consistent admin design language instead of plain white boxes.
 function PolishedCard({ color, className, children }: { color: string; className?: string; children: ReactNode }) {
   return (
     <Card className={`relative overflow-hidden ${className ?? ""}`} style={{ borderTop: `3px solid ${color}` }}>

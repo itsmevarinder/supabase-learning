@@ -58,7 +58,6 @@ export default function FAQSection({ faqs: faqRows }: FAQSectionProps) {
 
   useGSAP(
     () => {
-      // --- Left column entrance, replays every visit ---
       gsap
         .timeline({
           scrollTrigger: {
@@ -80,11 +79,6 @@ export default function FAQSection({ faqs: faqRows }: FAQSectionProps) {
           "-=0.25"
         );
 
-      // The button is never scroll-gated — it's visible immediately and
-      // just glows continuously, so it can never end up stuck hidden.
-
-      // --- Per-item reveal for the FAQ accordion, each item watching its
-      // OWN scroll position. ---
       accordionItemRefs.current.forEach((item, i) => {
         scrollReveal(item, {
           trigger: item,
@@ -99,7 +93,6 @@ export default function FAQSection({ faqs: faqRows }: FAQSectionProps) {
 
       if (prefersReducedMotion()) return;
 
-      // --- Continuous ambient motion ---
       const blurCircles = section.current?.querySelectorAll<HTMLElement>(".faq-blur");
       if (blurCircles?.length) {
         gsap.to(blurCircles, {
@@ -169,9 +162,11 @@ export default function FAQSection({ faqs: faqRows }: FAQSectionProps) {
 
             <div className="relative mt-10 inline-block">
               <span className="cta-glow pointer-events-none absolute left-1/2 top-1/2 -z-10 h-16 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/30 opacity-30 blur-2xl" />
-              <Button className="rounded-full px-8 py-5">
-                Contact Support
-              </Button>
+              <a href="#contact">
+                <Button className="rounded-full px-8 py-5">
+                  Contact Support
+                </Button>
+              </a>
             </div>
           </div>
 

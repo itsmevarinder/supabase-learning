@@ -26,8 +26,6 @@ import { gsap, useGSAP, EASE, prefersReducedMotion } from "@/lib/gsap/config";
 
 const AUTOPLAY_DELAY_MS = 4000;
 
-// Shape of a row from the `testimonials` Supabase table — the admin panel
-// manages these; this component just renders whatever's active.
 export interface TestimonialRow {
   id: string;
   name: string;
@@ -80,9 +78,6 @@ export default function TestimonialSection({ testimonials: testimonialRows }: Te
     () => {
       if (!api) return;
 
-      // --- Progress dots: the active dot's fill bar animates in step with
-      // the autoplay timer, resetting and restarting on every slide change
-      // (including manual prev/next/dot clicks, since those fire "select" too). ---
       const startDotFill = (index: number) => {
         dotFillTweenRef.current?.kill();
         gsap.set(dotFillRefs.current, { scaleX: 0 });
@@ -103,7 +98,6 @@ export default function TestimonialSection({ testimonials: testimonialRows }: Te
       handleDotSelect(api);
       api.on("select", handleDotSelect);
 
-      // --- One-time heading entrance, played once it scrolls into view ---
       gsap
         .timeline({
           scrollTrigger: {
@@ -127,7 +121,6 @@ export default function TestimonialSection({ testimonials: testimonialRows }: Te
         };
       }
 
-      // --- Continuous ambient motion ---
       const blurCircles = section.current?.querySelectorAll<HTMLElement>(".testimonial-blur");
       if (blurCircles?.length) {
         gsap.to(blurCircles, {

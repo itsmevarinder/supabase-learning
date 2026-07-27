@@ -68,8 +68,6 @@ export function GalleryItemForm({ item }: GalleryItemFormProps) {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [videoUploading, setVideoUploading] = useState(false);
   const [videoUploadError, setVideoUploadError] = useState<string | null>(null);
-  // Which video input is showing — a UI-only toggle, not persisted. Existing
-  // rows infer it from whether their saved video_url is a YouTube link.
   const [videoSource, setVideoSource] = useState<"youtube" | "upload">(() =>
     item?.video_url && !getYouTubeId(item.video_url) ? "upload" : "youtube"
   );

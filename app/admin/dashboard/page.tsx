@@ -36,8 +36,6 @@ function initialsFor(name: string) {
     .join("");
 }
 
-// Cycles through the site's own --chart-1..5 tokens (navy/gold/teal/wine/slate)
-// so each stat tile gets a distinct, on-brand accent instead of one flat color.
 const CHART_COLORS = [
   "var(--chart-1)",
   "var(--chart-2)",
@@ -67,8 +65,6 @@ export default async function AdminOverviewPage() {
   fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 13);
   fourteenDaysAgo.setHours(0, 0, 0, 0);
 
-  // 28 days back so the donations chart can compare this 14-day window
-  // against the previous one for a trend indicator.
   const twentyEightDaysAgo = new Date();
   twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 27);
   twentyEightDaysAgo.setHours(0, 0, 0, 0);
@@ -139,8 +135,6 @@ export default async function AdminOverviewPage() {
   });
   const chartData = Array.from(dayBuckets, ([date, count]) => ({ date, count }));
 
-  // Donations: bucket the last 14 days for the chart, and separately sum the
-  // 14 days before that (days -27..-14) purely to compute a trend percentage.
   const donationDayBuckets = new Map<string, number>();
   for (let i = 0; i < 14; i++) {
     const d = new Date();
@@ -213,10 +207,6 @@ export default async function AdminOverviewPage() {
     { label: "FAQs", total: totalFaqs ?? 0, active: activeFaqs ?? 0, href: "/admin/faqs" },
   ];
 
-  // The 4 media/events sections, shown in their own chart below the main
-  // stat tiles rather than as 4 more tiles. Video is a singleton (just an
-  // is_active flag, not a list) so it's represented as a 1-item total that's
-  // either fully "active" or fully "hidden" — same bar shape, still reads fine.
   const mediaSections = [
     { label: "Events", total: totalEvents ?? 0, active: activeEvents ?? 0, href: "/admin/events" },
     { label: "Gallery", total: totalGalleryItems ?? 0, active: activeGalleryItems ?? 0, href: "/admin/gallery" },
@@ -224,8 +214,6 @@ export default async function AdminOverviewPage() {
     { label: "Video", total: 1, active: videoSection?.is_active ? 1 : 0, href: "/admin/video" },
   ];
 
-  // Content that exists but is toggled off — easy to lose track of once a
-  // section has more than a couple of rows.
   const attentionItems = [...contentSections, ...mediaSections]
     .map((item) => ({ ...item, inactive: item.total - item.active }))
     .filter((item) => item.inactive > 0);

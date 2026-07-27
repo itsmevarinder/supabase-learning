@@ -45,8 +45,6 @@ export function ProfileForm({ defaultFullName }: ProfileFormProps) {
       return;
     }
 
-    // Keep auth user_metadata (used for display name elsewhere) and the
-    // profiles table (the actual source of truth) in sync.
     const [authResult, profileResult] = await Promise.all([
       supabase.auth.updateUser({ data: { full_name: values.fullName } }),
       supabase.from("profiles").update({ full_name: values.fullName }).eq("id", user.id),

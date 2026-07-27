@@ -55,7 +55,6 @@ export default function VideoSection({ video }: VideoSectionProps) {
 
       scrollReveal(tileRef.current, { trigger: tileRef.current, direction: "up", distance: 50, scale: 0.96, start: "top 85%" });
 
-      // Floating "Watch Video" badge pops in right after the tile settles.
       gsap.from(badgeRef.current, {
         scale: 0,
         opacity: 0,
@@ -71,10 +70,8 @@ export default function VideoSection({ video }: VideoSectionProps) {
 
       if (prefersReducedMotion()) return;
 
-      // Gentle continuous float on the badge, matching the About section's badge motion.
       gsap.to(badgeRef.current, { y: -8, duration: 2.4, ease: "linear", yoyo: true, repeat: -1 });
 
-      // Ambient drift on the decorative background blurs.
       if (blurRefs.current.length) {
         gsap.to(blurRefs.current, {
           scale: 1.2,
@@ -86,8 +83,6 @@ export default function VideoSection({ video }: VideoSectionProps) {
         });
       }
 
-      // Radar-style ping rings around the play button, staggered so a new
-      // ring launches while the previous one is still expanding.
       ringRefs.current.forEach((ring, i) => {
         if (!ring) return;
         gsap.fromTo(

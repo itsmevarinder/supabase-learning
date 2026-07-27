@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     const stripe = new Stripe(secretKey);
 
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // rupees -> paise
+      amount: Math.round(amount * 100), 
       currency: "inr",
       payment_method_types: ["upi"],
       payment_method_data: {

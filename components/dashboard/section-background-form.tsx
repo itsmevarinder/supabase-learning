@@ -18,7 +18,6 @@ function slugify(value: string) {
 interface SectionBackgroundFormProps {
   title: string;
   description: string;
-  // Singleton table (id=1) holding a single `background_image_url` column.
   table: string;
   bucket: string;
   imageUrl: string | null;

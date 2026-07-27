@@ -12,8 +12,6 @@ export function ShareProjectButton() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Clipboard access can be blocked (permissions, insecure context, etc.)
-      // — failing silently is fine, the button just won't confirm the copy.
     }
   }
 

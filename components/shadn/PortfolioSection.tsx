@@ -13,8 +13,6 @@ import { gsap, useGSAP, ScrollTrigger, EASE, prefersReducedMotion, isFinePointer
 import { scrollReveal } from "@/lib/gsap/reveal";
 import { attachMagneticHover } from "@/lib/gsap/magnetic";
 
-// Shape of a row from the `portfolio_projects` Supabase table — the admin
-// panel manages these; this component just renders whatever's active.
 export interface PortfolioProjectRow {
   id: string;
   title: string;
@@ -80,8 +78,6 @@ export default function PortfolioSection({ projects: projectRows }: PortfolioSec
   useGSAP(
     () => {
       const reduced = prefersReducedMotion();
-
-      // --- Heading entrance, replays every visit ---
       gsap
         .timeline({
           scrollTrigger: {
@@ -98,8 +94,6 @@ export default function PortfolioSection({ projects: projectRows }: PortfolioSec
         )
         .from(subRef.current, { y: 20, opacity: 0, duration: 0.5, ease: EASE.soft }, "-=0.4");
 
-      // --- Per-card scroll reveal — each card watches its OWN position, so
-      // one bad ScrollTrigger calculation can never hide the whole grid. ---
       const cards = cardRefs.current.filter((el): el is HTMLDivElement => Boolean(el));
       cards.forEach((card, i) => {
         scrollReveal(card, {
@@ -133,7 +127,6 @@ export default function PortfolioSection({ projects: projectRows }: PortfolioSec
 
       if (reduced) return;
 
-      // --- Continuous ambient glow behind the grid and the CTA button ---
       const blurCircles = section.current?.querySelectorAll<HTMLElement>(".portfolio-blur");
       if (blurCircles?.length) {
         gsap.to(blurCircles, {

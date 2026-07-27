@@ -6,10 +6,6 @@ import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap/config";
 
 gsap.registerPlugin(MorphSVGPlugin);
 
-// Both closed, filled shapes on the same 24x24 grid — morphing between two
-// filled polygons (rather than an open checkmark stroke) keeps the
-// in-between frames clean instead of looking like a messy self-intersecting
-// tangle, which is what happens morphing an open path into a closed one.
 const CHECK_PATH =
   "M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z";
 const STAR_PATH =
@@ -17,7 +13,6 @@ const STAR_PATH =
 
 interface MorphCheckIconProps {
   className?: string;
-  /** Stagger the loop start so a row of these icons doesn't morph in unison. */
   delay?: number;
 }
 

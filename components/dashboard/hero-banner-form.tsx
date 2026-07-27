@@ -78,8 +78,6 @@ export function HeroBannerForm({ banner }: HeroBannerFormProps) {
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  // Editing an existing banner shouldn't silently rewrite its slug just
-  // because the title changed — only auto-derive the slug in create mode.
   const [slugTouched, setSlugTouched] = useState(isEditing);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);

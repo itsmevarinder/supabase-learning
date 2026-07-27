@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Minus, TrendingDown, TrendingUp } from "lucide-react";
 
 interface DayAmount {
-  date: string; // "YYYY-MM-DD"
+  date: string;
   amount: number;
 }
 
@@ -12,16 +12,13 @@ interface DonationsChartProps {
   data: DayAmount[];
   totalAmount: number;
   donationCount: number;
-  trendPercent: number | null; // null when there's no previous-period data to compare against
+  trendPercent: number | null; 
 }
 
 const CHART_HEIGHT = 160;
 const BAR_MAX_WIDTH = 20;
 
 function formatDayLabel(dateStr: string) {
-  // Fixed locale, not the runtime default — the server (Node) and the
-  // browser can report different default locales, which formats the same
-  // date differently ("Jul 9" vs "9 Jul") and breaks SSR hydration.
   const date = new Date(`${dateStr}T00:00:00`);
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
@@ -30,8 +27,6 @@ function formatAmount(amount: number) {
   return `₹${amount.toLocaleString("en-IN")}`;
 }
 
-// Smooth line through the points via quadratic curves to each midpoint —
-// avoids sharp elbows without needing a full Catmull-Rom spline.
 function smoothPath(points: { x: number; y: number }[]) {
   if (points.length === 0) return "";
   if (points.length === 1) return `M ${points[0].x} ${points[0].y}`;

@@ -73,10 +73,6 @@ function mapGalleryRow(row: GalleryItemRow): GalleryItem | null {
   };
 }
 
-// Uploaded video tiles autoplay muted as a live preview, but every one
-// decoding at once is expensive — especially on mobile Safari, which has real
-// limits on concurrent video decode. Only the tile actually on-screen plays;
-// the rest stay paused until scrolled into view.
 function GalleryVideoTile({ src, className }: { src: string; className?: string }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -109,11 +105,6 @@ interface GalleryTileProps {
   ref?: Ref<HTMLButtonElement>;
 }
 
-// One self-contained tile: its own scroll-triggered entrance (per-item
-// trigger, never a shared one — see the note in the main entrance timeline
-// below for why), plus a cursor-driven 3D tilt + spotlight glare on hover,
-// and — for videos only — a continuous soft pulse ring so they read as
-// "alive" even before you touch them.
 function GalleryTile({ item, index, color, onOpen, ref }: GalleryTileProps) {
   const tileRef = useRef<HTMLButtonElement | null>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
@@ -207,7 +198,6 @@ function GalleryTile({ item, index, color, onOpen, ref }: GalleryTileProps) {
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : item.videoFileUrl ? (
-            // Uploaded video, no auto-derivable thumbnail — preview it inline instead.
             <GalleryVideoTile
               src={item.videoFileUrl}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -311,7 +301,6 @@ export default function GallerySection({ items: itemRows, viewAllHref }: Gallery
 
       if (prefersReducedMotion()) return;
 
-      // Continuous ambient drift on the decorative backdrop blurs.
       const blurCircles = section.current.querySelectorAll<HTMLElement>(".gallery-blur");
       if (blurCircles.length) {
         gsap.to(blurCircles, {
@@ -326,12 +315,6 @@ export default function GallerySection({ items: itemRows, viewAllHref }: Gallery
     },
     { scope: section }
   );
-
-  // Per-tile entrance and hover animations live inside GalleryTile itself —
-  // each watches its OWN scroll position (not one shared trigger for the
-  // whole, possibly multi-row section). A single tall shared trigger
-  // governing a stagger across spatially-separated tiles is what previously
-  // caused tiles to get stuck reversed/hidden even while on-screen.
 
   const activeItem = activeIndex !== null ? items[activeIndex] : null;
 

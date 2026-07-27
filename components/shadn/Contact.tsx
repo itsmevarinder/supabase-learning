@@ -106,7 +106,6 @@ export default function ContactSection({ settings }: ContactSectionProps) {
 
   useGSAP(
     () => {
-      // --- Heading entrance, replays every visit ---
       gsap
         .timeline({
           scrollTrigger: {
@@ -123,15 +122,12 @@ export default function ContactSection({ settings }: ContactSectionProps) {
         )
         .from(paragraphRef.current, { y: 20, opacity: 0, duration: 0.5, ease: EASE.soft }, "-=0.4");
 
-      // --- Per-step reveal for the process timeline, each step watching
-      // its OWN scroll position. ---
       stepRefs.current.forEach((step, i) => {
         scrollReveal(step, { trigger: step, direction: "right", distance: 30, rotation: 3, duration: 0.6, delay: i * 0.1, start: "top 90%" });
       });
 
       if (prefersReducedMotion()) return;
 
-      // --- Continuous ambient motion ---
       const blurCircles = section.current?.querySelectorAll<HTMLElement>(".contact-blur");
       if (blurCircles?.length) {
         gsap.to(blurCircles, {

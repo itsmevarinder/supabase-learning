@@ -30,8 +30,6 @@ interface AudioSectionProps {
   backgroundImageUrl?: string | null;
 }
 
-// Cycles through the site's own --chart-1..5 tokens (navy/gold/teal/wine/slate)
-// so each track gets a distinct, on-brand accent instead of one flat color.
 const ACCENT_COLORS = [
   "var(--chart-1)",
   "var(--chart-2)",
@@ -111,8 +109,6 @@ export default function AudioSection({ tracks: trackRows, backgroundImageUrl }: 
     { scope: section }
   );
 
-  // "Now playing" equalizer — three bars bouncing out of phase, only while
-  // something is actually playing. Skips entirely for reduced motion.
   useEffect(() => {
     if (prefersReducedMotion()) return;
     if (!playingId) return;

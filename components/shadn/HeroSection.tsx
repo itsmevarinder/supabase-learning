@@ -53,8 +53,6 @@ interface HeroStat {
   label: string;
 }
 
-// Shape of a row from the `hero_banners` Supabase table — the admin panel
-// manages these; this component just renders whatever's active.
 export interface HeroBannerRow {
   id: string;
   slug: string;
@@ -91,8 +89,6 @@ const DEFAULT_STATS: HeroStat[] = [
   { target: 98, suffix: "%", label: "Client Satisfaction" },
 ];
 
-// Used when no active rows exist yet in `hero_banners` (fresh installs,
-// or the table not seeded) — the section still renders something real.
 const FALLBACK_SLIDES: HeroSlide[] = [
   {
     image:
@@ -172,8 +168,6 @@ export default function HeroSection({ banners }: HeroSectionProps) {
   const subtitleRefs = useRef<(HTMLParagraphElement | null)[]>([]);
   const buttonsRefs = useRef<(HTMLDivElement | null)[]>([]);
   const statsRefs = useRef<(HTMLDivElement | null)[]>([]);
-  // Nested per-slide — [slideIndex][statIndex] — since each banner can
-  // carry its own number of stats, unlike the old fixed-length heroStats.
   const statNumberRefs = useRef<(HTMLHeadingElement | null)[][]>([]);
   const rippleLayerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const magneticButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -218,8 +212,6 @@ export default function HeroSection({ banners }: HeroSectionProps) {
         const el = statsRefs.current[index];
         return el ? Array.from(el.children) : [];
       };
-      // Split each slide's title into characters once, so the timeline can
-      // flip them in individually (3D rotation) on every slide change.
       titleSplitsRef.current.forEach((split) => split.revert());
       titleSplitsRef.current = titleRefs.current.map((el) => {
         gsap.set(el, { perspective: 400 });
@@ -238,10 +230,6 @@ export default function HeroSection({ banners }: HeroSectionProps) {
         });
       };
 
-      // Counter animations are kicked off from a deferred timeline callback
-      // (it fires later, when the playhead reaches it — not synchronously
-      // during this effect), so it needs contextSafe() to be tracked and
-      // cleaned up by gsap's context like everything else here.
       const playCounters = contextSafe!((index: number) => {
         slides[index].stats.forEach((stat, statIndex) => {
           const el = statNumberRefs.current[index]?.[statIndex];
@@ -265,10 +253,6 @@ export default function HeroSection({ banners }: HeroSectionProps) {
           return tl;
         }
 
-        // Cinematic entrance: badge pops, title chars flip in with a 3D
-        // rotation, subtitle and CTAs follow, stats stagger in and count up
-        // — each beat overlapping the previous slightly so it reads as one
-        // continuous motion rather than a checklist of separate animations.
         tl.to(badgeRefs.current[index], { y: 0, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }, 0.1)
           .to(
             titleChars(index),
@@ -310,8 +294,6 @@ export default function HeroSection({ banners }: HeroSectionProps) {
       api.on("select", handleSelect);
 
       if (!reduced) {
-        // Gentle, continuous ambient motion on the decorative blur circles —
-        // independent of slide transitions so it never resets/pops.
         const blurCircles = container.current?.querySelectorAll<HTMLElement>(".hero-blur");
         if (blurCircles?.length) {
           gsap.to(blurCircles, {
@@ -324,8 +306,6 @@ export default function HeroSection({ banners }: HeroSectionProps) {
           });
         }
 
-        // Continuous Ken Burns loop on every slide's background — always
-        // playing, never tied to slide selection, so it never resets/pops.
         if (bgRefs.current.length) {
           gsap.to(bgRefs.current, {
             scale: 1.12,
@@ -337,10 +317,6 @@ export default function HeroSection({ banners }: HeroSectionProps) {
             stagger: { each: 2, from: "start" },
           });
 
-          // Cinematic exit parallax: the backgrounds drift as you scroll
-          // from the hero into the rest of the page — a different
-          // property (y) from the Ken Burns scale/xPercent above, so the
-          // two motions layer instead of fighting over the same transform.
           scrollParallax(bgRefs.current, {
             trigger: container.current,
             distance: 120,
@@ -349,7 +325,6 @@ export default function HeroSection({ banners }: HeroSectionProps) {
           });
         }
 
-        // Magnetic hover on every CTA — one gsap.quickTo pair per button.
         const detachMagnetic = magneticButtonRefs.current
           .filter((button): button is HTMLButtonElement => Boolean(button))
           .map((button) => attachMagneticHover(button, { strength: 0.35 }));

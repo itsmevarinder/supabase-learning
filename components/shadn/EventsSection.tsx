@@ -33,8 +33,6 @@ interface Event {
   linkUrl: string | null;
 }
 
-// Cycles through the site's own --chart-1..5 tokens (navy/gold/teal/wine/slate)
-// so each row gets a distinct, on-brand accent instead of one flat color.
 const ACCENT_COLORS = [
   "var(--chart-1)",
   "var(--chart-2)",
@@ -150,7 +148,7 @@ export default function EventsSection({ events: eventRows, backgroundImageUrl }:
             No upcoming events right now — check back soon.
           </p>
         ) : (
-          <div className="mx-auto mt-16 max-w-5xl rounded-3xl bg-black/20 p-8 backdrop-blur-md">
+          <div className="mx-auto mt-16 max-w-5xl rounded-3xl bg-black/20 p-5 backdrop-blur-md sm:p-8">
             {pagedEvents.map((event, localIndex) => {
               const index = page * EVENTS_PER_PAGE + localIndex;
               const color = ACCENT_COLORS[index % ACCENT_COLORS.length];
@@ -160,14 +158,14 @@ export default function EventsSection({ events: eventRows, backgroundImageUrl }:
                   ref={(el) => {
                     rowRefs.current[index] = el;
                   }}
-                  className="group flex gap-6 border-b border-white/15 py-7 first:pt-0 last:border-0 last:pb-0"
+                  className="group flex gap-4 border-b border-white/15 py-5 first:pt-0 last:border-0 last:pb-0 sm:gap-6 sm:py-7"
                 >
                   {/* Date */}
-                  <div className="w-16 flex-col flex justify-center shrink-0 text-center">
-                    <div className="text-3xl font-bold leading-none" style={{ color }}>
+                  <div className="flex w-12 shrink-0 flex-col justify-center text-center sm:w-16">
+                    <div className="text-2xl font-bold leading-none sm:text-3xl" style={{ color }}>
                       {event.day}
                     </div>
-                    <div className="mt-1.5 text-xs font-semibold tracking-wide text-white/60">
+                    <div className="mt-1 text-[10px] font-semibold tracking-wide text-white/60 sm:mt-1.5 sm:text-xs">
                       {event.month}
                     </div>
                   </div>
@@ -177,10 +175,12 @@ export default function EventsSection({ events: eventRows, backgroundImageUrl }:
 
                   {/* Details */}
                   <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
+                    <div className="flex items-start justify-between gap-3 sm:flex-wrap sm:gap-x-6 sm:gap-y-3">
                       <div className="min-w-0">
-                        <h3 className="text-lg font-semibold text-white transition-colors">{event.title}</h3>
-                        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/70">
+                        <h3 className="text-base font-semibold text-white transition-colors sm:text-lg">
+                          {event.title}
+                        </h3>
+                        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-white/70 sm:text-sm">
                           <span>{event.weekday}</span>
                           {event.time && (
                             <span className="flex items-center gap-1">
@@ -202,17 +202,19 @@ export default function EventsSection({ events: eventRows, backgroundImageUrl }:
                         <img
                           src={event.image}
                           alt=""
-                          className="hidden size-12 shrink-0 rounded-lg object-cover sm:block"
+                          className="size-10 shrink-0 rounded-lg object-cover sm:size-12"
                         />
                       ) : (
-                        <div className="hidden size-12 shrink-0 items-center justify-center rounded-lg bg-white/10 sm:flex">
-                          <Calendar className="size-6" style={{ color }} />
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-white/10 sm:size-12">
+                          <Calendar className="size-5 sm:size-6" style={{ color }} />
                         </div>
                       )}
                     </div>
 
-                    <div className="mt-2 flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-                      <p className="max-w-xl leading-7 text-white/70">{event.description}</p>
+                    <div className="mt-2 flex flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:gap-x-6 sm:gap-y-2">
+                      <p className="text-sm leading-6 text-white/70 sm:max-w-xl sm:text-base sm:leading-7">
+                        {event.description}
+                      </p>
 
                       {event.linkUrl && (
                         <a
