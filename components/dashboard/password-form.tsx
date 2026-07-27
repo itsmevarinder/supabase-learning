@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,28 +18,21 @@ import { createClient } from "@/lib/supabase/client";
 import { passwordSchema, type PasswordFormData } from "@/schemas/password-schema";
 
 export function PasswordForm() {
-  const [status, setStatus] = useState<"idle" | "saved" | "error">("idle");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
   const form = useForm<PasswordFormData>({
     resolver: zodResolver(passwordSchema),
     defaultValues: { password: "", confirmPassword: "" },
   });
 
   async function onSubmit(values: PasswordFormData) {
-    setStatus("idle");
-    setErrorMessage(null);
-
     const supabase = createClient();
     const { error } = await supabase.auth.updateUser({ password: values.password });
 
     if (error) {
-      setStatus("error");
-      setErrorMessage(error.message);
+      toast.error(error.message);
       return;
     }
 
-    setStatus("saved");
+    toast.success("Password updated.");
     form.reset();
   }
 
@@ -73,9 +66,6 @@ export function PasswordForm() {
             </FormItem>
           )}
         />
-
-        {status === "saved" && <p className="text-sm text-green-600">Password updated.</p>}
-        {status === "error" && errorMessage && <p className="text-sm text-destructive">{errorMessage}</p>}
 
         <Button type="submit" className="rounded-full" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? "Updating…" : "Update password"}

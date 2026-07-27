@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -54,12 +55,8 @@ interface AboutSectionFormProps {
 
 export function AboutSectionForm({ about }: AboutSectionFormProps) {
   const router = useRouter();
-  const [status, setStatus] = useState<"idle" | "saved" | "error">("idle");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploading2, setUploading2] = useState(false);
-  const [uploadError2, setUploadError2] = useState<string | null>(null);
 
   const form = useForm<AboutSectionFormData>({
     resolver: zodResolver(aboutSectionSchema),
@@ -90,17 +87,17 @@ export function AboutSectionForm({ about }: AboutSectionFormProps) {
     if (!file) return;
 
     setUploading(true);
-    setUploadError(null);
 
     const result = await uploadImage(file);
     setUploading(false);
     event.target.value = "";
 
     if (result.error) {
-      setUploadError(result.error);
+      toast.error(result.error);
       return;
     }
     form.setValue("imageUrl", result.url!, { shouldValidate: true });
+    toast.success("Image uploaded.");
   }
 
   async function handleImage2Upload(event: React.ChangeEvent<HTMLInputElement>) {
@@ -108,23 +105,20 @@ export function AboutSectionForm({ about }: AboutSectionFormProps) {
     if (!file) return;
 
     setUploading2(true);
-    setUploadError2(null);
 
     const result = await uploadImage(file);
     setUploading2(false);
     event.target.value = "";
 
     if (result.error) {
-      setUploadError2(result.error);
+      toast.error(result.error);
       return;
     }
     form.setValue("imageUrl2", result.url!, { shouldValidate: true });
+    toast.success("Image uploaded.");
   }
 
   async function onSubmit(values: AboutSectionFormData) {
-    setStatus("idle");
-    setErrorMessage(null);
-
     const supabase = createClient();
     const { error } = await supabase
       .from("about_section")
@@ -144,12 +138,11 @@ export function AboutSectionForm({ about }: AboutSectionFormProps) {
       .eq("id", 1);
 
     if (error) {
-      setStatus("error");
-      setErrorMessage(error.message);
+      toast.error(error.message);
       return;
     }
 
-    setStatus("saved");
+    toast.success("About section saved.");
     router.refresh();
   }
 
@@ -163,7 +156,6 @@ export function AboutSectionForm({ about }: AboutSectionFormProps) {
             <div>
               <Input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
               {uploading && <p className="mt-1 text-sm text-muted-foreground">Uploading…</p>}
-              {uploadError && <p className="mt-1 text-sm text-destructive">{uploadError}</p>}
             </div>
 
             {imageUrl && (
@@ -178,7 +170,6 @@ export function AboutSectionForm({ about }: AboutSectionFormProps) {
             <div>
               <Input type="file" accept="image/*" onChange={handleImage2Upload} disabled={uploading2} />
               {uploading2 && <p className="mt-1 text-sm text-muted-foreground">Uploading…</p>}
-              {uploadError2 && <p className="mt-1 text-sm text-destructive">{uploadError2}</p>}
             </div>
 
             {imageUrl2 && (
@@ -278,9 +269,6 @@ export function AboutSectionForm({ about }: AboutSectionFormProps) {
             </FormItem>
           )}
         />
-
-        {status === "saved" && <p className="text-sm text-green-600">Saved.</p>}
-        {status === "error" && errorMessage && <p className="text-sm text-destructive">{errorMessage}</p>}
 
         <Button type="submit" className="w-fit rounded-full" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? "Saving…" : "Save changes"}

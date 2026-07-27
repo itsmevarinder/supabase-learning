@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 import {
   AlertDialog,
@@ -25,23 +26,22 @@ export function DeleteTestimonialButton({ id, name }: DeleteTestimonialButtonPro
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   async function handleDelete() {
     setDeleting(true);
-    setError(null);
 
     const supabase = createClient();
     const { error: deleteError } = await supabase.from("testimonials").delete().eq("id", id);
 
     if (deleteError) {
-      setError(deleteError.message);
+      toast.error(deleteError.message);
       setDeleting(false);
       return;
     }
 
     setDeleting(false);
     setOpen(false);
+    toast.success(`"${name}"'s testimonial deleted.`);
     router.refresh();
   }
 
@@ -64,7 +64,6 @@ export function DeleteTestimonialButton({ id, name }: DeleteTestimonialButtonPro
             homepage. This can&apos;t be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        {error && <p className="text-sm text-destructive">{error}</p>}
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <Button variant="destructive" onClick={handleDelete} disabled={deleting}>

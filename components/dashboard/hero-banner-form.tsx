@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
 import EmojiPicker from "emoji-picker-react";
+import { toast } from "sonner";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -76,11 +77,8 @@ interface HeroBannerFormProps {
 export function HeroBannerForm({ banner }: HeroBannerFormProps) {
   const isEditing = Boolean(banner);
   const router = useRouter();
-  const [status, setStatus] = useState<"idle" | "error">("idle");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [slugTouched, setSlugTouched] = useState(isEditing);
   const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const form = useForm<HeroBannerFormData>({
     resolver: zodResolver(heroBannerSchema),
@@ -94,7 +92,6 @@ export function HeroBannerForm({ banner }: HeroBannerFormProps) {
     if (!file) return;
 
     setUploading(true);
-    setUploadError(null);
 
     const supabase = createClient();
     const extension = file.name.match(/\.[^.]+$/)?.[0] ?? "";
@@ -106,7 +103,7 @@ export function HeroBannerForm({ banner }: HeroBannerFormProps) {
     });
 
     if (error) {
-      setUploadError(error.message);
+      toast.error(error.message);
       setUploading(false);
       return;
     }
@@ -114,13 +111,11 @@ export function HeroBannerForm({ banner }: HeroBannerFormProps) {
     const { data } = supabase.storage.from(HERO_BANNERS_BUCKET).getPublicUrl(path);
     form.setValue("imageUrl", data.publicUrl, { shouldValidate: true });
     setUploading(false);
+    toast.success("Image uploaded.");
     event.target.value = "";
   }
 
   async function onSubmit(values: HeroBannerFormData) {
-    setStatus("idle");
-    setErrorMessage(null);
-
     const supabase = createClient();
     const record = {
       slug: values.slug,
@@ -143,10 +138,11 @@ export function HeroBannerForm({ banner }: HeroBannerFormProps) {
       : await supabase.from("hero_banners").insert(record);
 
     if (error) {
-      setStatus("error");
-      setErrorMessage(error.message);
+      toast.error(error.message);
       return;
     }
+
+    toast.success(isEditing ? "Banner updated." : "Banner added.");
 
     if (isEditing) {
       router.push("/admin/hero-banners");
@@ -212,7 +208,6 @@ export function HeroBannerForm({ banner }: HeroBannerFormProps) {
             <div>
               <Input type="file" accept="image/*" className="flex items-center" onChange={handleImageUpload} disabled={uploading} />
               {uploading && <p className="mt-1 text-sm text-muted-foreground">Uploading…</p>}
-              {uploadError && <p className="mt-1 text-sm text-destructive">{uploadError}</p>}
             </div>
 
             {imageUrl && (
@@ -389,10 +384,6 @@ export function HeroBannerForm({ banner }: HeroBannerFormProps) {
             )}
           />
         </div>
-
-        {status === "error" && errorMessage && (
-          <p className="text-sm text-destructive">{errorMessage}</p>
-        )}
 
         <Button type="submit" className="w-fit rounded-full" disabled={form.formState.isSubmitting}>
           {isEditing

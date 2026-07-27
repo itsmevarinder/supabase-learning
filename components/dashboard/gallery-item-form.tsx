@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
 import { Image as ImageIcon, Video } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -62,12 +63,8 @@ interface GalleryItemFormProps {
 export function GalleryItemForm({ item }: GalleryItemFormProps) {
   const isEditing = Boolean(item);
   const router = useRouter();
-  const [status, setStatus] = useState<"idle" | "error">("idle");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
   const [videoUploading, setVideoUploading] = useState(false);
-  const [videoUploadError, setVideoUploadError] = useState<string | null>(null);
   const [videoSource, setVideoSource] = useState<"youtube" | "upload">(() =>
     item?.video_url && !getYouTubeId(item.video_url) ? "upload" : "youtube"
   );
@@ -88,7 +85,6 @@ export function GalleryItemForm({ item }: GalleryItemFormProps) {
     if (!file) return;
 
     setUploading(true);
-    setUploadError(null);
 
     const supabase = createClient();
     const extension = file.name.match(/\.[^.]+$/)?.[0] ?? "";
@@ -100,7 +96,7 @@ export function GalleryItemForm({ item }: GalleryItemFormProps) {
     });
 
     if (error) {
-      setUploadError(error.message);
+      toast.error(error.message);
       setUploading(false);
       return;
     }
@@ -108,6 +104,7 @@ export function GalleryItemForm({ item }: GalleryItemFormProps) {
     const { data } = supabase.storage.from(GALLERY_BUCKET).getPublicUrl(path);
     form.setValue("imageUrl", data.publicUrl, { shouldValidate: true });
     setUploading(false);
+    toast.success("Image uploaded.");
     event.target.value = "";
   }
 
@@ -116,7 +113,6 @@ export function GalleryItemForm({ item }: GalleryItemFormProps) {
     if (!file) return;
 
     setVideoUploading(true);
-    setVideoUploadError(null);
 
     const supabase = createClient();
     const extension = file.name.match(/\.[^.]+$/)?.[0] ?? "";
@@ -128,7 +124,7 @@ export function GalleryItemForm({ item }: GalleryItemFormProps) {
     });
 
     if (error) {
-      setVideoUploadError(error.message);
+      toast.error(error.message);
       setVideoUploading(false);
       return;
     }
@@ -136,13 +132,11 @@ export function GalleryItemForm({ item }: GalleryItemFormProps) {
     const { data } = supabase.storage.from(GALLERY_BUCKET).getPublicUrl(path);
     form.setValue("videoUrl", data.publicUrl, { shouldValidate: true });
     setVideoUploading(false);
+    toast.success("Video uploaded.");
     event.target.value = "";
   }
 
   async function onSubmit(values: GalleryItemFormData) {
-    setStatus("idle");
-    setErrorMessage(null);
-
     const supabase = createClient();
     const record = {
       media_type: values.mediaType,
@@ -158,11 +152,11 @@ export function GalleryItemForm({ item }: GalleryItemFormProps) {
       : await supabase.from("gallery_items").insert(record);
 
     if (error) {
-      setStatus("error");
-      setErrorMessage(error.message);
+      toast.error(error.message);
       return;
     }
 
+    toast.success(isEditing ? "Gallery item updated." : "Gallery item added.");
     router.push("/admin/gallery");
     router.refresh();
   }
@@ -216,7 +210,6 @@ export function GalleryItemForm({ item }: GalleryItemFormProps) {
             <div>
               <Input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
               {uploading && <p className="mt-1 text-sm text-muted-foreground">Uploading…</p>}
-              {uploadError && <p className="mt-1 text-sm text-destructive">{uploadError}</p>}
               {form.formState.errors.imageUrl && (
                 <p className="mt-1 text-sm text-destructive">{form.formState.errors.imageUrl.message}</p>
               )}
@@ -291,7 +284,6 @@ export function GalleryItemForm({ item }: GalleryItemFormProps) {
                 <div className="mt-1.5">
                   <Input type="file" accept="video/*" onChange={handleVideoUpload} disabled={videoUploading} />
                   {videoUploading && <p className="mt-1 text-sm text-muted-foreground">Uploading…</p>}
-                  {videoUploadError && <p className="mt-1 text-sm text-destructive">{videoUploadError}</p>}
                   {form.formState.errors.videoUrl && (
                     <p className="mt-1 text-sm text-destructive">{form.formState.errors.videoUrl.message}</p>
                   )}
@@ -357,8 +349,6 @@ export function GalleryItemForm({ item }: GalleryItemFormProps) {
             )}
           />
         </div>
-
-        {status === "error" && errorMessage && <p className="text-sm text-destructive">{errorMessage}</p>}
 
         <Button type="submit" className="w-fit rounded-full" disabled={form.formState.isSubmitting}>
           {isEditing

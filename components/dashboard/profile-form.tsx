@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -22,26 +22,19 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ defaultFullName }: ProfileFormProps) {
-  const [status, setStatus] = useState<"idle" | "saved" | "error">("idle");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: { fullName: defaultFullName },
   });
 
   async function onSubmit(values: ProfileFormData) {
-    setStatus("idle");
-    setErrorMessage(null);
-
     const supabase = createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     if (!user) {
-      setStatus("error");
-      setErrorMessage("You must be signed in.");
+      toast.error("You must be signed in.");
       return;
     }
 
@@ -51,12 +44,11 @@ export function ProfileForm({ defaultFullName }: ProfileFormProps) {
     ]);
 
     if (authResult.error || profileResult.error) {
-      setStatus("error");
-      setErrorMessage(authResult.error?.message ?? profileResult.error?.message ?? "Something went wrong.");
+      toast.error(authResult.error?.message ?? profileResult.error?.message ?? "Something went wrong.");
       return;
     }
 
-    setStatus("saved");
+    toast.success("Profile updated.");
   }
 
   return (
@@ -75,9 +67,6 @@ export function ProfileForm({ defaultFullName }: ProfileFormProps) {
             </FormItem>
           )}
         />
-
-        {status === "saved" && <p className="text-sm text-green-600">Saved.</p>}
-        {status === "error" && errorMessage && <p className="text-sm text-destructive">{errorMessage}</p>}
 
         <Button type="submit" className="rounded-full" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? "Saving…" : "Save changes"}

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
 import { LogIn } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -37,10 +38,7 @@ interface SiteSettingsFormProps {
 
 export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
   const router = useRouter();
-  const [status, setStatus] = useState<"idle" | "saved" | "error">("idle");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const form = useForm<SiteSettingsFormData>({
     resolver: zodResolver(siteSettingsSchema),
@@ -65,7 +63,6 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
     if (!file) return;
 
     setUploading(true);
-    setUploadError(null);
 
     const supabase = createClient();
     const extension = file.name.match(/\.[^.]+$/)?.[0] ?? "";
@@ -77,7 +74,7 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
     });
 
     if (error) {
-      setUploadError(error.message);
+      toast.error(error.message);
       setUploading(false);
       return;
     }
@@ -85,13 +82,11 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
     const { data } = supabase.storage.from(CONTACT_SECTION_BUCKET).getPublicUrl(path);
     form.setValue("contactBackgroundImageUrl", data.publicUrl, { shouldValidate: true });
     setUploading(false);
+    toast.success("Image uploaded.");
     event.target.value = "";
   }
 
   async function onSubmit(values: SiteSettingsFormData) {
-    setStatus("idle");
-    setErrorMessage(null);
-
     const supabase = createClient();
     const { error } = await supabase
       .from("site_settings")
@@ -110,12 +105,11 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
       .eq("id", 1);
 
     if (error) {
-      setStatus("error");
-      setErrorMessage(error.message);
+      toast.error(error.message);
       return;
     }
 
-    setStatus("saved");
+    toast.success("Site settings saved.");
     router.refresh();
   }
 
@@ -248,7 +242,6 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
           <div>
             <Input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
             {uploading && <p className="mt-1 text-sm text-muted-foreground">Uploading…</p>}
-            {uploadError && <p className="mt-1 text-sm text-destructive">{uploadError}</p>}
           </div>
 
           {contactBackgroundImageUrl && (
@@ -287,9 +280,6 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
             </FormItem>
           )}
         />
-
-        {status === "saved" && <p className="text-sm text-green-600">Saved.</p>}
-        {status === "error" && errorMessage && <p className="text-sm text-destructive">{errorMessage}</p>}
 
         <Button type="submit" className="w-fit rounded-full" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? "Saving…" : "Save changes"}

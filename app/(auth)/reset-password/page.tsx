@@ -5,6 +5,7 @@ import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MailCheck } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +32,7 @@ export default function ResetPasswordPage() {
 
   function onSubmit(values: ResetPasswordFormData) {
     setSubmittedEmail(values.email);
+    toast.success("Reset link sent, if that account exists.");
   }
 
   if (submittedEmail) {

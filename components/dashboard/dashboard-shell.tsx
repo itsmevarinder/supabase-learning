@@ -5,6 +5,7 @@ import NextImage from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { CalendarDays, ChevronDown, ChevronsUpDown, CircleHelp, GalleryHorizontal, Heart, Images, Info, LayoutDashboard, Layers, LogIn, LogOut, Mail, MessageSquareQuote, Music, Rss, Settings, Image as ImageIcon, Video } from "lucide-react";
+import { toast } from "sonner";
 
 import {
   AlertDialog,
@@ -124,7 +125,14 @@ export function DashboardShell({
 
   async function handleSignOut() {
     const supabase = createClient();
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    toast.success("Signed out.");
     router.push("/login");
     router.refresh();
   }
@@ -142,8 +150,11 @@ export function DashboardShell({
     setSavingLoginToggle(false);
     if (error) {
       setLoginButtonVisible(!checked);
+      toast.error(error.message);
       return;
     }
+
+    toast.success(checked ? "Login button shown." : "Login button hidden.");
     router.refresh();
   }
 

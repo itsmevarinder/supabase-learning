@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Toaster } from "sonner";
 
 export const metadata = {
   title: "CMS Login",
@@ -8,6 +9,7 @@ export const metadata = {
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
+      <Toaster richColors position="top-right" />
       {/* Left — image panel */}
       <div className="relative hidden lg:block">
         <img

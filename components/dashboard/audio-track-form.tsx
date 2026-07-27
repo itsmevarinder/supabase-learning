@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -61,12 +62,8 @@ interface AudioTrackFormProps {
 export function AudioTrackForm({ track }: AudioTrackFormProps) {
   const isEditing = Boolean(track);
   const router = useRouter();
-  const [status, setStatus] = useState<"idle" | "error">("idle");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [audioUploading, setAudioUploading] = useState(false);
-  const [audioUploadError, setAudioUploadError] = useState<string | null>(null);
   const [coverUploading, setCoverUploading] = useState(false);
-  const [coverUploadError, setCoverUploadError] = useState<string | null>(null);
 
   const form = useForm<AudioTrackFormData>({
     resolver: zodResolver(audioTrackSchema),
@@ -97,13 +94,13 @@ export function AudioTrackForm({ track }: AudioTrackFormProps) {
     if (!file) return;
 
     setAudioUploading(true);
-    setAudioUploadError(null);
 
     try {
       const url = await uploadFile(file);
       form.setValue("audioUrl", url, { shouldValidate: true });
+      toast.success("Audio file uploaded.");
     } catch (error) {
-      setAudioUploadError(error instanceof Error ? error.message : "Upload failed");
+      toast.error(error instanceof Error ? error.message : "Upload failed");
     } finally {
       setAudioUploading(false);
       event.target.value = "";
@@ -115,13 +112,13 @@ export function AudioTrackForm({ track }: AudioTrackFormProps) {
     if (!file) return;
 
     setCoverUploading(true);
-    setCoverUploadError(null);
 
     try {
       const url = await uploadFile(file);
       form.setValue("coverImageUrl", url, { shouldValidate: true });
+      toast.success("Cover image uploaded.");
     } catch (error) {
-      setCoverUploadError(error instanceof Error ? error.message : "Upload failed");
+      toast.error(error instanceof Error ? error.message : "Upload failed");
     } finally {
       setCoverUploading(false);
       event.target.value = "";
@@ -129,9 +126,6 @@ export function AudioTrackForm({ track }: AudioTrackFormProps) {
   }
 
   async function onSubmit(values: AudioTrackFormData) {
-    setStatus("idle");
-    setErrorMessage(null);
-
     const supabase = createClient();
     const record = {
       title: values.title,
@@ -147,11 +141,11 @@ export function AudioTrackForm({ track }: AudioTrackFormProps) {
       : await supabase.from("audio_tracks").insert(record);
 
     if (error) {
-      setStatus("error");
-      setErrorMessage(error.message);
+      toast.error(error.message);
       return;
     }
 
+    toast.success(isEditing ? "Track updated." : "Track added.");
     router.push("/admin/audio");
     router.refresh();
   }
@@ -164,7 +158,6 @@ export function AudioTrackForm({ track }: AudioTrackFormProps) {
           <div className="mt-1.5">
             <Input type="file" accept="audio/*" onChange={handleAudioUpload} disabled={audioUploading} />
             {audioUploading && <p className="mt-1 text-sm text-muted-foreground">Uploading…</p>}
-            {audioUploadError && <p className="mt-1 text-sm text-destructive">{audioUploadError}</p>}
             {form.formState.errors.audioUrl && (
               <p className="mt-1 text-sm text-destructive">{form.formState.errors.audioUrl.message}</p>
             )}
@@ -178,7 +171,6 @@ export function AudioTrackForm({ track }: AudioTrackFormProps) {
           <div>
             <Input type="file" accept="image/*" onChange={handleCoverUpload} disabled={coverUploading} />
             {coverUploading && <p className="mt-1 text-sm text-muted-foreground">Uploading…</p>}
-            {coverUploadError && <p className="mt-1 text-sm text-destructive">{coverUploadError}</p>}
           </div>
 
           {coverImageUrl && (
@@ -248,8 +240,6 @@ export function AudioTrackForm({ track }: AudioTrackFormProps) {
             )}
           />
         </div>
-
-        {status === "error" && errorMessage && <p className="text-sm text-destructive">{errorMessage}</p>}
 
         <Button type="submit" className="w-fit rounded-full" disabled={form.formState.isSubmitting}>
           {isEditing

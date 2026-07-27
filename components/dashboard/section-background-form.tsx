@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,14 +28,12 @@ export function SectionBackgroundForm({ title, description, table, bucket, image
   const router = useRouter();
   const [preview, setPreview] = useState(imageUrl ?? "");
   const [uploading, setUploading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   async function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setUploading(true);
-    setErrorMessage(null);
 
     const supabase = createClient();
     const extension = file.name.match(/\.[^.]+$/)?.[0] ?? "";
@@ -46,7 +45,7 @@ export function SectionBackgroundForm({ title, description, table, bucket, image
     });
 
     if (uploadError) {
-      setErrorMessage(uploadError.message);
+      toast.error(uploadError.message);
       setUploading(false);
       return;
     }
@@ -62,11 +61,12 @@ export function SectionBackgroundForm({ title, description, table, bucket, image
     event.target.value = "";
 
     if (updateError) {
-      setErrorMessage(updateError.message);
+      toast.error(updateError.message);
       return;
     }
 
     setPreview(data.publicUrl);
+    toast.success("Background image updated.");
     router.refresh();
   }
 
@@ -89,7 +89,6 @@ export function SectionBackgroundForm({ title, description, table, bucket, image
           </Label>
           <Input id={`${table}-bg`} type="file" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
           {uploading && <p className="mt-1 text-sm text-muted-foreground">Uploading…</p>}
-          {errorMessage && <p className="mt-1 text-sm text-destructive">{errorMessage}</p>}
         </div>
       </div>
     </div>

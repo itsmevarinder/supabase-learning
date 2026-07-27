@@ -1,10 +1,11 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -24,7 +25,6 @@ import { loginSchema, type LoginFormData } from "@/schemas/login-schema";
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [formError, setFormError] = useState<string | null>(null);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -32,8 +32,6 @@ function LoginForm() {
   });
 
   async function onSubmit(values: LoginFormData) {
-    setFormError(null);
-
     const supabase = createClient();
     const { data, error } = await supabase.auth.signInWithPassword({
       email: values.email,
@@ -41,17 +39,18 @@ function LoginForm() {
     });
 
     if (error) {
-      setFormError(error.message);
+      toast.error(error.message);
       return;
     }
 
     const isAdmin = data.user?.app_metadata?.role === "admin";
     if (!isAdmin) {
       await supabase.auth.signOut();
-      setFormError("This account doesn't have admin access.");
+      toast.error("This account doesn't have admin access.");
       return;
     }
 
+    toast.success("Signed in.");
     router.push(searchParams.get("from") ?? "/admin/dashboard");
     router.refresh();
   }
@@ -62,12 +61,6 @@ function LoginForm() {
         <h1 className="text-4xl font-bold">Welcome back</h1>
         <p className="mt-2 text-muted-foreground">Sign in to your account to continue.</p>
       </div>
-
-      {formError && (
-        <p className="mb-6 rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          {formError}
-        </p>
-      )}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">

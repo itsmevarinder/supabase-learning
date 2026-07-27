@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,13 +12,11 @@ export function NewsletterComposeForm() {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const router = useRouter();
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
-  const [resultText, setResultText] = useState<string | null>(null);
+  const [status, setStatus] = useState<"idle" | "sending">("idle");
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setStatus("sending");
-    setResultText(null);
 
     const response = await fetch("/api/admin/newsletter/send", {
       method: "POST",
@@ -28,16 +27,15 @@ export function NewsletterComposeForm() {
     const data = await response.json();
 
     if (!response.ok) {
-      setStatus("error");
-      setResultText(data.error ?? "Something went wrong.");
+      setStatus("idle");
+      toast.error(data.error ?? "Something went wrong.");
       return;
     }
 
-    setStatus("sent");
-    setResultText(`Sent to ${data.sent} of ${data.total} subscriber${data.total === 1 ? "" : "s"}.`);
+    toast.success(`Sent to ${data.sent} of ${data.total} subscriber${data.total === 1 ? "" : "s"}.`);
     setSubject("");
-    router.push("/admin/newsletter");
     setMessage("");
+    router.push("/admin/newsletter");
   }
 
   return (
@@ -64,9 +62,6 @@ export function NewsletterComposeForm() {
           required
         />
       </div>
-
-      {status === "sent" && resultText && <p className="text-sm text-green-600">{resultText}</p>}
-      {status === "error" && resultText && <p className="text-sm text-destructive">{resultText}</p>}
 
       <Button type="submit" className="rounded-full" disabled={status === "sending"}>
         {status === "sending" ? "Sending…" : "Send to all subscribers"}

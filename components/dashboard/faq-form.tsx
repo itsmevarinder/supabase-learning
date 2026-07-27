@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -47,8 +47,6 @@ interface FaqFormProps {
 export function FaqForm({ faq }: FaqFormProps) {
   const isEditing = Boolean(faq);
   const router = useRouter();
-  const [status, setStatus] = useState<"idle" | "error">("idle");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const form = useForm<FaqFormData>({
     resolver: zodResolver(faqSchema),
@@ -56,9 +54,6 @@ export function FaqForm({ faq }: FaqFormProps) {
   });
 
   async function onSubmit(values: FaqFormData) {
-    setStatus("idle");
-    setErrorMessage(null);
-
     const supabase = createClient();
     const record = {
       question: values.question,
@@ -72,11 +67,11 @@ export function FaqForm({ faq }: FaqFormProps) {
       : await supabase.from("faqs").insert(record);
 
     if (error) {
-      setStatus("error");
-      setErrorMessage(error.message);
+      toast.error(error.message);
       return;
     }
 
+    toast.success(isEditing ? "FAQ updated." : "FAQ added.");
     router.push("/admin/faqs");
     router.refresh();
   }
@@ -145,8 +140,6 @@ export function FaqForm({ faq }: FaqFormProps) {
             )}
           />
         </div>
-
-        {status === "error" && errorMessage && <p className="text-sm text-destructive">{errorMessage}</p>}
 
         <Button type="submit" className="w-fit rounded-full" disabled={form.formState.isSubmitting}>
           {isEditing

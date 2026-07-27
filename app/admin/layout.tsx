@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { Toaster } from "sonner";
 
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { createClient, getSiteSettings } from "@/lib/supabase/server";
@@ -26,6 +27,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       userName={userName}
       showLoginButton={siteSettings?.show_login_button ?? true}
     >
+      <Toaster richColors position="top-right" />
       {children}
     </DashboardShell>
   );
