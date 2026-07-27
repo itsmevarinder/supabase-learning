@@ -38,9 +38,7 @@ export default function AboutSection({ about }: AboutSectionProps) {
   const imageUrl2 = about?.image_url_2 || "https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=80";
   const eyebrowText = about?.eyebrow_text ?? "About Us";
   const title = about?.title ?? "Building Digital Experiences That Inspire";
-  const description =
-    about?.description ??
-    "We specialize in creating beautiful websites, scalable applications, and innovative digital products that help businesses grow faster and stand out in today's competitive market.";
+  const description = about?.description ?? "We specialize in creating beautiful websites, scalable applications, and innovative digital products that help businesses grow faster and stand out in today's competitive market.";
   const yearsExperience = about?.years_experience ?? 10;
   const buttonText = about?.button_text ?? "Learn More";
   const features = about?.features?.length ? about.features : DEFAULT_FEATURES;
@@ -61,15 +59,10 @@ export default function AboutSection({ about }: AboutSectionProps) {
     (_context, contextSafe) => {
       const reduced = prefersReducedMotion();
 
-      // Counter is kicked off from a deferred timeline callback, so it
-      // needs contextSafe() to be tracked/cleaned up by gsap's context.
       const playCounter = contextSafe!(() => {
         animateCounter(badgeNumberRef.current, yearsExperience, { suffix: "+", duration: 1.2 });
       });
 
-      // --- Cohesive entrance timeline — image slides in first, badge pops
-      // with its counter, then the text column cascades in below it.
-      // Replays every time the section scrolls into/out of view. ---
       gsap
         .timeline({
           scrollTrigger: {
@@ -98,12 +91,8 @@ export default function AboutSection({ about }: AboutSectionProps) {
 
       if (reduced) return;
 
-      // True scroll-scrubbed parallax on the image — a separate element
-      // from the continuous float below so the two never fight over the
-      // same transform.
       scrollParallax(imageRef.current, { trigger: section.current, distance: 70 });
 
-      // Continuous ambient motion, plays indefinitely.
       gsap.to(imageWrapperRef.current, { y: -14, duration: 3.5, ease: "linear", yoyo: true, repeat: -1 });
       gsap.to(floatingImageRef.current, {
         y: 12,
@@ -144,7 +133,7 @@ export default function AboutSection({ about }: AboutSectionProps) {
       <div className="container mx-auto md:px-6 px-4">
         <div className="grid items-center gap-16 lg:grid-cols-2">
           {/* Left Image */}
-          <div className="relative pt-10 pl-10" ref={imageWrapperRef}>
+          <div className="relative pt-10 md:pl-10 pl-5 md:pr-0 pr-3" ref={imageWrapperRef}>
             {/* Decorative Blur */}
             <div className="about-blur absolute -left-8 top-2 -z-10 h-64 w-64 rounded-full bg-primary/20 blur-3xl" />
             <div className="about-blur absolute -bottom-10 -right-10 -z-10 h-72 w-72 rounded-full bg-amber-600/15 blur-3xl" />
@@ -160,7 +149,7 @@ export default function AboutSection({ about }: AboutSectionProps) {
 
             <div
               ref={floatingImageRef}
-              className="absolute left-0 -top-15 z-10 overflow-hidden rounded-2xl border-4 border-background shadow-2xl"
+              className="absolute -left-1 md:left-0 -top-15 z-10 overflow-hidden rounded-2xl border-4 border-background shadow-2xl"
             >
               <HoverDistortImage
                 image={imageUrl2}
@@ -171,7 +160,7 @@ export default function AboutSection({ about }: AboutSectionProps) {
 
             <div
               ref={badgeRef}
-              className="absolute -bottom-8 -right-3 z-10 rounded-2xl bg-primary p-6 text-white shadow-xl md:-right-8"
+              className="absolute -bottom-8 -right-1 z-10 rounded-2xl bg-primary p-6 text-white shadow-xl md:-right-8"
             >
               <h3 ref={badgeNumberRef} className="text-4xl font-bold">0+</h3>
               <p className="mt-1">Years Experience</p>

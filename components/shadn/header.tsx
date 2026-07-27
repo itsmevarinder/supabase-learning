@@ -90,8 +90,6 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
     const pill = pillRef.current;
     if (!pill) return;
 
-    // --- Scroll-driven progress bar, tied 1:1 to how far down the page
-    // you've scrolled (a true scrub, not a one-time reveal). ---
     if (progressRef.current) {
       gsap.to(progressRef.current, {
         scaleX: 1,
@@ -105,27 +103,29 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
       });
     }
 
-    // --- Compact the pill and deepen its shadow once scrolled past the top ---
     ScrollTrigger.create({
       start: 80,
-      onEnter: () =>
+      onEnter: () => {
         gsap.to(pill, {
           scale: 0.96,
           boxShadow: "0 15px 35px -10px rgba(0,0,0,0.3)",
-          duration: 0.3,
+          duration: 0.4,
           ease: "power2.out",
-        }),
-      onLeaveBack: () =>
+        });
+        gsap.to(headerRef.current, { top: 0, duration: 0.3, ease: "power2.out" });
+      },
+      onLeaveBack: () => {
         gsap.to(pill, {
           scale: 1,
           boxShadow: "0 10px 25px -8px rgba(0,0,0,0.1)",
-          duration: 0.3,
+          duration: 0.4,
           ease: "power2.out",
-        }),
+        });
+        gsap.to(headerRef.current, { top: "1.25rem", duration: 0.3, ease: "power2.out" });
+      },
     });
   }, { scope: headerRef });
 
-  // Lock background scroll while the full-height mobile drawer is open.
   useEffect(() => {
     if (!isOpen) return;
     const previousOverflow = document.body.style.overflow;
@@ -135,7 +135,6 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
     };
   }, [isOpen]);
 
-  // Close on Escape for keyboard/accessibility support.
   useEffect(() => {
     if (!isOpen) return;
     function handleKeyDown(event: KeyboardEvent) {
@@ -149,12 +148,6 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
 
   return (
     <>
-      {/* Scroll progress bar — scrubbed 1:1 to page scroll position */}
-      {/* <div
-        ref={progressRef}
-        className="fixed inset-x-0 top-0 z-60 h-1 origin-left scale-x-0 bg-primary"
-      /> */}
-
       <header ref={headerRef} className="fixed inset-x-0 top-5 z-50">
         <div className="container mx-auto md:px-6 px-4">
           <div
