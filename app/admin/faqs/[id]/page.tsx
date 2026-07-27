@@ -24,7 +24,7 @@ export default async function EditFaqPage({ params }: EditFaqPageProps) {
   return (
     <div className="space-y-6">
       <PageHeader>
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center flex-wrap gap-4 justify-between">
           <div>
             <h1 className="text-2xl font-bold">Edit FAQ</h1>
             <p className="text-muted-foreground">{faq.question}</p>

@@ -13,7 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { splitWords } from "@/components/shadn/split-words";
-import { gsap, useGSAP, EASE, prefersReducedMotion } from "@/lib/gsap/config";
+import { gsap, useGSAP, EASE } from "@/lib/gsap/config";
 
 export interface DonateSectionRow {
   id: number;
@@ -86,7 +86,6 @@ export default function DonateSection({ donate }: DonateSectionProps) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const bgRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
@@ -117,11 +116,6 @@ export default function DonateSection({ donate }: DonateSectionProps) {
           toggleActions: "restart reverse restart reverse",
         },
       });
-
-      if (prefersReducedMotion()) return;
-
-
-      gsap.to(bgRef.current, { scale: 1.12, duration: 12, ease: "linear", yoyo: true, repeat: -1 });
     },
     { scope: section }
   );
@@ -129,10 +123,10 @@ export default function DonateSection({ donate }: DonateSectionProps) {
   return (
     <section id="donate" className="scroll-mt-28" ref={section}>
       <div className="relative isolate overflow-hidden py-32">
-        <div ref={bgRef} className="absolute inset-0 -z-20 scale-100">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={backgroundImageUrl} alt="" className="h-full w-full object-cover" />
-        </div>
+        <div
+          className="absolute inset-0 -z-20 bg-cover bg-center bg-fixed"
+          style={{ backgroundImage: `url(${backgroundImageUrl})` }}
+        />
         <div className="absolute inset-0 -z-10 bg-black/65" />
 
         <div className="container relative mx-auto md:px-6 px-4 text-center text-white">

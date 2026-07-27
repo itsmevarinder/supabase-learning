@@ -24,7 +24,7 @@ export default async function EditPortfolioProjectPage({ params }: EditPortfolio
   return (
     <div className="space-y-6">
       <PageHeader>
-        <div className="flex justify-between gap-3 items-center">
+        <div className="flex items-center flex-wrap gap-4 justify-between">
           <div>
             <h1 className="mt-2 text-2xl font-bold">Edit Project</h1>
             <p className="text-muted-foreground">{project.title}</p>

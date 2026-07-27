@@ -121,10 +121,10 @@ export default function EventsSection({ events: eventRows, backgroundImageUrl }:
 
   return (
     <section className="relative isolate scroll-mt-28 overflow-hidden py-24" ref={section}>
-      <div className="absolute inset-0 -z-20">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={bgImage} alt="" className="h-full w-full object-cover" />
-      </div>
+      <div
+        className="absolute inset-0 -z-20 bg-cover bg-center bg-fixed"
+        style={{ backgroundImage: `url(${bgImage})` }}
+      />
       <div className="absolute inset-0 -z-10 bg-black/65" />
 
       <div className="container mx-auto md:px-6 px-4">

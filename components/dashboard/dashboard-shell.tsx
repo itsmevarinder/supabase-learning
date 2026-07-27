@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, type ComponentProps, type ReactNode } from "react";
 import NextImage from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -45,6 +45,7 @@ import {
   SidebarProvider,
   SidebarRail,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { createClient } from "@/lib/supabase/client";
 
@@ -88,6 +89,20 @@ function isNavItemActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+function NavLink({ href, onClick, ...props }: ComponentProps<typeof Link>) {
+  const { setOpenMobile } = useSidebar();
+  return (
+    <Link
+      href={href}
+      onClick={(event) => {
+        onClick?.(event);
+        setTimeout(() => setOpenMobile(false), 500);
+      }}
+      {...props}
+    />
+  );
+}
+
 export function DashboardShell({
   roleLabel,
   userEmail,
@@ -104,9 +119,6 @@ export function DashboardShell({
   const [loginButtonVisible, setLoginButtonVisible] = useState(showLoginButton ?? true);
   const [savingLoginToggle, setSavingLoginToggle] = useState(false);
   const mediaActive = MEDIA_NAV_ITEMS.some((item) => isNavItemActive(pathname, item.href));
-  // Starts open when first landing on a media route, but afterwards the
-  // user's own toggle always wins — previously `mediaToggled || mediaActive`
-  // meant the dropdown could never be collapsed while its route was active.
   const [mediaOpen, setMediaOpen] = useState(mediaActive);
 
   async function handleSignOut() {
@@ -158,10 +170,10 @@ export function DashboardShell({
                       isActive={isNavItemActive(pathname, item.href)}
                       tooltip={item.label}
                       render={
-                        <Link href={item.href}>
+                        <NavLink href={item.href}>
                           <item.icon />
                           <span>{item.label}</span>
-                        </Link>
+                        </NavLink>
                       }
                     />
                   </SidebarMenuItem>
@@ -193,10 +205,10 @@ export function DashboardShell({
                             <SidebarMenuSubButton
                               isActive={isNavItemActive(pathname, item.href)}
                               render={
-                                <Link href={item.href} className="h-8.5">
+                                <NavLink href={item.href} className="h-8.5">
                                   <item.icon />
                                   <span>{item.label}</span>
-                                </Link>
+                                </NavLink>
                               }
                             />
                           </SidebarMenuSubItem>
@@ -212,10 +224,10 @@ export function DashboardShell({
                       isActive={isNavItemActive(pathname, item.href)}
                       tooltip={item.label}
                       render={
-                        <Link href={item.href}>
+                        <NavLink href={item.href}>
                           <item.icon />
                           <span>{item.label}</span>
-                        </Link>
+                        </NavLink>
                       }
                     />
                   </SidebarMenuItem>
@@ -251,7 +263,7 @@ export function DashboardShell({
                 </DropdownMenuLabel>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem render={<Link href="/admin/settings" />}>
+              <DropdownMenuItem render={<NavLink href="/admin/settings" />}>
                 <Settings />
                 Settings
               </DropdownMenuItem>

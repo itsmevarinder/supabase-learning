@@ -24,7 +24,7 @@ export default async function EditAudioTrackPage({ params }: EditAudioTrackPageP
   return (
     <div className="space-y-6">
       <PageHeader>
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center flex-wrap gap-4 justify-between">
           <div>
             <h1 className="text-2xl font-bold">Edit Audio Track</h1>
             <p className="text-muted-foreground">{track.title}</p>

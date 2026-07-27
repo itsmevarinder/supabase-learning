@@ -24,7 +24,7 @@ export default async function EditGalleryItemPage({ params }: EditGalleryItemPag
   return (
     <div className="space-y-6">
       <PageHeader>
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center flex-wrap gap-4 justify-between">
           <div>
             <h1 className="text-2xl font-bold">Edit Gallery Item</h1>
             <p className="text-muted-foreground">{item.title ?? item.media_type}</p>

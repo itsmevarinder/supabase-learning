@@ -10,7 +10,7 @@ export default function AddGalleryItemPage() {
   return (
     <div className="space-y-8">
       <PageHeader>
-        <div className="flex justify-between">
+        <div className="flex items-center flex-wrap gap-4 justify-between">
           <div>
             <h1 className="text-2xl font-bold">Add Gallery Item</h1>
             <p className="text-muted-foreground">Shown in the homepage gallery once active.</p>

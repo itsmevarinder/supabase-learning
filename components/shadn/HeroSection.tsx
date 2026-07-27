@@ -502,30 +502,34 @@ export default function HeroSection({ banners }: HeroSectionProps) {
           ))}
         </CarouselContent>
 
-        {/* Navigation Arrows */}
-        <CarouselPrevious className="left-6 border-white bg-white/20 text-white backdrop-blur hover:bg-white hover:text-black" />
-        <CarouselNext className="right-6 border-white bg-white/20 text-white backdrop-blur hover:bg-white hover:text-black" />
+        {slides.length > 1 && (
+          <>
+            {/* Navigation Arrows */}
+            <CarouselPrevious className="left-6 border-white bg-white/20 text-white backdrop-blur hover:bg-white hover:text-black" />
+            <CarouselNext className="right-6 border-white bg-white/20 text-white backdrop-blur hover:bg-white hover:text-black" />
 
-        {/* Dot indicators — the active one fills smoothly over the autoplay
-            delay, so it doubles as a progress indicator for the next slide. */}
-        <div className="absolute inset-x-0 bottom-8 z-10 flex justify-center gap-2.5">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              type="button"
-              onClick={() => api?.scrollTo(index)}
-              aria-label={`Go to slide ${index + 1}`}
-              aria-current={selectedIndex === index}
-              className={`relative h-2 overflow-hidden rounded-full bg-white/30 transition-[width] duration-300 ${
-                selectedIndex === index ? "w-10" : "w-2 hover:bg-white/50"
-              }`}
-            >
-              {selectedIndex === index && (
-                <span key={selectedIndex} className="hero-dot-fill absolute inset-0 rounded-full bg-white" />
-              )}
-            </button>
-          ))}
-        </div>
+            {/* Dot indicators — the active one fills smoothly over the autoplay
+                delay, so it doubles as a progress indicator for the next slide. */}
+            <div className="absolute inset-x-0 bottom-8 z-10 flex justify-center gap-2.5">
+              {slides.map((_, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => api?.scrollTo(index)}
+                  aria-label={`Go to slide ${index + 1}`}
+                  aria-current={selectedIndex === index}
+                  className={`relative h-2 overflow-hidden rounded-full bg-white/30 transition-[width] duration-300 ${
+                    selectedIndex === index ? "w-10" : "w-2 hover:bg-white/50"
+                  }`}
+                >
+                  {selectedIndex === index && (
+                    <span key={selectedIndex} className="hero-dot-fill absolute inset-0 rounded-full bg-white" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
       </Carousel>
     </section>
   );

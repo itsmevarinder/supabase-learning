@@ -264,6 +264,25 @@ interface GallerySectionProps {
 export default function GallerySection({ items: itemRows, viewAllHref }: GallerySectionProps) {
   const items = (itemRows ?? []).map(mapGalleryRow).filter((item): item is GalleryItem => item !== null);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const lightboxMediaRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      if (activeIndex === null || !lightboxMediaRef.current) return;
+
+      if (prefersReducedMotion()) {
+        gsap.set(lightboxMediaRef.current, { opacity: 1, scale: 1 });
+        return;
+      }
+
+      gsap.fromTo(
+        lightboxMediaRef.current,
+        { opacity: 0, scale: 0.92 },
+        { opacity: 1, scale: 1, duration: 0.45, ease: "power3.out" }
+      );
+    },
+    { dependencies: [activeIndex] }
+  );
 
   const section = useRef<HTMLElement>(null);
   const eyebrowRef = useRef<HTMLSpanElement>(null);
@@ -377,14 +396,24 @@ export default function GallerySection({ items: itemRows, viewAllHref }: Gallery
       </div>
 
       <Dialog open={activeIndex !== null} onOpenChange={(open) => !open && setActiveIndex(null)}>
-        <DialogContent className="max-w-4xl border-none bg-transparent p-0 shadow-none" showClose={false}>
+        <DialogContent
+          className="top-0 left-0 h-screen w-screen max-w-none translate-x-0 translate-y-0 rounded-none border-none bg-black/95 p-0 shadow-none"
+          showClose={false}
+        >
           {activeItem && (
-            <div className="relative">
+            <div className="relative flex h-full w-full min-h-0 min-w-0 items-center justify-center p-4 sm:p-16">
               <DialogTitle className="sr-only">{activeItem.title ?? "Gallery item"}</DialogTitle>
 
-              <div className="overflow-hidden rounded-2xl bg-black shadow-2xl">
+              {/* Counter */}
+              {items.length > 1 && activeIndex !== null && (
+                <span className="fixed left-4 top-4 z-10 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-sm font-medium text-white backdrop-blur-md">
+                  {activeIndex + 1} / {items.length}
+                </span>
+              )}
+
+              <div ref={lightboxMediaRef} className="flex h-full w-full items-center justify-center">
                 {activeItem.type === "video" ? (
-                  <div className="aspect-video w-full">
+                  <div className="aspect-video max-h-[calc(100vh-2rem)] w-full max-w-6xl overflow-hidden rounded-2xl bg-black shadow-2xl ring-1 ring-white/10 sm:max-h-[calc(100vh-8rem)]">
                     {activeItem.embedUrl ? (
                       <iframe
                         src={activeItem.embedUrl}
@@ -410,22 +439,24 @@ export default function GallerySection({ items: itemRows, viewAllHref }: Gallery
                   <img
                     src={activeItem.fullImage ?? undefined}
                     alt={activeItem.title ?? ""}
-                    className="max-h-[80vh] w-full object-contain"
+                    className="max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] rounded-2xl object-contain shadow-2xl ring-1 ring-white/10 sm:max-h-[calc(100vh-8rem)] sm:max-w-[calc(100vw-8rem)]"
                   />
                 )}
               </div>
 
               {activeItem.title && (
-                <p className="mt-3 text-center text-sm text-white/80">{activeItem.title}</p>
+                <span className="fixed bottom-6 left-1/2 -translate-x-1/2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm text-white backdrop-blur-md">
+                  {activeItem.title}
+                </span>
               )}
 
               <button
                 type="button"
                 onClick={() => setActiveIndex(null)}
                 aria-label="Close"
-                className="absolute -right-3 -top-3 flex size-9 items-center justify-center rounded-full bg-white text-foreground shadow-lg transition-transform hover:scale-105"
+                className="fixed right-4 top-4 z-10 flex size-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20"
               >
-                <X className="size-4" />
+                <X className="size-5" />
               </button>
 
               {items.length > 1 && (
@@ -434,17 +465,17 @@ export default function GallerySection({ items: itemRows, viewAllHref }: Gallery
                     type="button"
                     onClick={showPrev}
                     aria-label="Previous"
-                    className="absolute left-2 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-foreground shadow-lg transition-transform hover:scale-105"
+                    className="fixed left-4 top-1/2 z-10 flex size-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20"
                   >
-                    <ChevronLeft className="size-5" />
+                    <ChevronLeft className="size-6" />
                   </button>
                   <button
                     type="button"
                     onClick={showNext}
                     aria-label="Next"
-                    className="absolute right-2 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-foreground shadow-lg transition-transform hover:scale-105"
+                    className="fixed right-4 top-1/2 z-10 flex size-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20"
                   >
-                    <ChevronRight className="size-5" />
+                    <ChevronRight className="size-6" />
                   </button>
                 </>
               )}
