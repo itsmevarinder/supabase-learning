@@ -220,7 +220,7 @@ export function HeroBannerForm({ banner }: HeroBannerFormProps) {
               <img
                 src={imageUrl}
                 alt="Preview"
-                className="h-28 w-48 rounded-lg border object-cover"
+                className="aspect-video rounded-lg border object-cover"
               />
             )}
           </div>

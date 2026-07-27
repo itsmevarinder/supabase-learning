@@ -178,7 +178,7 @@ export function DonateSectionForm({ donate }: DonateSectionFormProps) {
           )}
         />
 
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid gap-5 items-start sm:grid-cols-2">
           <FormField
             control={form.control}
             name="buttonText"

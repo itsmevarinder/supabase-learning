@@ -185,7 +185,7 @@ export function PortfolioProjectForm({ project }: PortfolioProjectFormProps) {
 
           {imageUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={imageUrl} alt="Preview" className="h-28 w-48 rounded-lg border object-cover" />
+            <img src={imageUrl} alt="Preview" className="aspect-video rounded-lg border object-cover" />
           )}
         </div>
 
