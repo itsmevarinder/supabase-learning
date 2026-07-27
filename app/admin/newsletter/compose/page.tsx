@@ -5,8 +5,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { NewsletterComposeForm } from "@/components/dashboard/newsletter-compose-form";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/dashboard/page-header";
+import { createClient } from "@/lib/supabase/server";
 
-export default function AdminNewsletterComposePage() {
+export default async function AdminNewsletterComposePage() {
+  const supabase = await createClient();
+  const { data: subscribers } = await supabase
+    .from("newsletter_subscribers")
+    .select("id, email")
+    .eq("is_active", true)
+    .order("email", { ascending: true });
+
   return (
     <div className="md:space-y-6 space-y-5">
       <PageHeader>
@@ -26,7 +34,7 @@ export default function AdminNewsletterComposePage() {
 
       <Card>
         <CardContent>
-          <NewsletterComposeForm />
+          <NewsletterComposeForm subscribers={subscribers ?? []} />
         </CardContent>
       </Card>
     </div>

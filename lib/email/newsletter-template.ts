@@ -2,9 +2,10 @@ interface NewsletterEmailParams {
   subject: string;
   message: string;
   siteUrl: string;
+  unsubscribeUrl: string;
 }
 
-export function renderNewsletterEmail({ subject, message, siteUrl }: NewsletterEmailParams): string {
+export function renderNewsletterEmail({ subject, message, siteUrl, unsubscribeUrl }: NewsletterEmailParams): string {
   const bodyHtml = message
     .split("\n")
     .filter((line) => line.trim().length > 0)
@@ -48,9 +49,12 @@ export function renderNewsletterEmail({ subject, message, siteUrl }: NewsletterE
 
             <tr>
               <td style="padding-top:24px;border-top:1px solid #e4e4e7;">
-                <p style="margin:0;font-size:12px;line-height:1.6;color:#a1a1aa;">
+                <p style="margin:0 0 8px;font-size:12px;line-height:1.6;color:#a1a1aa;">
                   You&rsquo;re receiving this email because you subscribed on our website.
                 </p>
+                <a href="${unsubscribeUrl}" style="font-size:12px;color:#a1a1aa;text-decoration:underline;">
+                  Unsubscribe
+                </a>
               </td>
             </tr>
           </table>
@@ -59,4 +63,17 @@ export function renderNewsletterEmail({ subject, message, siteUrl }: NewsletterE
     </table>
   </body>
 </html>`;
+}
+
+export function renderNewsletterEmailText({ subject, message, siteUrl, unsubscribeUrl }: NewsletterEmailParams): string {
+  return [
+    subject,
+    "",
+    message,
+    "",
+    `Visit our site: ${siteUrl}`,
+    "",
+    "You're receiving this email because you subscribed on our website.",
+    `Unsubscribe: ${unsubscribeUrl}`,
+  ].join("\n");
 }

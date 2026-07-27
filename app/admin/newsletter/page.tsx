@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, Clock, Send } from "lucide-react";
+import { History, Mail, Clock, Send } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -24,11 +24,18 @@ export default async function AdminNewsletterPage() {
               Everyone who&apos;s subscribed from the &ldquo;Stay In Touch&rdquo; section.
             </p>
           </div>
-          <Link href="/admin/newsletter/compose">
-            <Button className="rounded-full px-6 py-5">
-              Compose <Send />
-            </Button>
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link href="/admin/newsletter/history">
+              <Button variant="outline" className="rounded-full px-6 py-5">
+                History <History />
+              </Button>
+            </Link>
+            <Link href="/admin/newsletter/compose">
+              <Button className="rounded-full px-6 py-5">
+                Compose <Send />
+              </Button>
+            </Link>
+          </div>
         </div>
       </PageHeader>
 
