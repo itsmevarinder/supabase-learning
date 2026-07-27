@@ -6,8 +6,6 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 export { gsap, ScrollTrigger, useGSAP };
 
-// Shared ease vocabulary — keeps every section's motion feeling like one
-// consistent system instead of each file picking its own ad-hoc curve.
 export const EASE = {
   out: "power3.out",
   soft: "power2.out",
@@ -31,9 +29,6 @@ export function isDesktopViewport(minWidth = 1024): boolean {
   return window.matchMedia(`(min-width: ${minWidth}px)`).matches;
 }
 
-// Mobile gets shorter travel distances and no stagger cascade — cheaper to
-// composite and reads as "snappy" rather than "sluggish" on smaller,
-// often lower-powered devices.
 export function responsiveDistance(desktopPx: number): number {
   return isDesktopViewport(768) ? desktopPx : Math.round(desktopPx * 0.6);
 }

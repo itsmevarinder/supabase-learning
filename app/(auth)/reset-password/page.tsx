@@ -30,7 +30,6 @@ export default function ResetPasswordPage() {
   });
 
   function onSubmit(values: ResetPasswordFormData) {
-    // TODO: wire up to a real "send reset link" endpoint.
     setSubmittedEmail(values.email);
   }
 

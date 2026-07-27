@@ -1,23 +1,11 @@
 import { gsap, isFinePointer, prefersReducedMotion } from "./config";
 
 interface MagneticOptions {
-  /** How much of the pointer offset is applied (0-1). */
   strength?: number;
   duration?: number;
   ease?: string;
 }
 
-/**
- * Attaches a magnetic hover effect to a single element: it drifts toward
- * the cursor, snapping back on pointer-leave, via gsap.quickTo (reused
- * setter functions, not a new tween per pointer-move event). Skips entirely
- * on touch devices and prefers-reduced-motion.
- *
- * Returns a cleanup function that removes the listeners — since this
- * attaches raw DOM listeners rather than creating GSAP objects during the
- * main useGSAP() callback, it is NOT auto-tracked by gsap context; always
- * call the returned cleanup (or wrap the call in contextSafe()).
- */
 export function attachMagneticHover(el: HTMLElement | null, options: MagneticOptions = {}) {
   if (!el || !isFinePointer() || prefersReducedMotion()) return () => {};
 

@@ -16,6 +16,10 @@ import ScrollFlipBackground from "@/components/shadn/ScrollFlipBackground";
 import SmoothScroll from "@/components/shadn/SmoothScroll";
 import { getAboutSection, getAudioSection, getAudioTracks, getDonateSection, getEvents, getEventsSection, getFaqs, getGalleryItems, getHeroBanners, getPortfolioProjects, getSiteSettings, getTestimonials, getVideoSection } from "@/lib/supabase/server";
 
+export const metadata = {
+   title: "CMS Homepage",
+};
+
 const Page = async () => {
    const [heroBanners, portfolioProjects, donateSection, siteSettings, testimonials, faqs, aboutSection, videoSection, events, galleryItems, audioTracks, eventsSection, audioSection] = await Promise.all([
       getHeroBanners(),

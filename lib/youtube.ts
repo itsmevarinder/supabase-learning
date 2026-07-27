@@ -26,7 +26,6 @@ export function getYouTubeEmbedUrl(
 
   const params = new URLSearchParams({ autoplay: "1", rel: "0" });
   if (options.mute) params.set("mute", "1");
-  // YouTube only loops a single video when `playlist` is set to that same ID.
   if (options.loop) {
     params.set("loop", "1");
     params.set("playlist", id);

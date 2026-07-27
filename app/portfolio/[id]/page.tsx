@@ -15,6 +15,11 @@ interface ProjectDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
+export const metadata = {
+  title: "All Projects — Portfolio",
+  description: "Every project we've shipped, in one place.",
+};
+
 export default async function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   const { id } = await params;
 
@@ -28,9 +33,6 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
     notFound();
   }
 
-  // Prefer other projects in the same category; if there aren't enough
-  // (e.g. every project currently has a unique category), fill the rest
-  // with any other active project so the slider isn't left empty.
   const { data: sameCategory } = await supabase
     .from("portfolio_projects")
     .select("id, title, category, image_url")

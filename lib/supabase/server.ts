@@ -38,9 +38,6 @@ export async function createClient() {
   );
 }
 
-// Active hero_banners rows, in display order — used by the homepage's
-// Hero carousel. Falls back to an empty array (HeroSection has its own
-// hardcoded fallback slides) rather than throwing if the query fails.
 export async function getHeroBanners(): Promise<HeroBannerRow[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -57,9 +54,6 @@ export async function getHeroBanners(): Promise<HeroBannerRow[]> {
   return data ?? [];
 }
 
-// Active portfolio_projects rows, in display order — used by the homepage's
-// Portfolio grid. Falls back to an empty array (PortfolioSection has its own
-// hardcoded fallback projects) rather than throwing if the query fails.
 export async function getPortfolioProjects(): Promise<PortfolioProjectRow[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -76,10 +70,6 @@ export async function getPortfolioProjects(): Promise<PortfolioProjectRow[]> {
   return data ?? [];
 }
 
-
-// The single site_settings row — contact info and social links shared by
-// the Footer and Contact sections. Returns null (both components have their
-// own hardcoded fallback values) rather than throwing if the query fails.
 export async function getSiteSettings(): Promise<SiteSettings | null> {
   const supabase = await createClient();
   const { data, error } = await supabase.from("site_settings").select("*").eq("id", 1).single();
@@ -92,9 +82,6 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
   return data;
 }
 
-// Active testimonials rows, in display order — used by the homepage's
-// Testimonials carousel. Falls back to an empty array (TestimonialSection
-// shows an empty-state message) rather than throwing if the query fails.
 export async function getTestimonials(): Promise<TestimonialRow[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -111,9 +98,6 @@ export async function getTestimonials(): Promise<TestimonialRow[]> {
   return data ?? [];
 }
 
-// Active FAQ rows, in display order — used by the homepage's FAQ accordion.
-// Falls back to an empty array (FAQSection shows an empty-state message)
-// rather than throwing if the query fails.
 export async function getFaqs(): Promise<FaqRow[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -130,9 +114,6 @@ export async function getFaqs(): Promise<FaqRow[]> {
   return data ?? [];
 }
 
-// The single about_section row — image + copy for the homepage About
-// section. Returns null (AboutSection has its own hardcoded fallback values)
-// rather than throwing if the query fails.
 export async function getAboutSection(): Promise<AboutSectionRow | null> {
   const supabase = await createClient();
   const { data, error } = await supabase.from("about_section").select("*").eq("id", 1).single();
@@ -145,9 +126,6 @@ export async function getAboutSection(): Promise<AboutSectionRow | null> {
   return data;
 }
 
-// The single video_section row — the YouTube link + copy for the homepage
-// video showcase. Returns null (VideoSection renders nothing) rather than
-// throwing if the query fails.
 export async function getVideoSection(): Promise<VideoSectionRow | null> {
   const supabase = await createClient();
   const { data, error } = await supabase.from("video_section").select("*").eq("id", 1).single();
@@ -160,9 +138,6 @@ export async function getVideoSection(): Promise<VideoSectionRow | null> {
   return data;
 }
 
-// Active events, in date order — used by the homepage's events schedule.
-// Falls back to an empty array (EventsSection shows an empty-state message)
-// rather than throwing if the query fails.
 export async function getEvents(): Promise<EventRow[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -179,9 +154,6 @@ export async function getEvents(): Promise<EventRow[]> {
   return data ?? [];
 }
 
-// Active gallery items, in display order — used by the homepage's photo/video
-// gallery. Falls back to an empty array (GallerySection shows an empty-state
-// message) rather than throwing if the query fails.
 export async function getGalleryItems(): Promise<GalleryItemRow[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -198,9 +170,6 @@ export async function getGalleryItems(): Promise<GalleryItemRow[]> {
   return data ?? [];
 }
 
-// Active audio tracks, in display order — used by the homepage's audio
-// player. Falls back to an empty array (AudioSection shows an empty-state
-// message) rather than throwing if the query fails.
 export async function getAudioTracks(): Promise<AudioTrackRow[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -217,9 +186,6 @@ export async function getAudioTracks(): Promise<AudioTrackRow[]> {
   return data ?? [];
 }
 
-// The single donate_section row — background image, copy, and UPI phone
-// number for the homepage Donate section. Returns null (DonateSection has
-// its own hardcoded fallback copy) rather than throwing if the query fails.
 export async function getDonateSection(): Promise<DonateSectionRow | null> {
   const supabase = await createClient();
   const { data, error } = await supabase.from("donate_section").select("*").eq("id", 1).single();
@@ -232,9 +198,6 @@ export async function getDonateSection(): Promise<DonateSectionRow | null> {
   return data;
 }
 
-// The single events_section row — just the background image behind the
-// homepage's Events schedule. Returns null (EventsSection falls back to its
-// own hardcoded image) rather than throwing if the query fails.
 export async function getEventsSection(): Promise<{ background_image_url: string | null } | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -251,9 +214,6 @@ export async function getEventsSection(): Promise<{ background_image_url: string
   return data;
 }
 
-// The single audio_section row — just the background image behind the
-// homepage's Audio player. Returns null (AudioSection falls back to its own
-// hardcoded image) rather than throwing if the query fails.
 export async function getAudioSection(): Promise<{ background_image_url: string | null } | null> {
   const supabase = await createClient();
   const { data, error } = await supabase

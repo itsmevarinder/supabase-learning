@@ -34,10 +34,6 @@ function LoginForm() {
   async function onSubmit(values: LoginFormData) {
     setFormError(null);
 
-    // Note: `rememberMe` isn't wired to session persistence yet — Supabase
-    // persists the session in localStorage by default regardless of this
-    // checkbox. Making it actually shorten/extend the session would need a
-    // custom storage adapter passed to createClient.
     const supabase = createClient();
     const { data, error } = await supabase.auth.signInWithPassword({
       email: values.email,

@@ -1,11 +1,7 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-
 import { createAdminClient } from "@/lib/supabase/admin";
 
-// Stripe calls this after payment events. We verify the signature against
-// the raw body (required — a parsed/re-stringified body won't match), then
-// log succeeded payments to the donations table.
 export async function POST(request: Request) {
   const rawBody = await request.text();
   const signature = request.headers.get("stripe-signature");
@@ -32,7 +28,7 @@ export async function POST(request: Request) {
     await supabase.from("donations").upsert(
       {
         stripe_payment_intent_id: paymentIntent.id,
-        amount: paymentIntent.amount / 100, // paise -> rupees
+        amount: paymentIntent.amount / 100,
         currency: paymentIntent.currency.toUpperCase(),
         status: "captured",
         donor_email: paymentIntent.receipt_email ?? null,
