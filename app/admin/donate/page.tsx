@@ -23,7 +23,7 @@ export default async function AdminDonatePage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="md:space-y-8 space-y-5">
+    <div className="md:space-y-6 space-y-5">
       <PageHeader>
         <div className="flex items-center flex-wrap gap-4 justify-between">
           <div>

@@ -256,7 +256,7 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
             <img
               src={contactBackgroundImageUrl}
               alt="Preview"
-              className="h-32 w-52 rounded-xl border object-cover"
+              className="aspect-square rounded-xl border object-cover"
             />
           )}
         </div>

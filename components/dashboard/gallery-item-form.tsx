@@ -281,7 +281,7 @@ export function GalleryItemForm({ item }: GalleryItemFormProps) {
                   <img
                     src={videoThumbnail}
                     alt="Video thumbnail preview"
-                    className="aspect-video w-full max-w-xs rounded-xl border object-cover"
+                    className="aspect-video w-full rounded-xl border object-cover"
                   />
                 )}
               </>
@@ -302,7 +302,7 @@ export function GalleryItemForm({ item }: GalleryItemFormProps) {
                     src={videoUrl}
                     controls
                     muted
-                    className="mt-3 aspect-video w-full max-w-xs rounded-xl border object-cover"
+                    className="mt-3 aspect-video w-full rounded-xl border object-cover"
                   />
                 )}
               </div>

@@ -7,7 +7,7 @@ export default async function AdminAboutPage() {
   const about = await getAboutSection();
 
   return (
-    <div className="md:space-y-8 space-y-5">
+    <div className="md:space-y-6 space-y-5">
       <PageHeader>
         <div>
           <h1 className="text-2xl font-bold">About Section</h1>

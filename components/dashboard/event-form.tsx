@@ -152,7 +152,7 @@ export function EventForm({ event }: EventFormProps) {
 
           {imageUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={imageUrl} alt="Preview" className="h-32 w-52 rounded-xl border object-cover" />
+            <img src={imageUrl} alt="Preview" className="aspect-square rounded-xl border object-cover" />
           )}
         </div>
 

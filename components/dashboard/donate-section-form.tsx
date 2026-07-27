@@ -132,7 +132,7 @@ export function DonateSectionForm({ donate }: DonateSectionFormProps) {
 
           {backgroundImageUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={backgroundImageUrl} alt="Preview" className="h-32 w-52 rounded-xl border object-cover" />
+            <img src={backgroundImageUrl} alt="Preview" className="aspect-square rounded-xl border object-cover" />
           )}
         </div>
 

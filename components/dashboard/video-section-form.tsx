@@ -99,7 +99,7 @@ export function VideoSectionForm({ video }: VideoSectionFormProps) {
             <img
               src={thumbnail}
               alt="Video thumbnail preview"
-              className="aspect-video w-full max-w-sm rounded-xl border object-cover"
+              className="aspect-video w-full rounded-xl border object-cover"
             />
           </div>
         )}

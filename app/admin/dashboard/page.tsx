@@ -1,31 +1,15 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  BarChart3,
-  CircleCheckBig,
-  CircleHelp,
-  EyeOff,
-  GalleryHorizontal,
-  Heart,
-  Images,
-  Image as ImageIcon,
-  Mail,
-  MessageSquareQuote,
-  Plus,
-  Users,
-} from "lucide-react";
-
+import { ArrowRight, CircleCheckBig, CircleHelp, GalleryHorizontal, Heart, Image as ImageIcon,  Mail, MessageSquareQuote, Plus,} from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContentStatusChart } from "@/components/dashboard/content-status-chart";
 import { DonationsChart } from "@/components/dashboard/donations-chart";
+import { NewsletterChart } from "@/components/dashboard/newsletter-chart";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { SubmissionsChart } from "@/components/dashboard/submissions-chart";
 import { createClient } from "@/lib/supabase/server";
 
-function dayKey(date: Date) {
-  return date.toISOString().slice(0, 10);
-}
+function dayKey(date: Date) { return date.toISOString().slice(0, 10);}
 
 function initialsFor(name: string) {
   return name
@@ -69,27 +53,7 @@ export default async function AdminOverviewPage() {
   twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 27);
   twentyEightDaysAgo.setHours(0, 0, 0, 0);
 
-  const [
-    { count: totalHeroBanners },
-    { count: activeHeroBanners },
-    { count: totalProjects },
-    { count: activeProjects },
-    { count: totalEvents },
-    { count: activeEvents },
-    { count: totalGalleryItems },
-    { count: activeGalleryItems },
-    { count: totalAudioTracks },
-    { count: activeAudioTracks },
-    { data: videoSection },
-    { data: donateSection },
-    { count: totalTestimonials },
-    { count: activeTestimonials },
-    { count: totalFaqs },
-    { count: activeFaqs },
-    { count: totalSubmissions },
-    { data: recentSubmissionDates },
-    { data: latestSubmissions },
-    { data: recentDonations },
+  const [ { count: totalHeroBanners },  { count: activeHeroBanners }, { count: totalProjects }, { count: activeProjects },  { count: totalEvents },  { count: activeEvents },  { count: totalGalleryItems }, { count: activeGalleryItems }, { count: totalAudioTracks },  { count: activeAudioTracks }, { data: videoSection }, { data: donateSection }, { count: totalTestimonials }, { count: activeTestimonials }, { count: totalFaqs }, { count: activeFaqs }, { count: totalSubmissions }, { data: recentSubmissionDates },  { data: latestSubmissions }, { data: recentDonations }, { data: recentSubscriberDates },
   ] = await Promise.all([
     supabase.from("hero_banners").select("*", { count: "exact", head: true }),
     supabase.from("hero_banners").select("*", { count: "exact", head: true }).eq("is_active", true),
@@ -109,16 +73,9 @@ export default async function AdminOverviewPage() {
     supabase.from("faqs").select("*", { count: "exact", head: true }).eq("is_active", true),
     supabase.from("contact_submissions").select("*", { count: "exact", head: true }),
     supabase.from("contact_submissions").select("created_at").gte("created_at", fourteenDaysAgo.toISOString()),
-    supabase
-      .from("contact_submissions")
-      .select("id, full_name, email, message, created_at")
-      .order("created_at", { ascending: false })
-      .limit(2),
-    supabase
-      .from("donations")
-      .select("amount, created_at, status")
-      .eq("status", "captured")
-      .gte("created_at", twentyEightDaysAgo.toISOString()),
+    supabase.from("contact_submissions").select("id, full_name, email, message, created_at").order("created_at", { ascending: false }).limit(2),
+    supabase.from("donations").select("amount, created_at, status").eq("status", "captured").gte("created_at", twentyEightDaysAgo.toISOString()),
+    supabase.from("newsletter_subscribers").select("created_at").gte("created_at", twentyEightDaysAgo.toISOString()),
   ]);
 
   const dayBuckets = new Map<string, number>();
@@ -155,6 +112,28 @@ export default async function AdminOverviewPage() {
   const donationCount = recentDonations?.filter((row) => row.created_at.slice(0, 10) >= dayKey(fourteenDaysAgo)).length ?? 0;
   const donationsTrendPercent =
     previousPeriodTotal > 0 ? ((currentPeriodTotal - previousPeriodTotal) / previousPeriodTotal) * 100 : null;
+
+  const subscriberDayBuckets = new Map<string, number>();
+  for (let i = 0; i < 14; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - (13 - i));
+    subscriberDayBuckets.set(dayKey(d), 0);
+  }
+  let previousSubscriberPeriodCount = 0;
+  recentSubscriberDates?.forEach((row) => {
+    const key = row.created_at.slice(0, 10);
+    if (subscriberDayBuckets.has(key)) {
+      subscriberDayBuckets.set(key, (subscriberDayBuckets.get(key) ?? 0) + 1);
+    } else {
+      previousSubscriberPeriodCount += 1;
+    }
+  });
+  const subscribersChartData = Array.from(subscriberDayBuckets, ([date, count]) => ({ date, count }));
+  const currentSubscriberPeriodCount = subscribersChartData.reduce((sum, d) => sum + d.count, 0);
+  const subscribersTrendPercent =
+    previousSubscriberPeriodCount > 0
+      ? ((currentSubscriberPeriodCount - previousSubscriberPeriodCount) / previousSubscriberPeriodCount) * 100
+      : null;
 
   const stats = [
     {
@@ -280,12 +259,6 @@ export default async function AdminOverviewPage() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div
-                className="flex size-9 items-center justify-center rounded-lg"
-                style={{ backgroundColor: "color-mix(in oklch, var(--chart-1) 15%, transparent)" }}
-              >
-                <Mail className="size-4.5" style={{ color: "var(--chart-1)" }} />
-              </div>
               <div>
                 <CardTitle className="text-lg">Contact submissions — last 14 days</CardTitle>
                 <CardDescription>
@@ -302,12 +275,7 @@ export default async function AdminOverviewPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div
-                className="flex size-9 items-center justify-center rounded-lg"
-                style={{ backgroundColor: "color-mix(in oklch, var(--chart-2) 15%, transparent)" }}
-              >
-                <Users className="size-4.5" style={{ color: "var(--chart-2)" }} />
-              </div>
+
               <div>
                 <CardTitle className="text-lg">Recent submissions</CardTitle>
                 <CardDescription>The latest 2 messages.</CardDescription>
@@ -346,16 +314,10 @@ export default async function AdminOverviewPage() {
         </Card>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-[45%_auto]">
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div
-                className="flex size-9 items-center justify-center rounded-lg"
-                style={{ backgroundColor: "color-mix(in oklch, var(--chart-5) 15%, transparent)" }}
-              >
-                <BarChart3 className="size-4.5" style={{ color: "var(--chart-5)" }} />
-              </div>
               <div>
                 <CardTitle className="text-lg">Content status</CardTitle>
                 <CardDescription>Active vs hidden, across your manageable sections.</CardDescription>
@@ -370,12 +332,6 @@ export default async function AdminOverviewPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div
-                className="flex size-9 items-center justify-center rounded-lg"
-                style={{ backgroundColor: "color-mix(in oklch, var(--chart-3) 15%, transparent)" }}
-              >
-                <Images className="size-4.5" style={{ color: "var(--chart-3)" }} />
-              </div>
               <div>
                 <CardTitle className="text-lg">Media &amp; events</CardTitle>
                 <CardDescription>Events, gallery, audio, and the video showcase.</CardDescription>
@@ -388,40 +344,49 @@ export default async function AdminOverviewPage() {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div
-              className="flex size-9 items-center justify-center rounded-lg"
-              style={{ backgroundColor: "color-mix(in oklch, var(--chart-2) 15%, transparent)" }}
-            >
-              <Heart className="size-4.5" style={{ color: "var(--chart-2)" }} />
+      <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-[auto_45%]">
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div>
+                <CardTitle className="text-lg">Donations</CardTitle>
+                <CardDescription>UPI donations collected through the Donate section.</CardDescription>
+              </div>
             </div>
-            <div>
-              <CardTitle className="text-lg">Donations</CardTitle>
-              <CardDescription>UPI donations collected through the Donate section.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <DonationsChart
+              data={donationsChartData}
+              totalAmount={currentPeriodTotal}
+              donationCount={donationCount}
+              trendPercent={donationsTrendPercent}
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3">
+
+              <div>
+                <CardTitle className="text-lg">Newsletter</CardTitle>
+                <CardDescription>Subscribers gained from the &ldquo;Stay In Touch&rdquo; section.</CardDescription>
+              </div>
             </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <DonationsChart
-            data={donationsChartData}
-            totalAmount={currentPeriodTotal}
-            donationCount={donationCount}
-            trendPercent={donationsTrendPercent}
-          />
-        </CardContent>
-      </Card>
+          </CardHeader>
+          <CardContent>
+            <NewsletterChart
+              data={subscribersChartData}
+              totalCount={currentSubscriberPeriodCount}
+              trendPercent={subscribersTrendPercent}
+            />
+          </CardContent>
+        </Card>
+      </div>
 
       <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div
-              className="flex size-9 items-center justify-center rounded-lg"
-              style={{ backgroundColor: "color-mix(in oklch, var(--chart-4) 15%, transparent)" }}
-            >
-              <EyeOff className="size-4.5" style={{ color: "var(--chart-4)" }} />
-            </div>
             <div>
               <CardTitle className="text-lg">Needs attention</CardTitle>
               <CardDescription>Content that&apos;s hidden from the homepage.</CardDescription>

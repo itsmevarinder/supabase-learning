@@ -1,5 +1,7 @@
-import { Mail, Clock } from "lucide-react";
+import Link from "next/link";
+import { Mail, Clock, Send } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { SectionBackgroundForm } from "@/components/dashboard/section-background-form";
@@ -15,11 +17,18 @@ export default async function AdminNewsletterPage() {
   return (
     <div className="md:space-y-6 space-y-5">
       <PageHeader>
-        <div>
-          <h1 className="text-2xl font-bold">Newsletter</h1>
-          <p className="text-muted-foreground">
-            Everyone who&apos;s subscribed from the &ldquo;Stay In Touch&rdquo; section.
-          </p>
+        <div className="flex items-center flex-wrap gap-4 justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Newsletter</h1>
+            <p className="text-muted-foreground">
+              Everyone who&apos;s subscribed from the &ldquo;Stay In Touch&rdquo; section.
+            </p>
+          </div>
+          <Link href="/admin/newsletter/compose">
+            <Button className="rounded-full px-6 py-5">
+              Compose <Send />
+            </Button>
+          </Link>
         </div>
       </PageHeader>
 

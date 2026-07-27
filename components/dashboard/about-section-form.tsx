@@ -168,7 +168,7 @@ export function AboutSectionForm({ about }: AboutSectionFormProps) {
 
             {imageUrl && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={imageUrl} alt="Preview" className="h-32 w-52 rounded-xl border object-cover" />
+              <img src={imageUrl} alt="Preview" className="aspect-square rounded-xl border object-cover" />
             )}
           </div>
 
@@ -183,7 +183,7 @@ export function AboutSectionForm({ about }: AboutSectionFormProps) {
 
             {imageUrl2 && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={imageUrl2} alt="Preview" className="h-32 w-52 rounded-xl border object-cover" />
+              <img src={imageUrl2} alt="Preview" className="aspect-square rounded-xl border object-cover" />
             )}
           </div>
         </div>

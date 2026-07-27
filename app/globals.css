@@ -101,12 +101,15 @@
 }
 
 @keyframes qr-scan-line {
-  0%, 100% {
+
+  0%,
+  100% {
     top: 6%;
     opacity: 0;
   }
 
-  10%, 90% {
+  10%,
+  90% {
     opacity: 1;
   }
 
@@ -127,7 +130,9 @@
 }
 
 @keyframes gradient-drift {
-  0%, 100% {
+
+  0%,
+  100% {
     background-position: 0% 50%;
   }
 
@@ -162,6 +167,7 @@
 
 
   @media (prefers-reduced-motion: reduce) {
+
     .section-tint-indigo,
     .section-tint-fuchsia,
     .section-tint-cyan {
@@ -293,10 +299,11 @@
   color: #fff;
 }
 
-.container{
-  max-width:1600px !important;
+.container {
+  max-width: 1600px !important;
 }
-button{
+
+button {
   cursor: pointer;
 }
 
@@ -323,4 +330,9 @@ button{
 * {
   scrollbar-width: thin;
   scrollbar-color: #888 transparent;
+}
+
+input[type="file" i] {
+  line-height: 37px;
+  cursor: pointer;
 }

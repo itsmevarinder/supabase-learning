@@ -9,7 +9,7 @@ import { PageHeader } from "@/components/dashboard/page-header";
 export default async function AdminHeroBannersPage() {
 
    return (
-      <div className="md:space-y-8 space-y-5">
+      <div className="md:space-y-6 space-y-5">
          <PageHeader>
             <div className="flex justify-between">
                <div>
