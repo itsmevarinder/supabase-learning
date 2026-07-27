@@ -21,6 +21,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
+  DropdownMenuArrow,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
@@ -106,6 +107,91 @@ function NavLink({ href, onClick, ...props }: ComponentProps<typeof Link>) {
   );
 }
 
+function MediaNavItem({ pathname }: { pathname: string }) {
+  const { state, isMobile } = useSidebar();
+  const mediaActive = MEDIA_NAV_ITEMS.some((item) => isNavItemActive(pathname, item.href));
+  const [mediaOpen, setMediaOpen] = useState(mediaActive);
+
+  if (state === "collapsed" && !isMobile) {
+    return (
+      <SidebarMenuItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <SidebarMenuButton tooltip="Manage Media and Events" isActive={mediaActive}>
+                <Layers />
+                <span>Manage Media and Events</span>
+              </SidebarMenuButton>
+            }
+          />
+          <DropdownMenuContent side="right" align="center" sideOffset={8} className="w-56">
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>Manage Media and Events</DropdownMenuLabel>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              {MEDIA_NAV_ITEMS.map((item) => {
+                const active = isNavItemActive(pathname, item.href);
+                return (
+                  <DropdownMenuItem
+                    key={item.href}
+                    render={<NavLink href={item.href} />}
+                    className={`gap-2.5 py-1.5 ${active ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground" : ""}`}
+                  >
+                    <item.icon />
+                    {item.label}
+                  </DropdownMenuItem>
+                );
+              })}
+            </DropdownMenuGroup>
+            <DropdownMenuArrow />
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarMenuItem>
+    );
+  }
+
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        tooltip="Manage Media and Events"
+        isActive={mediaActive}
+        onClick={() => setMediaOpen((open) => !open)}
+        aria-expanded={mediaOpen}
+      >
+        <Layers />
+        <span>Manage Media and Events</span>
+        <ChevronDown
+          className={`ml-auto size-4 shrink-0 text-muted-foreground transition-transform duration-200 ${mediaOpen ? "rotate-180" : ""}`}
+        />
+      </SidebarMenuButton>
+
+      <div
+        className={`grid overflow-hidden transition-all duration-200 ease-out ${mediaOpen ? "pt-3" : "pt-0"}`}
+        style={{ gridTemplateRows: mediaOpen ? "1fr" : "0fr" }}
+      >
+        <div className="overflow-hidden">
+          <SidebarMenuSub className="py-3">
+            {MEDIA_NAV_ITEMS.map((item) => (
+              <SidebarMenuSubItem key={item.href}>
+                <SidebarMenuSubButton
+                  isActive={isNavItemActive(pathname, item.href)}
+                  render={
+                    <NavLink href={item.href} className="h-8.5">
+                      <item.icon />
+                      <span>{item.label}</span>
+                    </NavLink>
+                  }
+                />
+              </SidebarMenuSubItem>
+            ))}
+          </SidebarMenuSub>
+        </div>
+      </div>
+    </SidebarMenuItem>
+  );
+}
+
 export function DashboardShell({
   roleLabel,
   userEmail,
@@ -121,8 +207,6 @@ export function DashboardShell({
   const [signOutOpen, setSignOutOpen] = useState(false);
   const [loginButtonVisible, setLoginButtonVisible] = useState(showLoginButton ?? true);
   const [savingLoginToggle, setSavingLoginToggle] = useState(false);
-  const mediaActive = MEDIA_NAV_ITEMS.some((item) => isNavItemActive(pathname, item.href));
-  const [mediaOpen, setMediaOpen] = useState(mediaActive);
 
   async function handleSignOut() {
     const supabase = createClient();
@@ -192,44 +276,7 @@ export function DashboardShell({
                   </SidebarMenuItem>
                 ))}
 
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    tooltip="Manage Media and Events"
-                    isActive={mediaActive}
-                    onClick={() => setMediaOpen((open) => !open)}
-                    aria-expanded={mediaOpen}
-                  >
-                    <Layers />
-                    <span>Manage Media and Events</span>
-                    <ChevronDown
-                      className={`ml-auto size-4 shrink-0 text-muted-foreground transition-transform duration-200 ${mediaOpen ? "rotate-180" : ""}`}
-                    />
-                  </SidebarMenuButton>
-
-                  <div
-                    className={`grid overflow-hidden transition-all duration-200 ease-out ${mediaOpen ? "pt-3" : "pt-0"
-                      }`}
-                    style={{ gridTemplateRows: mediaOpen ? "1fr" : "0fr" }}
-                  >
-                    <div className="overflow-hidden">
-                      <SidebarMenuSub className="py-3">
-                        {MEDIA_NAV_ITEMS.map((item) => (
-                          <SidebarMenuSubItem key={item.href}>
-                            <SidebarMenuSubButton
-                              isActive={isNavItemActive(pathname, item.href)}
-                              render={
-                                <NavLink href={item.href} className="h-8.5">
-                                  <item.icon />
-                                  <span>{item.label}</span>
-                                </NavLink>
-                              }
-                            />
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
-                    </div>
-                  </div>
-                </SidebarMenuItem>
+                <MediaNavItem pathname={pathname} />
 
                 {NAV_ITEMS.slice(3).map((item) => (
                   <SidebarMenuItem key={item.href}>
