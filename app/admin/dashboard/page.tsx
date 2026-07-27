@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ArrowRight, CircleCheckBig, CircleHelp, GalleryHorizontal, Heart, Image as ImageIcon,  Mail, MessageSquareQuote, Plus,} from "lucide-react";
+import { ArrowRight, CircleCheckBig, CircleHelp, GalleryHorizontal, Heart, Image as ImageIcon,  Mail, MessageSquareQuote, Plus, Send,} from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContentStatusChart } from "@/components/dashboard/content-status-chart";
 import { DonationsChart } from "@/components/dashboard/donations-chart";
@@ -53,7 +54,7 @@ export default async function AdminOverviewPage() {
   twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 27);
   twentyEightDaysAgo.setHours(0, 0, 0, 0);
 
-  const [ { count: totalHeroBanners },  { count: activeHeroBanners }, { count: totalProjects }, { count: activeProjects },  { count: totalEvents },  { count: activeEvents },  { count: totalGalleryItems }, { count: activeGalleryItems }, { count: totalAudioTracks },  { count: activeAudioTracks }, { data: videoSection }, { data: donateSection }, { count: totalTestimonials }, { count: activeTestimonials }, { count: totalFaqs }, { count: activeFaqs }, { count: totalSubmissions }, { data: recentSubmissionDates },  { data: latestSubmissions }, { data: recentDonations }, { data: recentSubscriberDates },
+  const [ { count: totalHeroBanners },  { count: activeHeroBanners }, { count: totalProjects }, { count: activeProjects },  { count: totalEvents },  { count: activeEvents },  { count: totalGalleryItems }, { count: activeGalleryItems }, { count: totalAudioTracks },  { count: activeAudioTracks }, { data: videoSection }, { data: donateSection }, { count: totalTestimonials }, { count: activeTestimonials }, { count: totalFaqs }, { count: activeFaqs }, { count: totalSubmissions }, { data: recentSubmissionDates },  { data: latestSubmissions }, { data: recentDonations }, { data: recentSubscriberDates }, { count: totalSends }, { data: latestSends },
   ] = await Promise.all([
     supabase.from("hero_banners").select("*", { count: "exact", head: true }),
     supabase.from("hero_banners").select("*", { count: "exact", head: true }).eq("is_active", true),
@@ -76,6 +77,12 @@ export default async function AdminOverviewPage() {
     supabase.from("contact_submissions").select("id, full_name, email, message, created_at").order("created_at", { ascending: false }).limit(2),
     supabase.from("donations").select("amount, created_at, status").eq("status", "captured").gte("created_at", twentyEightDaysAgo.toISOString()),
     supabase.from("newsletter_subscribers").select("created_at").gte("created_at", twentyEightDaysAgo.toISOString()),
+    supabase.from("newsletter_sends").select("*", { count: "exact", head: true }),
+    supabase
+      .from("newsletter_sends")
+      .select("id, subject, sent_count, total_count, created_at")
+      .order("created_at", { ascending: false })
+      .limit(3),
   ]);
 
   const dayBuckets = new Map<string, number>();
@@ -163,7 +170,7 @@ export default async function AdminOverviewPage() {
       sub: `${activeFaqs ?? 0} active`,
       icon: CircleHelp,
       href: "/admin/faqs",
-    },
+    }
   ];
 
   const contentSections = [
@@ -370,6 +377,48 @@ export default async function AdminOverviewPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div>
+              <CardTitle className="text-lg">Recent newsletters</CardTitle>
+              <CardDescription>The last 3 newsletters you&apos;ve sent.</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {!latestSends?.length ? (
+            <p className="text-sm text-muted-foreground">No newsletters sent yet.</p>
+          ) : (
+            latestSends.map((send) => (
+              <div key={send.id} className="flex gap-3 border-b pb-4 last:border-0 last:pb-0">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Send className="size-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="truncate font-medium">{send.subject}</p>
+                    <Badge variant="secondary">
+                      {send.sent_count}/{send.total_count} sent
+                    </Badge>
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {new Date(send.created_at).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            ))
+          )}
+          <Link
+            href="/admin/newsletter/history"
+            className="flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+          >
+            View all newsletters
+            <ArrowRight className="size-3.5" />
+          </Link>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
