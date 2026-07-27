@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DynaPuff, Sour_Gummy, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import PageLoader from "@/components/shadn/PageLoader";
 
 const dynaPuff = DynaPuff({
   variable: "--font-dynapuff",
@@ -35,6 +36,7 @@ export default function RootLayout({
       className={`${dynaPuff.variable} ${sourGummy.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <PageLoader />
         <TooltipProvider>{children}</TooltipProvider>
       </body>
     </html>
