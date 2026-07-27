@@ -27,7 +27,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       userName={userName}
       showLoginButton={siteSettings?.show_login_button ?? true}
     >
-      <Toaster richColors position="top-right" />
+      <Toaster
+        richColors
+        position="top-right"
+        toastOptions={{
+          classNames: {
+            error: "!bg-destructive !text-white !border-destructive",
+          },
+        }}
+      />
       {children}
     </DashboardShell>
   );

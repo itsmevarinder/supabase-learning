@@ -4,7 +4,7 @@ import { useState, type ComponentProps, type ReactNode } from "react";
 import NextImage from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { CalendarDays, ChevronDown, ChevronsUpDown, CircleHelp, GalleryHorizontal, Heart, Images, Info, LayoutDashboard, Layers, LogIn, LogOut, Mail, MessageSquareQuote, Music, Rss, Settings, Image as ImageIcon, Video } from "lucide-react";
+import { CalendarDays, ChevronDown, ChevronsUpDown, CircleHelp, ExternalLink, GalleryHorizontal, Heart, Images, Info, LayoutDashboard, Layers, LogIn, LogOut, Mail, MessageSquareQuote, Music, Rss, Settings, Image as ImageIcon, Video } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -164,7 +165,7 @@ export function DashboardShell({
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton size="lg" render={<Link href="/" className="flex items-center gap-3">
+              <SidebarMenuButton size="lg" render={<Link href="/admin/dashboard" className="flex items-center gap-3">
                 <NextImage src="/logo.png" alt="" width={48} height={48} priority className="w-12 animate-spin-linear" />
                 <span className="truncate text-3xl font-semibold">CMS</span>
               </Link>} />
@@ -312,17 +313,26 @@ export function DashboardShell({
           <SidebarTrigger />
           <span className="text-base font-semibold">{activeItem?.label ?? "Dashboard"}</span>
 
-          {showLoginButton !== undefined && (
-            <div className="ml-auto flex items-center gap-2">
-              <LogIn className="size-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">Login button</span>
-              <Switch
-                checked={loginButtonVisible}
-                onCheckedChange={handleLoginToggle}
-                disabled={savingLoginToggle}
-              />
-            </div>
-          )}
+          <div className="ml-auto flex items-center gap-4">
+            {showLoginButton !== undefined && (
+              <div className="flex items-center gap-2">
+                <LogIn className="size-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">Login button</span>
+                <Switch
+                  checked={loginButtonVisible}
+                  onCheckedChange={handleLoginToggle}
+                  disabled={savingLoginToggle}
+                />
+              </div>
+            )}
+
+            <a href="/" target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" size="sm" className="rounded-full">
+                Visit site
+                <ExternalLink />
+              </Button>
+            </a>
+          </div>
         </header>
         <main className="flex-1 md:p-6 py-5 px-4">{children}</main>
       </SidebarInset>
