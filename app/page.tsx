@@ -10,18 +10,19 @@ import FAQSection from "@/components/shadn/Accordion";
 import DonateSection from "@/components/shadn/DonateSection";
 import TestimonialSection from "@/components/shadn/TestimonialSection";
 import EventsSection from "@/components/shadn/EventsSection";
+import NewsletterSection from "@/components/shadn/NewsletterSection";
 import ContactSection from "@/components/shadn/Contact";
 import Footer from "@/components/shadn/footer";
 import ScrollFlipBackground from "@/components/shadn/ScrollFlipBackground";
 import SmoothScroll from "@/components/shadn/SmoothScroll";
-import { getAboutSection, getAudioSection, getAudioTracks, getDonateSection, getEvents, getEventsSection, getFaqs, getGalleryItems, getHeroBanners, getPortfolioProjects, getSiteSettings, getTestimonials, getVideoSection } from "@/lib/supabase/server";
+import { getAboutSection, getAudioSection, getAudioTracks, getDonateSection, getEvents, getEventsSection, getFaqs, getGalleryItems, getHeroBanners, getNewsletterSection, getPortfolioProjects, getSiteSettings, getTestimonials, getVideoSection } from "@/lib/supabase/server";
 
 export const metadata = {
    title: "CMS Homepage",
 };
 
 const Page = async () => {
-   const [heroBanners, portfolioProjects, donateSection, siteSettings, testimonials, faqs, aboutSection, videoSection, events, galleryItems, audioTracks, eventsSection, audioSection] = await Promise.all([
+   const [heroBanners, portfolioProjects, donateSection, siteSettings, testimonials, faqs, aboutSection, videoSection, events, galleryItems, audioTracks, eventsSection, audioSection, newsletterSection] = await Promise.all([
       getHeroBanners(),
       getPortfolioProjects(),
       getDonateSection(),
@@ -35,6 +36,7 @@ const Page = async () => {
       getAudioTracks(),
       getEventsSection(),
       getAudioSection(),
+      getNewsletterSection(),
    ]);
 
    return (
@@ -53,6 +55,7 @@ const Page = async () => {
          <VideoSection video={videoSection} />
          <EventsSection events={events} backgroundImageUrl={eventsSection?.background_image_url} />
          <TestimonialSection testimonials={testimonials} />
+         <NewsletterSection backgroundImageUrl={newsletterSection?.background_image_url} />
          <ContactSection settings={siteSettings} />
          <Footer settings={siteSettings} />
       </main>

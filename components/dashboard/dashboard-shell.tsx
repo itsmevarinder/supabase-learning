@@ -4,7 +4,7 @@ import { useState, type ComponentProps, type ReactNode } from "react";
 import NextImage from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { CalendarDays, ChevronDown, ChevronsUpDown, CircleHelp, GalleryHorizontal, Heart, Images, Info, LayoutDashboard, Layers, LogIn, LogOut, Mail, MessageSquareQuote, Music, Settings, Image as ImageIcon, Video } from "lucide-react";
+import { CalendarDays, ChevronDown, ChevronsUpDown, CircleHelp, GalleryHorizontal, Heart, Images, Info, LayoutDashboard, Layers, LogIn, LogOut, Mail, MessageSquareQuote, Music, Rss, Settings, Image as ImageIcon, Video } from "lucide-react";
 
 import {
   AlertDialog,
@@ -58,6 +58,7 @@ const NAV_ITEMS = [
   { href: "/admin/donate", label: "Donate", icon: Heart },
   { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },
   { href: "/admin/contact-submissions", label: "Messages", icon: Mail },
+  { href: "/admin/newsletter", label: "Newsletter", icon: Rss },
 ] as const;
 
 const MEDIA_NAV_ITEMS = [

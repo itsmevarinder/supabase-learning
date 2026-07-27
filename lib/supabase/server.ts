@@ -228,3 +228,19 @@ export async function getAudioSection(): Promise<{ background_image_url: string 
 
   return data;
 }
+
+export async function getNewsletterSection(): Promise<{ background_image_url: string | null } | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("newsletter_section")
+    .select("background_image_url")
+    .eq("id", 1)
+    .single();
+
+  if (error) {
+    console.error("Failed to load newsletter_section:", error.message);
+    return null;
+  }
+
+  return data;
+}
