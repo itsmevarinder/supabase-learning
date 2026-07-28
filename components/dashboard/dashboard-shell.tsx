@@ -17,7 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -75,6 +75,7 @@ interface DashboardShellProps {
   roleLabel: string;
   userEmail: string;
   userName: string;
+  userAvatarUrl?: string;
   children: ReactNode;
   showLoginButton?: boolean;
 }
@@ -196,14 +197,17 @@ export function DashboardShell({
   roleLabel,
   userEmail,
   userName,
+  userAvatarUrl,
   children,
   showLoginButton,
 }: DashboardShellProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const settingsActive = isNavItemActive(pathname, "/admin/settings");
   const activeItem =
     NAV_ITEMS.find((item) => isNavItemActive(pathname, item.href)) ??
-    MEDIA_NAV_ITEMS.find((item) => isNavItemActive(pathname, item.href));
+    MEDIA_NAV_ITEMS.find((item) => isNavItemActive(pathname, item.href)) ??
+    (settingsActive ? { label: "Settings" } : undefined);
   const [signOutOpen, setSignOutOpen] = useState(false);
   const [loginButtonVisible, setLoginButtonVisible] = useState(showLoginButton ?? true);
   const [savingLoginToggle, setSavingLoginToggle] = useState(false);
@@ -302,7 +306,8 @@ export function DashboardShell({
             <DropdownMenuTrigger
               render={
                 <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent">
-                  <Avatar className="size-8 rounded-lg">
+                  <Avatar className="size-10 rounded-lg">
+                    <AvatarImage src={userAvatarUrl || undefined} alt="" />
                     <AvatarFallback className="rounded-lg">{initialsFor(userName)}</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
@@ -323,7 +328,10 @@ export function DashboardShell({
                 </DropdownMenuLabel>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem render={<NavLink href="/admin/settings" />}>
+              <DropdownMenuItem
+                render={<NavLink href="/admin/settings" />}
+                className={settingsActive ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground" : ""}
+              >
                 <Settings />
                 Settings
               </DropdownMenuItem>

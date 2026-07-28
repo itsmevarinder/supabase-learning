@@ -254,33 +254,6 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
           )}
         </div>
 
-        <FormField
-          control={form.control}
-          name="showLoginButton"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between gap-4 space-y-0 rounded-xl border bg-muted/30 px-4 py-3">
-              <div className="flex items-center gap-3">
-                <div
-                  className="flex size-9 shrink-0 items-center justify-center rounded-lg"
-                  style={{ backgroundColor: "color-mix(in oklch, var(--chart-3) 15%, transparent)" }}
-                >
-                  <LogIn className="size-4.5" style={{ color: "var(--chart-3)" }} />
-                </div>
-                <div>
-                  <FormLabel className="font-medium">Login button</FormLabel>
-                  <p className="text-sm text-muted-foreground">
-                    Show the Login button in the site header and mobile menu.
-                  </p>
-                </div>
-              </div>
-              <FormControl>
-                <Switch checked={field.value} onCheckedChange={field.onChange} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <Button type="submit" className="w-fit rounded-full" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? "Saving…" : "Save changes"}
         </Button>

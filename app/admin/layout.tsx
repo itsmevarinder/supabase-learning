@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { Toaster } from "sonner";
 
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { createClient, getSiteSettings } from "@/lib/supabase/server";
@@ -17,6 +18,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   const userName = (user.user_metadata?.full_name as string | undefined) ?? user.email ?? "Admin";
+  const userAvatarUrl = user.user_metadata?.avatar_url as string | undefined;
   const siteSettings = await getSiteSettings();
 
   return (
@@ -24,9 +26,18 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       roleLabel="Admin"
       userEmail={user.email ?? ""}
       userName={userName}
+      userAvatarUrl={userAvatarUrl}
       showLoginButton={siteSettings?.show_login_button ?? true}
     >
-
+      <Toaster
+        richColors
+        position="top-right"
+        toastOptions={{
+          classNames: {
+            error: "!bg-destructive !text-white !border-destructive",
+          },
+        }}
+      />
       {children}
     </DashboardShell>
   );
