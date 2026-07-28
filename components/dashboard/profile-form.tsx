@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
 import { profileSchema, type ProfileFormData } from "@/schemas/profile-schema";
+import { useProfileSync } from "@/components/dashboard/profile-sync-context";
 
 interface ProfileFormProps {
   defaultFullName: string;
@@ -47,6 +48,7 @@ function slugify(value: string) {
 
 export function ProfileForm({ defaultFullName, defaultAvatarUrl }: ProfileFormProps) {
   const router = useRouter();
+  const { setProfile } = useProfileSync();
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -112,6 +114,7 @@ export function ProfileForm({ defaultFullName, defaultAvatarUrl }: ProfileFormPr
       return;
     }
 
+    setProfile({ fullName: values.fullName, avatarUrl: values.avatarUrl ?? "" });
     toast.success("Profile updated.");
     router.refresh();
   }

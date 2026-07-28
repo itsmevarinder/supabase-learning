@@ -52,6 +52,8 @@ import {
 } from "@/components/ui/sidebar";
 import { createClient } from "@/lib/supabase/client";
 
+import { ProfileSyncProvider, useProfileSync } from "@/components/dashboard/profile-sync-context";
+
 const NAV_ITEMS = [
   { href: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/hero-banners", label: "Hero Banners", icon: GalleryHorizontal },
@@ -193,6 +195,65 @@ function MediaNavItem({ pathname }: { pathname: string }) {
   );
 }
 
+function AccountMenu({
+  userEmail,
+  roleLabel,
+  settingsActive,
+  onSignOutRequest,
+}: {
+  userEmail: string;
+  roleLabel: string;
+  settingsActive: boolean;
+  onSignOutRequest: () => void;
+}) {
+  const { fullName, avatarUrl } = useProfileSync();
+
+  return (
+    <SidebarFooter>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent">
+              <Avatar className="size-10 rounded-lg group-data-[collapsible=icon]:size-7.5">
+                <AvatarImage src={avatarUrl || undefined} alt="" />
+                <AvatarFallback className="rounded-lg">{initialsFor(fullName)}</AvatarFallback>
+              </Avatar>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">{fullName}</span>
+                <span className="truncate text-xs text-muted-foreground">{userEmail}</span>
+              </div>
+              <ChevronsUpDown className="ml-auto size-4" />
+            </SidebarMenuButton>
+          }
+        />
+        <DropdownMenuContent side="top" align="start" className="w-56">
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className="font-normal">
+              <div className="grid text-left text-sm leading-tight">
+                <span className="truncate font-medium">{fullName}</span>
+                <span className="truncate text-xs text-muted-foreground">{roleLabel}</span>
+              </div>
+            </DropdownMenuLabel>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            render={<NavLink href="/admin/settings" />}
+            className={settingsActive ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground" : ""}
+          >
+            <Settings />
+            Settings
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={onSignOutRequest}>
+            <LogOut />
+            Sign out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </SidebarFooter>
+  );
+}
+
 export function DashboardShell({
   roleLabel,
   userEmail,
@@ -248,149 +309,115 @@ export function DashboardShell({
   }
 
   return (
-    <SidebarProvider>
-      <Sidebar collapsible="icon" variant="inset">
-        <SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton size="lg" render={<Link href="/admin/dashboard" className="flex items-center gap-3">
-                <NextImage src="/logo.png" alt="" width={48} height={48} priority className="w-12 animate-spin-linear" />
-                <span className="truncate text-3xl font-semibold">CMS</span>
-              </Link>} />
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarHeader>
+    <ProfileSyncProvider initialFullName={userName} initialAvatarUrl={userAvatarUrl ?? ""}>
+      <SidebarProvider>
+        <Sidebar collapsible="icon" variant="inset">
+          <SidebarHeader>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton size="lg" render={<Link href="/admin/dashboard" className="flex items-center gap-3">
+                  <NextImage src="/logo.png" alt="" width={48} height={48} priority className="w-12 animate-spin-linear" />
+                  <span className="truncate text-3xl font-semibold">CMS</span>
+                </Link>} />
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarHeader>
 
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {NAV_ITEMS.slice(0, 3).map((item) => (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      isActive={isNavItemActive(pathname, item.href)}
-                      tooltip={item.label}
-                      render={
-                        <NavLink href={item.href}>
-                          <item.icon />
-                          <span>{item.label}</span>
-                        </NavLink>
-                      }
-                    />
-                  </SidebarMenuItem>
-                ))}
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {NAV_ITEMS.slice(0, 3).map((item) => (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton
+                        isActive={isNavItemActive(pathname, item.href)}
+                        tooltip={item.label}
+                        render={
+                          <NavLink href={item.href}>
+                            <item.icon />
+                            <span>{item.label}</span>
+                          </NavLink>
+                        }
+                      />
+                    </SidebarMenuItem>
+                  ))}
 
-                <MediaNavItem pathname={pathname} />
+                  <MediaNavItem pathname={pathname} />
 
-                {NAV_ITEMS.slice(3).map((item) => (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      isActive={isNavItemActive(pathname, item.href)}
-                      tooltip={item.label}
-                      render={
-                        <NavLink href={item.href}>
-                          <item.icon />
-                          <span>{item.label}</span>
-                        </NavLink>
-                      }
-                    />
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
+                  {NAV_ITEMS.slice(3).map((item) => (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton
+                        isActive={isNavItemActive(pathname, item.href)}
+                        tooltip={item.label}
+                        render={
+                          <NavLink href={item.href}>
+                            <item.icon />
+                            <span>{item.label}</span>
+                          </NavLink>
+                        }
+                      />
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
 
-        <SidebarFooter>
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent">
-                  <Avatar className="size-10 rounded-lg">
-                    <AvatarImage src={userAvatarUrl || undefined} alt="" />
-                    <AvatarFallback className="rounded-lg">{initialsFor(userName)}</AvatarFallback>
-                  </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{userName}</span>
-                    <span className="truncate text-xs text-muted-foreground">{userEmail}</span>
-                  </div>
-                  <ChevronsUpDown className="ml-auto size-4" />
-                </SidebarMenuButton>
-              }
-            />
-            <DropdownMenuContent side="top" align="start" className="w-56">
-              <DropdownMenuGroup>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="grid text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{userName}</span>
-                    <span className="truncate text-xs text-muted-foreground">{roleLabel}</span>
-                  </div>
-                </DropdownMenuLabel>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                render={<NavLink href="/admin/settings" />}
-                className={settingsActive ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground" : ""}
-              >
-                <Settings />
-                Settings
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setSignOutOpen(true)}>
-                <LogOut />
-                Sign out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </SidebarFooter>
-        <SidebarRail />
-      </Sidebar>
+          <AccountMenu
+            userEmail={userEmail}
+            roleLabel={roleLabel}
+            settingsActive={settingsActive}
+            onSignOutRequest={() => setSignOutOpen(true)}
+          />
+          <SidebarRail />
+        </Sidebar>
 
-      <AlertDialog open={signOutOpen} onOpenChange={setSignOutOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Sign out?</AlertDialogTitle>
-            <AlertDialogDescription>
-              You&apos;ll need to log back in to access your dashboard.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleSignOut}>Sign out</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        <AlertDialog open={signOutOpen} onOpenChange={setSignOutOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Sign out?</AlertDialogTitle>
+              <AlertDialogDescription>
+                You&apos;ll need to log back in to access your dashboard.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleSignOut}>Sign out</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
-      <SidebarInset>
-        <header className="sticky top-0 z-30 flex h-14 shrink-0 overflow-hidden bg-card rounded-tl-md rounded-tr-md items-center gap-4 border-b border-border px-4">
-          <span className="pointer-events-none absolute -right-10 -top-16 h-56 w-56 rounded-full bg-primary/10 blur-3xl" />
-          <span className="pointer-events-none absolute -bottom-20 left-1/3 h-56 w-56 rounded-full bg-[color-mix(in_oklch,var(--chart-2),transparent_80%)] blur-3xl" />
-          <SidebarTrigger />
-          <span className="text-base font-semibold">{activeItem?.label ?? "Dashboard"}</span>
+        <SidebarInset>
+          <header className="sticky top-0 z-30 flex h-14 shrink-0 overflow-hidden bg-card rounded-tl-md rounded-tr-md items-center gap-4 border-b border-border px-4">
+            <span className="pointer-events-none absolute -right-10 -top-16 h-56 w-56 rounded-full bg-primary/10 blur-3xl" />
+            <span className="pointer-events-none absolute -bottom-20 left-1/3 h-56 w-56 rounded-full bg-[color-mix(in_oklch,var(--chart-2),transparent_80%)] blur-3xl" />
+            <SidebarTrigger />
+            <span className="text-base font-semibold">{activeItem?.label ?? "Dashboard"}</span>
 
-          <div className="ml-auto flex items-center gap-4">
-            {showLoginButton !== undefined && (
-              <div className="flex items-center gap-2">
-                <LogIn className="size-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Login button</span>
-                <Switch
-                  checked={loginButtonVisible}
-                  onCheckedChange={handleLoginToggle}
-                  disabled={savingLoginToggle}
-                />
-              </div>
-            )}
+            <div className="ml-auto flex items-center gap-4">
+              {showLoginButton !== undefined && (
+                <div className="flex items-center gap-2">
+                  <LogIn className="size-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Login button</span>
+                  <Switch
+                    checked={loginButtonVisible}
+                    onCheckedChange={handleLoginToggle}
+                    disabled={savingLoginToggle}
+                  />
+                </div>
+              )}
 
-            <a href="/" target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" size="sm" className="rounded-full">
-                Visit site
-                <ExternalLink />
-              </Button>
-            </a>
-          </div>
-        </header>
-        <main className="flex-1 md:p-6 py-5 px-4">{children}</main>
-      </SidebarInset>
-    </SidebarProvider>
+              <a href="/" target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="sm" className="rounded-full">
+                  Visit site
+                  <ExternalLink />
+                </Button>
+              </a>
+            </div>
+          </header>
+          <main className="flex-1 md:p-6 py-5 px-4">{children}</main>
+        </SidebarInset>
+      </SidebarProvider>
+    </ProfileSyncProvider>
   );
 }
