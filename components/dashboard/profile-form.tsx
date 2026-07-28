@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
 import { Camera, Loader2 } from "lucide-react";
@@ -45,6 +46,7 @@ function slugify(value: string) {
 }
 
 export function ProfileForm({ defaultFullName, defaultAvatarUrl }: ProfileFormProps) {
+  const router = useRouter();
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -111,6 +113,7 @@ export function ProfileForm({ defaultFullName, defaultAvatarUrl }: ProfileFormPr
     }
 
     toast.success("Profile updated.");
+    router.refresh();
   }
 
   return (
