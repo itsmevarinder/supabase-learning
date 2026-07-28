@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DynaPuff, Sour_Gummy, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import PageLoader from "@/components/shadn/PageLoader";
@@ -37,6 +38,15 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
+        <Toaster
+          richColors
+          position="top-right"
+          toastOptions={{
+            classNames: {
+              error: "!bg-destructive !text-white !border-destructive",
+            },
+          }}
+        />
         <PageLoader />
         <TooltipProvider>{children}</TooltipProvider>
       </body>
