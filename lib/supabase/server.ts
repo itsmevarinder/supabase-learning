@@ -82,7 +82,7 @@ export async function getPortfolioProjects(): Promise<PortfolioProjectRow[]> {
   }
 
   const locale = await getCurrentLocale();
-  return localizeRows(data ?? [], locale, ["title", "description", "role"]);
+  return localizeRows(data ?? [], locale, ["title", "category", "description", "role"]);
 }
 
 export async function getSiteSettings(): Promise<SiteSettings | null> {

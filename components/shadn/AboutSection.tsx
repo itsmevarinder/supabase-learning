@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import MorphCheckIcon from "@/components/shadn/MorphCheckIcon";
@@ -9,13 +10,6 @@ import { splitWords } from "@/components/shadn/split-words";
 import HoverDistortImage from "@/components/shadn/HoverDistortImage";
 import { gsap, useGSAP, EASE, prefersReducedMotion } from "@/lib/gsap/config";
 import { scrollParallax } from "@/lib/gsap/parallax";
-
-const DEFAULT_FEATURES = [
-  "Experienced & Professional Team",
-  "Fast Project Delivery",
-  "Modern UI/UX Design",
-  "24/7 Customer Support",
-];
 
 export interface AboutSectionRow {
   id: number;
@@ -34,14 +28,15 @@ interface AboutSectionProps {
 }
 
 export default function AboutSection({ about }: AboutSectionProps) {
+  const t = useTranslations("About");
   const imageUrl = about?.image_url || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&q=80";
   const imageUrl2 = about?.image_url_2 || "https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=80";
-  const eyebrowText = about?.eyebrow_text ?? "About Us";
-  const title = about?.title ?? "Building Digital Experiences That Inspire";
-  const description = about?.description ?? "We specialize in creating beautiful websites, scalable applications, and innovative digital products that help businesses grow faster and stand out in today's competitive market.";
+  const eyebrowText = about?.eyebrow_text ?? t("fallback.eyebrow");
+  const title = about?.title ?? t("fallback.title");
+  const description = about?.description ?? t("fallback.description");
   const yearsExperience = about?.years_experience ?? 10;
-  const buttonText = about?.button_text ?? "Learn More";
-  const features = about?.features?.length ? about.features : DEFAULT_FEATURES;
+  const buttonText = about?.button_text ?? t("fallback.buttonText");
+  const features: string[] = about?.features?.length ? about.features : t.raw("fallback.features");
 
   const section = useRef<HTMLElement>(null);
   const imageWrapperRef = useRef<HTMLDivElement>(null);
@@ -163,7 +158,7 @@ export default function AboutSection({ about }: AboutSectionProps) {
               className="absolute -bottom-8 -right-1 z-10 rounded-2xl bg-primary p-6 text-white shadow-xl md:-right-8"
             >
               <h3 ref={badgeNumberRef} className="text-4xl font-bold">0+</h3>
-              <p className="mt-1">Years Experience</p>
+              <p className="mt-1">{t("yearsExperience")}</p>
             </div>
           </div>
 

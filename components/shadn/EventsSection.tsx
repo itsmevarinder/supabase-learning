@@ -44,16 +44,17 @@ const ACCENT_COLORS = [
 
 const EVENTS_PER_PAGE = 4;
 
-function mapEventRow(row: EventRow): Event {
+function mapEventRow(row: EventRow, monthsShort: string[], weekdaysShort: string[]): Event {
   const date = new Date(`${row.event_date}T00:00:00`);
   return {
     id: row.id,
     image: row.image_url,
     title: row.title,
     description: row.description,
-    day: date.toLocaleDateString("en-US", { day: "numeric" }),
-    month: date.toLocaleDateString("en-US", { month: "short" }).toUpperCase(),
-    weekday: date.toLocaleDateString("en-US", { weekday: "short" }),
+
+    day: String(date.getDate()),
+    month: monthsShort[date.getMonth()],
+    weekday: weekdaysShort[date.getDay()],
     time: row.event_time,
     location: row.location,
     linkUrl: row.link_url,
@@ -67,7 +68,10 @@ interface EventsSectionProps {
 
 export default function EventsSection({ events: eventRows, backgroundImageUrl }: EventsSectionProps) {
   const t = useTranslations("Events");
-  const events = (eventRows ?? []).map(mapEventRow);
+  const tc = useTranslations("Common");
+  const monthsShort = tc.raw("monthsShort") as string[];
+  const weekdaysShort = tc.raw("weekdaysShort") as string[];
+  const events = (eventRows ?? []).map((row) => mapEventRow(row, monthsShort, weekdaysShort));
   const bgImage =
     backgroundImageUrl || "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1600&q=80";
 

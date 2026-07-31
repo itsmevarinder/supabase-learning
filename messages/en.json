@@ -185,7 +185,9 @@
     }
   },
   "Common": {
-    "backToHome": "Back to home"
+    "backToHome": "Back to home",
+    "monthsShort": ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],
+    "weekdaysShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
   },
   "ProjectDetail": {
     "backToProjects": "Back to all projects",
@@ -200,6 +202,30 @@
     "visitLiveSite": "Visit live site",
     "likeWhatYouSee": "Like what you see?",
     "likeDescription": "We'd love to build something just as good for you.",
-    "startProject": "Start your project"
+    "startProject": "Start your project",
+    "similarProjects": "Similar Projects",
+    "viewProjectLower": "View project",
+    "shareThisProject": "Share this project",
+    "linkCopied": "Link copied!"
+  },
+  "About": {
+    "yearsExperience": "Years Experience",
+    "fallback": {
+      "eyebrow": "About Us",
+      "title": "Building Digital Experiences That Inspire",
+      "description": "We specialize in creating beautiful websites, scalable applications, and innovative digital products that help businesses grow faster and stand out in today's competitive market.",
+      "buttonText": "Learn More",
+      "features": [
+        "Experienced & Professional Team",
+        "Fast Project Delivery",
+        "Modern UI/UX Design",
+        "24/7 Customer Support"
+      ]
+    }
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist or may have been moved.",
+    "backToHome": "Back to Home"
   }
 }

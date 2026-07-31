@@ -26,7 +26,18 @@ function unflatten(flat) {
     }
     node[parts[parts.length - 1]] = value;
   }
-  return out;
+  return arrayify(out);
+}
+
+// Recursively converts any object whose own keys are exactly "0","1",...,"n-1"
+// (produced by flattening a source array) back into a real array.
+function arrayify(node) {
+  if (Array.isArray(node) || typeof node !== "object" || node === null) return node;
+  const keys = Object.keys(node);
+  const isArrayLike = keys.length > 0 && keys.every((k, i) => k === String(i));
+  const entries = Object.entries(node).map(([k, v]) => [k, arrayify(v)]);
+  if (isArrayLike) return entries.map(([, v]) => v);
+  return Object.fromEntries(entries);
 }
 
 const PLACEHOLDER_RE = /\{[^}]+\}/g;

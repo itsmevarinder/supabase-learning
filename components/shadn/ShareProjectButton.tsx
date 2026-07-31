@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Check, Share2 } from "lucide-react";
 
 export function ShareProjectButton() {
+  const t = useTranslations("ProjectDetail");
   const [copied, setCopied] = useState(false);
 
   async function handleShare() {
@@ -21,7 +23,7 @@ export function ShareProjectButton() {
       onClick={handleShare}
       className="flex w-full items-center justify-between border-t pt-4 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
     >
-      {copied ? "Link copied!" : "Share this project"}
+      {copied ? t("linkCopied") : t("shareThisProject")}
       {copied ? <Check className="h-4 w-4 text-green-600" /> : <Share2 className="h-4 w-4" />}
     </button>
   );

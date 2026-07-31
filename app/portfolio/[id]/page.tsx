@@ -12,7 +12,7 @@ import { SimilarProjectsSlider } from "@/components/shadn/SimilarProjectsSlider"
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { localizeRow, localizeRows } from "@/lib/localize";
-import { DEFAULT_LOCALE, isAppLocale, LOCALE_COOKIE } from "@/lib/locales";
+import { DEFAULT_LOCALE, isAppLocale, LOCALE_COOKIE, toIntlLocale } from "@/lib/locales";
 import { createClient, getSiteSettings } from "@/lib/supabase/server";
 
 interface ProjectDetailPageProps {
@@ -42,18 +42,19 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
     notFound();
   }
 
-  const project = localizeRow(projectRow, locale, ["title", "description", "role"]);
 
   const { data: sameCategory } = await supabase
     .from("portfolio_projects")
     .select("id, title, category, image_url, translations")
     .eq("is_active", true)
-    .eq("category", project.category)
+    .eq("category", projectRow.category)
     .neq("id", id)
     .order("sort_order", { ascending: true })
     .limit(6);
 
-  let similarProjects = localizeRows(sameCategory ?? [], locale, ["title"]);
+  const project = localizeRow(projectRow, locale, ["title", "category", "description", "role"]);
+
+  let similarProjects = localizeRows(sameCategory ?? [], locale, ["title", "category"]);
   if (similarProjects.length < 6) {
     const excludeIds = [id, ...similarProjects.map((p) => p.id)];
     const { data: others } = await supabase
@@ -64,7 +65,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
       .order("sort_order", { ascending: true })
       .limit(6 - similarProjects.length);
 
-    similarProjects = [...similarProjects, ...localizeRows(others ?? [], locale, ["title"])];
+    similarProjects = [...similarProjects, ...localizeRows(others ?? [], locale, ["title", "category"])];
   }
 
   const externalLink = project.project_link?.trim();
@@ -73,7 +74,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
   const completedLabel =
     project.project_year?.trim() ||
     (project.created_at
-      ? new Date(project.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" })
+      ? new Date(project.created_at).toLocaleDateString(toIntlLocale(locale), { month: "long", year: "numeric" })
       : null);
   const statusLabel = isExternalUrl ? t("statusLive") : t("statusInPortfolio");
 

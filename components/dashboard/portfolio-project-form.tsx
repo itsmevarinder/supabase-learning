@@ -136,6 +136,7 @@ export function PortfolioProjectForm({ project }: PortfolioProjectFormProps) {
 
     translatePortfolioProject(data.id, {
       title: values.title,
+      category: values.category,
       description: values.description || null,
       role: values.role || null,
     }).catch(() => {});
