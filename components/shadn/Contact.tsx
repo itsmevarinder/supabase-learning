@@ -78,6 +78,8 @@ export default function ContactSection({ settings }: ContactSectionProps) {
     },
   });
 
+  const phoneField = form.register("phone");
+
   const [status, setStatus] = useState<"idle" | "sent" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -193,7 +195,17 @@ export default function ContactSection({ settings }: ContactSectionProps) {
                 <Input placeholder="Company Name"  {...form.register("company")}/>
 
                 <div>
-                  <Input  placeholder="Phone Number"  {...form.register("phone")}  />
+                  <Input
+                    placeholder="Phone Number"
+                    type="tel"
+                    inputMode="numeric"
+                    maxLength={10}
+                    {...phoneField}
+                    onChange={(event) => {
+                      event.target.value = event.target.value.replace(/\D/g, "").slice(0, 10);
+                      phoneField.onChange(event);
+                    }}
+                  />
 
                   <p className="text-sm text-red-500">
                     {form.formState.errors.phone?.message}

@@ -13,7 +13,10 @@ function socialUrlSchema(domains: string[], label: string) {
 }
 
 export const siteSettingsSchema = z.object({
-  contactPhone: z.string().optional(),
+  contactPhone: z.string().optional().refine(
+    (value) => !value || /^\d{10}$/.test(value),
+    "Enter a valid 10-digit phone number"
+  ),
   contactEmail: z.union([z.email("Enter a valid email"), z.literal("")]).optional(),
   officeAddress: z.string().optional(),
   workingHours: z.string().optional(),

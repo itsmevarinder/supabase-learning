@@ -124,7 +124,14 @@ export function SiteSettingsForm({ settings }: SiteSettingsFormProps) {
               <FormItem>
                 <FormLabel>Contact phone</FormLabel>
                 <FormControl>
-                  <Input placeholder="+1 (234) 567-8900" {...field} />
+                  <Input
+                    placeholder="9876543210"
+                    type="tel"
+                    inputMode="numeric"
+                    maxLength={10}
+                    {...field}
+                    onChange={(event) => field.onChange(event.target.value.replace(/\D/g, "").slice(0, 10))}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
