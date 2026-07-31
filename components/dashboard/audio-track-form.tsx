@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { translateAudioTrack } from "@/app/actions/translate-cms";
 import { createClient } from "@/lib/supabase/client";
 import { audioTrackSchema, type AudioTrackFormData } from "@/schemas/audio-track-schema";
 import type { AudioTrackRow } from "@/components/shadn/AudioSection";
@@ -136,9 +137,9 @@ export function AudioTrackForm({ track }: AudioTrackFormProps) {
       sort_order: values.sortOrder,
     };
 
-    const { error } = isEditing
-      ? await supabase.from("audio_tracks").update(record).eq("id", track!.id)
-      : await supabase.from("audio_tracks").insert(record);
+    const { data, error } = isEditing
+      ? await supabase.from("audio_tracks").update(record).eq("id", track!.id).select().single()
+      : await supabase.from("audio_tracks").insert(record).select().single();
 
     if (error) {
       toast.error(error.message);
@@ -146,6 +147,12 @@ export function AudioTrackForm({ track }: AudioTrackFormProps) {
     }
 
     toast.success(isEditing ? "Track updated." : "Track added.");
+
+    translateAudioTrack(data.id, {
+      title: values.title,
+      description: values.description || null,
+    }).catch(() => {});
+
     router.push("/admin/audio");
     router.refresh();
   }

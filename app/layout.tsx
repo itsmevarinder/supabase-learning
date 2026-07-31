@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { DynaPuff, Sour_Gummy, Geist_Mono } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import { Toaster } from "sonner";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -26,29 +28,34 @@ export const metadata: Metadata = {
     "A simple CMS built with Next.js and Supabase for managing content, events, testimonials, and more.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`${dynaPuff.variable} ${sourGummy.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
-        <Toaster
-          richColors
-          position="top-right"
-          toastOptions={{
-            classNames: {
-              error: "!bg-destructive !text-white !border-destructive",
-            },
-          }}
-        />
-        <PageLoader />
-        <TooltipProvider>{children}</TooltipProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <Toaster
+            richColors
+            position="top-right"
+            toastOptions={{
+              classNames: {
+                error: "!bg-destructive !text-white !border-destructive",
+              },
+            }}
+          />
+          <PageLoader />
+          <TooltipProvider>{children}</TooltipProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

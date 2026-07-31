@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { translateDonateSection } from "@/app/actions/translate-cms";
 import { createClient } from "@/lib/supabase/client";
 import { donateSectionSchema, type DonateSectionFormData } from "@/schemas/donate-section-schema";
 import type { DonateSectionRow } from "@/components/shadn/DonateSection";
@@ -110,6 +111,13 @@ export function DonateSectionForm({ donate }: DonateSectionFormProps) {
 
     toast.success("Donate section saved.");
     router.refresh();
+
+    translateDonateSection({
+      title: values.title,
+      subtitle: values.subtitle,
+      description: values.description || null,
+      button_text: values.buttonText,
+    }).catch(() => {});
   }
 
   return (

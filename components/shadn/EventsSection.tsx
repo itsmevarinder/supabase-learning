@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { ArrowUpRight, Calendar, ChevronLeft, ChevronRight, Clock, MapPin } from "lucide-react";
 
 import { splitWords } from "@/components/shadn/split-words";
@@ -65,6 +66,7 @@ interface EventsSectionProps {
 }
 
 export default function EventsSection({ events: eventRows, backgroundImageUrl }: EventsSectionProps) {
+  const t = useTranslations("Events");
   const events = (eventRows ?? []).map(mapEventRow);
   const bgImage =
     backgroundImageUrl || "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1600&q=80";
@@ -131,21 +133,21 @@ export default function EventsSection({ events: eventRows, backgroundImageUrl }:
             ref={eyebrowRef}
             className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm"
           >
-            Upcoming Events
+            {t("eyebrow")}
           </span>
 
           <h2 ref={titleRef} className="mt-6 text-4xl font-bold leading-tight text-white lg:text-5xl">
-            {splitWords("Join Us At Our Next Event")}
+            {splitWords(t("title"))}
           </h2>
 
           <p ref={paragraphRef} className="mt-6 leading-8 text-white/80">
-            Workshops, meetups, and launches — see what we&apos;re hosting next and save your spot.
+            {t("description")}
           </p>
         </div>
 
         {events.length === 0 ? (
           <p className="mt-14 text-center text-white/70">
-            No upcoming events right now — check back soon.
+            {t("empty")}
           </p>
         ) : (
           <div className="mx-auto mt-16 max-w-5xl rounded-3xl bg-black/20 p-5 backdrop-blur-md sm:p-8">
@@ -223,7 +225,7 @@ export default function EventsSection({ events: eventRows, backgroundImageUrl }:
                           rel="noopener noreferrer"
                           className="flex shrink-0 text-white items-center gap-1 text-sm font-medium hover:underline"
                         >
-                          Learn More
+                          {t("learnMore")}
                           <ArrowUpRight className="size-3.5" />
                         </a>
                       )}
@@ -241,7 +243,7 @@ export default function EventsSection({ events: eventRows, backgroundImageUrl }:
               type="button"
               onClick={() => goToPage(page - 1)}
               disabled={page === 0}
-              aria-label="Previous events"
+              aria-label={t("previousEvents")}
               className="flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10"
             >
               <ChevronLeft className="size-4" />
@@ -253,7 +255,7 @@ export default function EventsSection({ events: eventRows, backgroundImageUrl }:
                   key={i}
                   type="button"
                   onClick={() => goToPage(i)}
-                  aria-label={`Page ${i + 1}`}
+                  aria-label={t("page", { number: i + 1 })}
                   aria-current={page === i ? "true" : undefined}
                   className={`size-2 rounded-full transition-all ${
                     page === i ? "w-5 bg-white" : "bg-white/30 hover:bg-white/50"
@@ -266,7 +268,7 @@ export default function EventsSection({ events: eventRows, backgroundImageUrl }:
               type="button"
               onClick={() => goToPage(page + 1)}
               disabled={page === totalPages - 1}
-              aria-label="Next events"
+              aria-label={t("nextEvents")}
               className="flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10"
             >
               <ChevronRight className="size-4" />

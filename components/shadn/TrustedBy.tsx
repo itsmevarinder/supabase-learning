@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { useTranslations } from "next-intl";
 import { gsap, useGSAP, prefersReducedMotion } from "@/lib/gsap/config";
 
 const brands = [
@@ -15,6 +16,7 @@ const brands = [
 ];
 
 export default function TrustedBy() {
+  const t = useTranslations("TrustedBy");
   const trackRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
@@ -34,7 +36,7 @@ export default function TrustedBy() {
     <section className="section-tint-indigo border-y py-10">
       <div className="container mx-auto md:px-6 px-4">
         <p className="mb-6 text-center text-sm font-semibold uppercase tracking-widest">
-          Trusted by teams at
+          {t("heading")}
         </p>
       </div>
 

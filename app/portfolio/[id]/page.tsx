@@ -1,6 +1,8 @@
+import { cookies } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { ArrowLeft, ArrowUpRight, ExternalLink, FolderKanban, Sparkles } from "lucide-react";
 
 import Header from "@/components/shadn/header";
@@ -9,6 +11,8 @@ import { ShareProjectButton } from "@/components/shadn/ShareProjectButton";
 import { SimilarProjectsSlider } from "@/components/shadn/SimilarProjectsSlider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { localizeRow, localizeRows } from "@/lib/localize";
+import { DEFAULT_LOCALE, isAppLocale, LOCALE_COOKIE } from "@/lib/locales";
 import { createClient, getSiteSettings } from "@/lib/supabase/server";
 
 interface ProjectDetailPageProps {
@@ -23,37 +27,44 @@ export const metadata = {
 export default async function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   const { id } = await params;
 
+  const cookieStore = await cookies();
+  const cookieLocale = cookieStore.get(LOCALE_COOKIE)?.value;
+  const locale = isAppLocale(cookieLocale) ? cookieLocale : DEFAULT_LOCALE;
+
   const supabase = await createClient();
-  const [{ data: project }, siteSettings] = await Promise.all([
+  const [{ data: projectRow }, siteSettings, t] = await Promise.all([
     supabase.from("portfolio_projects").select("*").eq("id", id).eq("is_active", true).single(),
     getSiteSettings(),
+    getTranslations("ProjectDetail"),
   ]);
 
-  if (!project) {
+  if (!projectRow) {
     notFound();
   }
 
+  const project = localizeRow(projectRow, locale, ["title", "description", "role"]);
+
   const { data: sameCategory } = await supabase
     .from("portfolio_projects")
-    .select("id, title, category, image_url")
+    .select("id, title, category, image_url, translations")
     .eq("is_active", true)
     .eq("category", project.category)
     .neq("id", id)
     .order("sort_order", { ascending: true })
     .limit(6);
 
-  let similarProjects = sameCategory ?? [];
+  let similarProjects = localizeRows(sameCategory ?? [], locale, ["title"]);
   if (similarProjects.length < 6) {
     const excludeIds = [id, ...similarProjects.map((p) => p.id)];
     const { data: others } = await supabase
       .from("portfolio_projects")
-      .select("id, title, category, image_url")
+      .select("id, title, category, image_url, translations")
       .eq("is_active", true)
       .not("id", "in", `(${excludeIds.join(",")})`)
       .order("sort_order", { ascending: true })
       .limit(6 - similarProjects.length);
 
-    similarProjects = [...similarProjects, ...(others ?? [])];
+    similarProjects = [...similarProjects, ...localizeRows(others ?? [], locale, ["title"])];
   }
 
   const externalLink = project.project_link?.trim();
@@ -64,7 +75,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
     (project.created_at
       ? new Date(project.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" })
       : null);
-  const statusLabel = isExternalUrl ? "Live" : "In portfolio";
+  const statusLabel = isExternalUrl ? t("statusLive") : t("statusInPortfolio");
 
   return (
     <main className="overflow-x-clip">
@@ -77,7 +88,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
             className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to all projects
+            {t("backToProjects")}
           </Link>
 
           <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
@@ -106,37 +117,37 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                 <CardContent className="space-y-5 p-6">
                   <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
                     <FolderKanban className="h-4 w-4" />
-                    Project details
+                    {t("projectDetails")}
                   </div>
 
                   <div className="flex items-center justify-between border-t pt-4 text-sm">
-                    <span className="text-muted-foreground">Category</span>
+                    <span className="text-muted-foreground">{t("category")}</span>
                     <span className="font-medium">{project.category}</span>
                   </div>
 
                   {project.client_name && (
                     <div className="flex items-center justify-between border-t pt-4 text-sm">
-                      <span className="text-muted-foreground">Client</span>
+                      <span className="text-muted-foreground">{t("client")}</span>
                       <span className="font-medium">{project.client_name}</span>
                     </div>
                   )}
 
                   {project.role && (
                     <div className="flex items-center justify-between border-t pt-4 text-sm">
-                      <span className="text-muted-foreground">Our role</span>
+                      <span className="text-muted-foreground">{t("ourRole")}</span>
                       <span className="font-medium">{project.role}</span>
                     </div>
                   )}
 
                   {completedLabel && (
                     <div className="flex items-center justify-between border-t pt-4 text-sm">
-                      <span className="text-muted-foreground">Completed</span>
+                      <span className="text-muted-foreground">{t("completed")}</span>
                       <span className="font-medium">{completedLabel}</span>
                     </div>
                   )}
 
                   <div className="flex items-center justify-between border-t pt-4 text-sm">
-                    <span className="text-muted-foreground">Status</span>
+                    <span className="text-muted-foreground">{t("status")}</span>
                     <span className="inline-flex items-center gap-1.5 font-medium">
                       <span
                         className={`h-2 w-2 rounded-full ${isExternalUrl ? "bg-green-500" : "bg-muted-foreground/40"}`}
@@ -152,7 +163,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                       rel="noopener noreferrer"
                       className="flex items-center justify-between border-t pt-4 text-sm font-medium text-primary transition-colors hover:text-primary/80"
                     >
-                      Visit live site
+                      {t("visitLiveSite")}
                       <ExternalLink className="h-4 w-4" />
                     </a>
                   )}
@@ -169,16 +180,16 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
 
                   <div className="flex items-center gap-2 font-semibold">
                     <Image src="/logo.png" alt="" width={20} height={20} className="w-5" />
-                    Like what you see?
+                    {t("likeWhatYouSee")}
                   </div>
 
                   <p className="text-sm text-muted-foreground">
-                    We&apos;d love to build something just as good for you.
+                    {t("likeDescription")}
                   </p>
 
                   <Link href="/#contact">
                     <Button className="w-full rounded-full">
-                      Start your project
+                      {t("startProject")}
                       <ArrowUpRight className="h-4 w-4" />
                     </Button>
                   </Link>

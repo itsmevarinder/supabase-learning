@@ -1,5 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { localizeRow, localizeRows } from "@/lib/localize";
+import { DEFAULT_LOCALE, isAppLocale, LOCALE_COOKIE } from "@/lib/locales";
 import type { AboutSectionRow } from "@/components/shadn/AboutSection";
 import type { AudioTrackRow } from "@/components/shadn/AudioSection";
 import type { FaqRow } from "@/components/shadn/Accordion";
@@ -37,6 +39,12 @@ export async function createClient() {
   );
 }
 
+async function getCurrentLocale(): Promise<string> {
+  const cookieStore = await cookies();
+  const cookieLocale = cookieStore.get(LOCALE_COOKIE)?.value;
+  return isAppLocale(cookieLocale) ? cookieLocale : DEFAULT_LOCALE;
+}
+
 export async function getHeroBanners(): Promise<HeroBannerRow[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -50,7 +58,14 @@ export async function getHeroBanners(): Promise<HeroBannerRow[]> {
     return [];
   }
 
-  return data ?? [];
+  const locale = await getCurrentLocale();
+  return localizeRows(data ?? [], locale, [
+    "badge_text",
+    "title",
+    "description",
+    "primary_button_text",
+    "secondary_button_text",
+  ]);
 }
 
 export async function getPortfolioProjects(): Promise<PortfolioProjectRow[]> {
@@ -66,7 +81,8 @@ export async function getPortfolioProjects(): Promise<PortfolioProjectRow[]> {
     return [];
   }
 
-  return data ?? [];
+  const locale = await getCurrentLocale();
+  return localizeRows(data ?? [], locale, ["title", "description", "role"]);
 }
 
 export async function getSiteSettings(): Promise<SiteSettings | null> {
@@ -94,7 +110,8 @@ export async function getTestimonials(): Promise<TestimonialRow[]> {
     return [];
   }
 
-  return data ?? [];
+  const locale = await getCurrentLocale();
+  return localizeRows(data ?? [], locale, ["review"]);
 }
 
 export async function getFaqs(): Promise<FaqRow[]> {
@@ -110,7 +127,8 @@ export async function getFaqs(): Promise<FaqRow[]> {
     return [];
   }
 
-  return data ?? [];
+  const locale = await getCurrentLocale();
+  return localizeRows(data ?? [], locale, ["question", "answer"]);
 }
 
 export async function getAboutSection(): Promise<AboutSectionRow | null> {
@@ -122,7 +140,8 @@ export async function getAboutSection(): Promise<AboutSectionRow | null> {
     return null;
   }
 
-  return data;
+  const locale = await getCurrentLocale();
+  return localizeRow(data, locale, ["eyebrow_text", "title", "description", "button_text", "features"]);
 }
 
 export async function getVideoSection(): Promise<VideoSectionRow | null> {
@@ -134,7 +153,8 @@ export async function getVideoSection(): Promise<VideoSectionRow | null> {
     return null;
   }
 
-  return data;
+  const locale = await getCurrentLocale();
+  return localizeRow(data, locale, ["title", "description"]);
 }
 
 export async function getEvents(): Promise<EventRow[]> {
@@ -150,7 +170,8 @@ export async function getEvents(): Promise<EventRow[]> {
     return [];
   }
 
-  return data ?? [];
+  const locale = await getCurrentLocale();
+  return localizeRows(data ?? [], locale, ["title", "description", "location"]);
 }
 
 export async function getGalleryItems(): Promise<GalleryItemRow[]> {
@@ -166,7 +187,8 @@ export async function getGalleryItems(): Promise<GalleryItemRow[]> {
     return [];
   }
 
-  return data ?? [];
+  const locale = await getCurrentLocale();
+  return localizeRows(data ?? [], locale, ["title"]);
 }
 
 export async function getAudioTracks(): Promise<AudioTrackRow[]> {
@@ -182,7 +204,8 @@ export async function getAudioTracks(): Promise<AudioTrackRow[]> {
     return [];
   }
 
-  return data ?? [];
+  const locale = await getCurrentLocale();
+  return localizeRows(data ?? [], locale, ["title", "description"]);
 }
 
 export async function getDonateSection(): Promise<DonateSectionRow | null> {
@@ -194,7 +217,8 @@ export async function getDonateSection(): Promise<DonateSectionRow | null> {
     return null;
   }
 
-  return data;
+  const locale = await getCurrentLocale();
+  return localizeRow(data, locale, ["title", "subtitle", "description", "button_text"]);
 }
 
 export async function getEventsSection(): Promise<{ background_image_url: string | null } | null> {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import Autoplay from "embla-carousel-autoplay";
 
 import { Button } from "@/components/ui/button";
@@ -83,68 +84,70 @@ interface HeroSlide {
   stats: HeroStat[];
 }
 
-const DEFAULT_STATS: HeroStat[] = [
-  { target: 500, suffix: "+", label: "Projects Delivered" },
-  { target: 120, suffix: "+", label: "Team Members" },
-  { target: 98, suffix: "%", label: "Client Satisfaction" },
-];
+function buildDefaultStats(t: ReturnType<typeof useTranslations>): HeroStat[] {
+  return [
+    { target: 500, suffix: "+", label: t("stats.projectsDelivered") },
+    { target: 120, suffix: "+", label: t("stats.teamMembers") },
+    { target: 98, suffix: "%", label: t("stats.clientSatisfaction") },
+  ];
+}
 
-const FALLBACK_SLIDES: HeroSlide[] = [
-  {
-    image:
-      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1800&q=80",
-    badge: "✨ Trusted by 10,000+ Clients",
-    title: "Create Experiences That Inspire",
-    subtitle:
-      "Build beautiful digital products that engage customers and grow your business.",
-    primaryButtonText: "Get Started",
-    primaryButtonLink: "#contact",
-    secondaryButtonText: "Learn More",
-    secondaryButtonLink: "#about",
-    stats: DEFAULT_STATS,
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1800&q=80",
-    badge: "🚀 Innovative Solutions",
-    title: "Turn Your Ideas Into Reality",
-    subtitle:
-      "Modern websites, scalable applications, and premium digital experiences.",
-    primaryButtonText: "Get Started",
-    primaryButtonLink: "#contact",
-    secondaryButtonText: "Learn More",
-    secondaryButtonLink: "#about",
-    stats: DEFAULT_STATS,
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1800&q=80",
-    badge: "💡 Smart Digital Agency",
-    title: "We Design. We Develop. We Deliver.",
-    subtitle:
-      "Helping startups and enterprises build the next generation of digital products.",
-    primaryButtonText: "Get Started",
-    primaryButtonLink: "#contact",
-    secondaryButtonText: "Learn More",
-    secondaryButtonLink: "#about",
-    stats: DEFAULT_STATS,
-  },
-];
+function buildFallbackSlides(t: ReturnType<typeof useTranslations>): HeroSlide[] {
+  const defaultStats = buildDefaultStats(t);
+  return [
+    {
+      image:
+        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1800&q=80",
+      badge: t("fallback.slide1.badge"),
+      title: t("fallback.slide1.title"),
+      subtitle: t("fallback.slide1.subtitle"),
+      primaryButtonText: t("getStarted"),
+      primaryButtonLink: "#contact",
+      secondaryButtonText: t("learnMore"),
+      secondaryButtonLink: "#about",
+      stats: defaultStats,
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1800&q=80",
+      badge: t("fallback.slide2.badge"),
+      title: t("fallback.slide2.title"),
+      subtitle: t("fallback.slide2.subtitle"),
+      primaryButtonText: t("getStarted"),
+      primaryButtonLink: "#contact",
+      secondaryButtonText: t("learnMore"),
+      secondaryButtonLink: "#about",
+      stats: defaultStats,
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1800&q=80",
+      badge: t("fallback.slide3.badge"),
+      title: t("fallback.slide3.title"),
+      subtitle: t("fallback.slide3.subtitle"),
+      primaryButtonText: t("getStarted"),
+      primaryButtonLink: "#contact",
+      secondaryButtonText: t("learnMore"),
+      secondaryButtonLink: "#about",
+      stats: defaultStats,
+    },
+  ];
+}
 
-function mapBannerToSlide(banner: HeroBannerRow): HeroSlide {
+function mapBannerToSlide(banner: HeroBannerRow, t: ReturnType<typeof useTranslations>): HeroSlide {
   const stats =
     Array.isArray(banner.stats) && banner.stats.length > 0
       ? banner.stats.map((stat) => ({ target: stat.target, suffix: stat.suffix ?? "", label: stat.label }))
-      : DEFAULT_STATS;
+      : buildDefaultStats(t);
 
   return {
     image: banner.image_url,
     badge: [banner.badge_emoji, banner.badge_text].filter(Boolean).join(" "),
     title: banner.title,
     subtitle: banner.description ?? "",
-    primaryButtonText: banner.primary_button_text || "Get Started",
+    primaryButtonText: banner.primary_button_text || t("getStarted"),
     primaryButtonLink: banner.primary_button_link || "#contact",
-    secondaryButtonText: banner.secondary_button_text || "Learn More",
+    secondaryButtonText: banner.secondary_button_text || t("learnMore"),
     secondaryButtonLink: banner.secondary_button_link || "#about",
     stats,
   };
@@ -155,7 +158,8 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ banners }: HeroSectionProps) {
-  const slides = banners && banners.length > 0 ? banners.map(mapBannerToSlide) : FALLBACK_SLIDES;
+  const t = useTranslations("Hero");
+  const slides = banners && banners.length > 0 ? banners.map((banner) => mapBannerToSlide(banner, t)) : buildFallbackSlides(t);
 
   const container = useRef<HTMLElement>(null);
   const [api, setApi] = useState<CarouselApi>();
@@ -385,7 +389,7 @@ export default function HeroSection({ banners }: HeroSectionProps) {
                 <div className="hero-blur absolute bottom-10 right-10 h-80 w-80 rounded-full bg-amber-600/15 blur-3xl" />
 
                 {/* Content */}
-                <div className="relative z-10 mx-auto max-w-4xl md:px-6 px-4 text-center text-white">
+                <div className="relative z-10 mx-auto max-w-6xl md:px-6 px-4 text-center text-white">
                   {/* Badge */}
                   <span
                     ref={(el) => {
@@ -401,7 +405,7 @@ export default function HeroSection({ banners }: HeroSectionProps) {
                     ref={(el) => {
                       titleRefs.current[index] = el;
                     }}
-                    className="text-5xl font-extrabold leading-tight md:text-7xl"
+                    className="text-5xl font-extrabold leading-tight md:text-7xl line-clamp-3"
                   >
                     {slide.title}
                   </h1>
@@ -491,7 +495,7 @@ export default function HeroSection({ banners }: HeroSectionProps) {
                   key={index}
                   type="button"
                   onClick={() => api?.scrollTo(index)}
-                  aria-label={`Go to slide ${index + 1}`}
+                  aria-label={t("goToSlide", { number: index + 1 })}
                   aria-current={selectedIndex === index}
                   className={`relative h-2 overflow-hidden rounded-full bg-white/30 transition-[width] duration-300 ${
                     selectedIndex === index ? "w-10" : "w-2 hover:bg-white/50"

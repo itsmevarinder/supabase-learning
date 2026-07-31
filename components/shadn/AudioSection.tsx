@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight, CircleCheck, Clock, Headphones, Music, Pause, Play } from "lucide-react";
 
 import DrawIcon from "@/components/shadn/DrawIcon";
@@ -9,11 +10,11 @@ import { gsap, useGSAP, EASE, prefersReducedMotion } from "@/lib/gsap/config";
 import { scrollReveal } from "@/lib/gsap/reveal";
 
 const checklist = [
-  { icon: Headphones, label: "New Episodes Weekly" },
-  { icon: Clock, label: "Listen On-Demand, Anytime" },
-  { icon: Music, label: "Free To Stream" },
-  { icon: CircleCheck, label: "No Sign-Up Required" },
-];
+  { icon: Headphones, key: "newEpisodes" },
+  { icon: Clock, key: "onDemand" },
+  { icon: Music, key: "free" },
+  { icon: CircleCheck, key: "noSignUp" },
+] as const;
 
 export interface AudioTrackRow {
   id: string;
@@ -48,6 +49,7 @@ function formatTime(seconds: number) {
 }
 
 export default function AudioSection({ tracks: trackRows, backgroundImageUrl }: AudioSectionProps) {
+  const t = useTranslations("Audio");
   const tracks = trackRows ?? [];
   const bgImage =
     backgroundImageUrl || "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=1600&q=80";
@@ -190,29 +192,28 @@ export default function AudioSection({ tracks: trackRows, backgroundImageUrl }: 
               ref={eyebrowRef}
               className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm"
             >
-              Listen In
+              {t("eyebrow")}
             </span>
 
             <h2 ref={titleRef} className="mt-6 text-4xl font-bold leading-tight text-white lg:text-5xl">
-              {splitWords("Sounds From Our Studio")}
+              {splitWords(t("title"))}
             </h2>
 
             <p ref={paragraphRef} className="mt-6 leading-8 text-white/80 max-w-125">
-              Podcast episodes, interviews, and audio stories worth a listen — press play and
-              listen right here, no app required.
+              {t("description")}
             </p>
 
             <div className="mt-8 space-y-4">
               {checklist.map((item, index) => (
                 <div
-                  key={item.label}
+                  key={item.key}
                   ref={(el) => {
                     checklistRefs.current[index] = el;
                   }}
                   className="flex items-center gap-3 text-white"
                 >
                   <DrawIcon icon={item.icon} delay={index * 0.15} className="h-5 w-5 text-white" />
-                  <span>{item.label}</span>
+                  <span>{t(`checklist.${item.key}`)}</span>
                 </div>
               ))}
             </div>
@@ -221,7 +222,7 @@ export default function AudioSection({ tracks: trackRows, backgroundImageUrl }: 
           {/* Right — player */}
           {tracks.length === 0 ? (
             <p className="text-white/70">
-              Audio tracks will show up here once they&apos;re added.
+              {t("empty")}
             </p>
           ) : (
             <div className="space-y-3">
@@ -274,7 +275,7 @@ export default function AudioSection({ tracks: trackRows, backgroundImageUrl }: 
                   <button
                     type="button"
                     onClick={() => togglePlay(track)}
-                    aria-label={isActive ? "Pause" : "Play"}
+                    aria-label={isActive ? t("pause") : t("play")}
                     className="flex size-11 shrink-0 items-center justify-center rounded-full text-white shadow-md transition-transform duration-200 hover:scale-105"
                     style={{ backgroundColor: color }}
                   >
@@ -331,7 +332,7 @@ export default function AudioSection({ tracks: trackRows, backgroundImageUrl }: 
                 type="button"
                 onClick={() => goToPage(page - 1)}
                 disabled={page === 0}
-                aria-label="Previous tracks"
+                aria-label={t("previousTracks")}
                 className="flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10"
               >
                 <ChevronLeft className="size-4" />
@@ -343,7 +344,7 @@ export default function AudioSection({ tracks: trackRows, backgroundImageUrl }: 
                     key={i}
                     type="button"
                     onClick={() => goToPage(i)}
-                    aria-label={`Page ${i + 1}`}
+                    aria-label={t("page", { number: i + 1 })}
                     aria-current={page === i ? "true" : undefined}
                     className={`size-2 rounded-full transition-all ${
                       page === i ? "w-5 bg-white" : "bg-white/30 hover:bg-white/50"
@@ -356,7 +357,7 @@ export default function AudioSection({ tracks: trackRows, backgroundImageUrl }: 
                 type="button"
                 onClick={() => goToPage(page + 1)}
                 disabled={page === totalPages - 1}
-                aria-label="Next tracks"
+                aria-label={t("nextTracks")}
                 className="flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10"
               >
                 <ChevronRight className="size-4" />

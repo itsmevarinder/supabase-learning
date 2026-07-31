@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useGSAP } from "@/lib/gsap/config";
 import { scrollReveal } from "@/lib/gsap/reveal";
 import type { SiteSettings } from "@/types/site-settings";
@@ -67,6 +68,7 @@ interface FooterProps {
 }
 
 export default function Footer({ settings }: FooterProps) {
+  const t = useTranslations("Footer");
   const footer = useRef<HTMLElement>(null);
   const columnRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -96,8 +98,7 @@ export default function Footer({ settings }: FooterProps) {
             </Link>
 
             <p className="mt-5 leading-7 text-muted-foreground">
-              We build modern digital experiences that help businesses
-              grow through innovation, creativity, and technology.
+              {t("tagline")}
             </p>
 
             <div className="mt-8 flex gap-3">
@@ -123,9 +124,9 @@ export default function Footer({ settings }: FooterProps) {
             }}
             className="mt-8 border-t pt-5 text-center text-sm text-muted-foreground"
           >
-            <p>© {new Date().getFullYear()} CMS. All rights reserved.
+            <p>{t("copyright", { year: new Date().getFullYear() })}
               <span className="ml-2 text-xs text-muted-foreground/70">
-                (For development purposes only)
+                {t("devNote")}
               </span>
             </p>
           </div>

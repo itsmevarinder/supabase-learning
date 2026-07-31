@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { translateHeroBanner } from "@/app/actions/translate-cms";
 import { createClient } from "@/lib/supabase/client";
 import { heroBannerSchema, type HeroBannerFormData } from "@/schemas/hero-banner-schema";
 import type { HeroBannerRow } from "@/components/shadn/HeroSection";
@@ -133,9 +134,9 @@ export function HeroBannerForm({ banner }: HeroBannerFormProps) {
       sort_order: values.sortOrder,
     };
 
-    const { error } = isEditing
-      ? await supabase.from("hero_banners").update(record).eq("id", banner!.id)
-      : await supabase.from("hero_banners").insert(record);
+    const { data, error } = isEditing
+      ? await supabase.from("hero_banners").update(record).eq("id", banner!.id).select().single()
+      : await supabase.from("hero_banners").insert(record).select().single();
 
     if (error) {
       toast.error(error.message);
@@ -143,6 +144,14 @@ export function HeroBannerForm({ banner }: HeroBannerFormProps) {
     }
 
     toast.success(isEditing ? "Banner updated." : "Banner added.");
+
+    translateHeroBanner(data.id, {
+      badge_text: values.badgeText,
+      title: values.title,
+      description: values.description || null,
+      primary_button_text: values.primaryButtonText || null,
+      secondary_button_text: values.secondaryButtonText || null,
+    }).catch(() => {});
 
     if (isEditing) {
       router.push("/admin/hero-banners");

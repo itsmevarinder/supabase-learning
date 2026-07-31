@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { translateTestimonial } from "@/app/actions/translate-cms";
 import { createClient } from "@/lib/supabase/client";
 import { testimonialSchema, type TestimonialFormData } from "@/schemas/testimonial-schema";
 import type { TestimonialRow } from "@/components/shadn/TestimonialSection";
@@ -115,9 +116,9 @@ export function TestimonialForm({ testimonial }: TestimonialFormProps) {
       sort_order: values.sortOrder,
     };
 
-    const { error } = isEditing
-      ? await supabase.from("testimonials").update(record).eq("id", testimonial!.id)
-      : await supabase.from("testimonials").insert(record);
+    const { data, error } = isEditing
+      ? await supabase.from("testimonials").update(record).eq("id", testimonial!.id).select().single()
+      : await supabase.from("testimonials").insert(record).select().single();
 
     if (error) {
       toast.error(error.message);
@@ -125,6 +126,9 @@ export function TestimonialForm({ testimonial }: TestimonialFormProps) {
     }
 
     toast.success(isEditing ? "Testimonial updated." : "Testimonial added.");
+
+    translateTestimonial(data.id, { review: values.review }).catch(() => {});
+
     router.push("/admin/testimonials");
     router.refresh();
   }

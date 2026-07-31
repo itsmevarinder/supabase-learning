@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { translateFaq } from "@/app/actions/translate-cms";
 import { createClient } from "@/lib/supabase/client";
 import { faqSchema, type FaqFormData } from "@/schemas/faq-schema";
 import type { FaqRow } from "@/components/shadn/Accordion";
@@ -62,9 +63,9 @@ export function FaqForm({ faq }: FaqFormProps) {
       sort_order: values.sortOrder,
     };
 
-    const { error } = isEditing
-      ? await supabase.from("faqs").update(record).eq("id", faq!.id)
-      : await supabase.from("faqs").insert(record);
+    const { data, error } = isEditing
+      ? await supabase.from("faqs").update(record).eq("id", faq!.id).select().single()
+      : await supabase.from("faqs").insert(record).select().single();
 
     if (error) {
       toast.error(error.message);
@@ -72,6 +73,9 @@ export function FaqForm({ faq }: FaqFormProps) {
     }
 
     toast.success(isEditing ? "FAQ updated." : "FAQ added.");
+
+    translateFaq(data.id, { question: values.question, answer: values.answer }).catch(() => {});
+
     router.push("/admin/faqs");
     router.refresh();
   }

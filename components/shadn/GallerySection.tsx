@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type Ref } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight, Maximize2, Play, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -106,6 +107,7 @@ interface GalleryTileProps {
 }
 
 function GalleryTile({ item, index, color, onOpen, ref }: GalleryTileProps) {
+  const t = useTranslations("Gallery");
   const tileRef = useRef<HTMLButtonElement | null>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
@@ -186,7 +188,7 @@ function GalleryTile({ item, index, color, onOpen, ref }: GalleryTileProps) {
         }}
         type="button"
         onClick={onOpen}
-        aria-label={item.type === "video" ? "Play video" : "View image"}
+        aria-label={item.type === "video" ? t("playVideo") : t("viewImage")}
         className="group relative w-full overflow-hidden rounded-2xl bg-muted shadow-sm transition-shadow duration-300 transform-3d will-change-transform hover:shadow-2xl"
       >
         <div ref={mediaRef} className="relative inset-0 scale-110">
@@ -252,6 +254,7 @@ interface GallerySectionProps {
 }
 
 export default function GallerySection({ items: itemRows, viewAllHref }: GallerySectionProps) {
+  const t = useTranslations("Gallery");
   const items = (itemRows ?? []).map(mapGalleryRow).filter((item): item is GalleryItem => item !== null);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const lightboxMediaRef = useRef<HTMLDivElement>(null);
@@ -339,21 +342,21 @@ export default function GallerySection({ items: itemRows, viewAllHref }: Gallery
             ref={eyebrowRef}
             className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary"
           >
-            Our Gallery
+            {t("eyebrow")}
           </span>
 
           <h2 ref={titleRef} className="mt-6 text-4xl font-bold leading-tight lg:text-5xl">
-            {splitWords("Moments Worth Sharing")}
+            {splitWords(t("title"))}
           </h2>
 
           <p ref={paragraphRef} className="mt-6 leading-8 text-muted-foreground">
-            A look behind the scenes — photos and videos from our work, our team, and our events.
+            {t("description")}
           </p>
         </div>
 
         {items.length === 0 ? (
           <p className="mt-14 text-center text-muted-foreground">
-            Gallery items will show up here once they&apos;re added.
+            {t("empty")}
           </p>
         ) : (
           <div className="mx-auto mt-16 columns-1 sm:columns-2 space-y-2.5 lg:columns-3 xl:columns-4">
@@ -372,7 +375,7 @@ export default function GallerySection({ items: itemRows, viewAllHref }: Gallery
         {viewAllHref && (
           <div className="mt-12 text-center">
             <Link href={viewAllHref}>
-              <Button className="rounded-full px-8 py-5">View All Gallery</Button>
+              <Button className="rounded-full px-8 py-5">{t("viewAll")}</Button>
             </Link>
           </div>
         )}
@@ -385,7 +388,7 @@ export default function GallerySection({ items: itemRows, viewAllHref }: Gallery
         >
           {activeItem && (
             <div className="relative flex h-full w-full min-h-0 min-w-0 items-center justify-center p-4 sm:p-16">
-              <DialogTitle className="sr-only">{activeItem.title ?? "Gallery item"}</DialogTitle>
+              <DialogTitle className="sr-only">{activeItem.title ?? t("galleryItem")}</DialogTitle>
 
               {/* Counter */}
               {items.length > 1 && activeIndex !== null && (
@@ -400,7 +403,7 @@ export default function GallerySection({ items: itemRows, viewAllHref }: Gallery
                     {activeItem.embedUrl ? (
                       <iframe
                         src={activeItem.embedUrl}
-                        title={activeItem.title ?? "Video"}
+                        title={activeItem.title ?? t("video")}
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                         className="h-full w-full"
@@ -436,7 +439,7 @@ export default function GallerySection({ items: itemRows, viewAllHref }: Gallery
               <button
                 type="button"
                 onClick={() => setActiveIndex(null)}
-                aria-label="Close"
+                aria-label={t("close")}
                 className="fixed right-4 top-4 z-10 flex size-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20"
               >
                 <X className="size-5" />
@@ -447,7 +450,7 @@ export default function GallerySection({ items: itemRows, viewAllHref }: Gallery
                   <button
                     type="button"
                     onClick={showPrev}
-                    aria-label="Previous"
+                    aria-label={t("previous")}
                     className="fixed left-4 top-1/2 z-10 flex size-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20"
                   >
                     <ChevronLeft className="size-6" />
@@ -455,7 +458,7 @@ export default function GallerySection({ items: itemRows, viewAllHref }: Gallery
                   <button
                     type="button"
                     onClick={showNext}
-                    aria-label="Next"
+                    aria-label={t("next")}
                     className="fixed right-4 top-1/2 z-10 flex size-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20"
                   >
                     <ChevronRight className="size-6" />

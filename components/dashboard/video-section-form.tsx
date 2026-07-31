@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { translateVideoSection } from "@/app/actions/translate-cms";
 import { createClient } from "@/lib/supabase/client";
 import { getYouTubeThumbnail } from "@/lib/youtube";
 import { videoSectionSchema, type VideoSectionFormData } from "@/schemas/video-section-schema";
@@ -67,6 +68,11 @@ export function VideoSectionForm({ video }: VideoSectionFormProps) {
 
     toast.success("Video section saved.");
     router.refresh();
+
+    translateVideoSection({
+      title: values.title,
+      description: values.description,
+    }).catch(() => {});
   }
 
   return (

@@ -1,11 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Code2, Megaphone, Menu, Palette, Smartphone, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { Code2, Languages, Megaphone, Menu, Palette, Smartphone, X } from "lucide-react";
 
+import { setLocale } from "@/app/actions/set-locale";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -16,26 +25,81 @@ import {
 } from "@/components/ui/navigation-menu";
 import DrawIcon from "@/components/shadn/DrawIcon";
 import { gsap, useGSAP, ScrollTrigger, prefersReducedMotion } from "@/lib/gsap/config";
+import { LOCALES, type AppLocale } from "@/lib/locales";
+
+const LOCALE_LABELS: Record<AppLocale, string> = {
+  en: "English",
+  hi: "हिन्दी",
+  pa: "ਪੰਜਾਬੀ",
+};
+
+const LOCALE_SHORT: Record<AppLocale, string> = {
+  en: "EN",
+  hi: "हिं",
+  pa: "ਪੰ",
+};
 
 const SERVICE_LINKS = [
-  { href: "#services", title: "Web Development", description: "Modern websites built with Next.js.", icon: Code2 },
-  { href: "#services", title: "Mobile Apps", description: "Android & iOS applications.", icon: Smartphone },
-  { href: "#services", title: "UI / UX Design", description: "Beautiful user experiences.", icon: Palette },
-  { href: "#services", title: "Digital Marketing", description: "Grow your online business.", icon: Megaphone },
-];
+  { href: "#services", key: "webDev", icon: Code2 },
+  { href: "#services", key: "mobileApps", icon: Smartphone },
+  { href: "#services", key: "uiUx", icon: Palette },
+  { href: "#services", key: "marketing", icon: Megaphone },
+] as const;
 
 const NAV_LINKS = [
-  { href: "#about", label: "About" },
-  { href: "#portfolio", label: "Portfolio" },
-  { href: "#donate", label: "Donate" },
-  { href: "#contact", label: "Contact" },
-];
+  { href: "#about", key: "about" },
+  { href: "#portfolio", key: "portfolio" },
+  { href: "#donate", key: "donate" },
+  { href: "#contact", key: "contact" },
+] as const;
 
 interface HeaderProps {
   showLoginButton?: boolean;
 }
 
+function LanguageSwitcher({ variant = "pill" }: { variant?: "pill" | "full" }) {
+  const locale = useLocale() as AppLocale;
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  function handleSelect(next: AppLocale) {
+    startTransition(async () => {
+      await setLocale(next);
+      router.refresh();
+    });
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="ghost"
+            disabled={isPending}
+            className={variant === "full" ? "w-full justify-center rounded-full" : "rounded-full"}
+          >
+            <Languages className="size-4" />
+            {variant === "full" ? LOCALE_LABELS[locale] : LOCALE_SHORT[locale]}
+          </Button>
+        }
+      />
+      <DropdownMenuContent align="end">
+        {LOCALES.map((code) => (
+          <DropdownMenuItem
+            key={code}
+            className={code === locale ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground" : ""}
+            onClick={() => handleSelect(code)}
+          >
+            {LOCALE_LABELS[code]}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 export default function Header({ showLoginButton = true }: HeaderProps) {
+  const t = useTranslations("Header");
   const [isOpen, setIsOpen] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const headerRef = useRef<HTMLElement>(null);
@@ -165,14 +229,14 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
                 <NavigationMenuList className="gap-1">
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="rounded-full font-medium text-foreground/80 data-[state=open]:bg-primary/10 data-[state=open]:text-primary">
-                      Services
+                      {t("services")}
                     </NavigationMenuTrigger>
 
                     <NavigationMenuContent>
                       <div className="grid w-full grid-cols-1 gap-2">
                         {SERVICE_LINKS.map((service) => (
                           <NavigationMenuLink
-                            key={service.title}
+                            key={service.key}
                             render={
                               <a
                                 href={service.href}
@@ -182,8 +246,8 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
                                   <service.icon className="size-3.5" />
                                 </span>
                                 <span>
-                                  <h4 className="font-semibold">{service.title}</h4>
-                                  <p className="mt-0.5 text-sm text-muted-foreground">{service.description}</p>
+                                  <h4 className="font-semibold">{t(`serviceLinks.${service.key}.title`)}</h4>
+                                  <p className="mt-0.5 text-sm text-muted-foreground">{t(`serviceLinks.${service.key}.description`)}</p>
                                 </span>
                               </a>
                             }
@@ -211,7 +275,7 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
                                 isActive ? "bg-primary/10 text-primary" : "text-foreground/80"
                               }`}
                             >
-                              {link.label}
+                              {t(`nav.${link.key}`)}
                             </a>
                           }
                         />
@@ -224,14 +288,16 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
 
             {/* Right Side */}
             <div className="hidden items-center gap-3 xl:flex">
+              <LanguageSwitcher />
+
               {showLoginButton && (
                 <Link href="/login">
-                  <Button variant="ghost" className="hover:px-6 py-5">Login</Button>
+                  <Button variant="ghost" className="hover:px-6 py-5">{t("login")}</Button>
                 </Link>
               )}
 
               <a href="#contact">
-                <Button className="rounded-full px-6 py-5">Get Started</Button>
+                <Button className="rounded-full px-6 py-5">{t("getStarted")}</Button>
               </a>
             </div>
 
@@ -239,7 +305,7 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
             <button
               type="button"
               onClick={() => setIsOpen(true)}
-              aria-label="Open menu"
+              aria-label={t("openMenu")}
               aria-expanded={isOpen}
               className="rounded-lg border p-2 transition-colors hover:bg-primary/10 hover:text-primary xl:hidden"
             >
@@ -271,7 +337,7 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
               <button
                 type="button"
                 onClick={closeDrawer}
-                aria-label="Close menu"
+                aria-label={t("closeMenu")}
                 className="rounded-full border p-2 transition-colors hover:bg-primary/10 hover:text-primary"
               >
                 <X className="h-5 w-5" />
@@ -280,11 +346,11 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
 
             <nav className="flex flex-1 flex-col gap-1">
               <p className="px-3 pb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                Services
+                {t("services")}
               </p>
               {SERVICE_LINKS.map((service, index) => (
                 <a
-                  key={service.title}
+                  key={service.key}
                   href={service.href}
                   onClick={closeDrawer}
                   className="group flex items-center gap-3 rounded-2xl px-3 py-3 transition-colors hover:bg-primary/5"
@@ -293,8 +359,8 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
                     <DrawIcon icon={service.icon} delay={index * 0.15} className="h-5 w-5" />
                   </span>
                   <span>
-                    <span className="block font-medium">{service.title}</span>
-                    <span className="block text-xs text-muted-foreground">{service.description}</span>
+                    <span className="block font-medium">{t(`serviceLinks.${service.key}.title`)}</span>
+                    <span className="block text-xs text-muted-foreground">{t(`serviceLinks.${service.key}.description`)}</span>
                   </span>
                 </a>
               ))}
@@ -318,22 +384,24 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
                       isActive ? "bg-primary/10 text-primary" : ""
                     }`}
                   >
-                    {link.label}
+                    {t(`nav.${link.key}`)}
                   </a>
                 );
               })}
             </nav>
 
             <div className="mt-auto flex flex-col gap-3 border-t pt-6">
+              <LanguageSwitcher variant="full" />
+
               {showLoginButton && (
                 <Link href="/login" onClick={closeDrawer}>
                   <Button variant="ghost" className="w-full rounded-full">
-                    Login
+                    {t("login")}
                   </Button>
                 </Link>
               )}
               <a href="#contact" onClick={closeDrawer}>
-                <Button className="w-full rounded-full">Get Started</Button>
+                <Button className="w-full rounded-full">{t("getStarted")}</Button>
               </a>
             </div>
           </div>

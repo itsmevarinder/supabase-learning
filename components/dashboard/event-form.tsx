@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { translateEvent } from "@/app/actions/translate-cms";
 import { createClient } from "@/lib/supabase/client";
 import { eventSchema, type EventFormData } from "@/schemas/event-schema";
 import type { EventRow } from "@/components/shadn/EventsSection";
@@ -119,9 +120,9 @@ export function EventForm({ event }: EventFormProps) {
       sort_order: values.sortOrder,
     };
 
-    const { error } = isEditing
-      ? await supabase.from("events").update(record).eq("id", event!.id)
-      : await supabase.from("events").insert(record);
+    const { data, error } = isEditing
+      ? await supabase.from("events").update(record).eq("id", event!.id).select().single()
+      : await supabase.from("events").insert(record).select().single();
 
     if (error) {
       toast.error(error.message);
@@ -129,6 +130,13 @@ export function EventForm({ event }: EventFormProps) {
     }
 
     toast.success(isEditing ? "Event updated." : "Event added.");
+
+    translateEvent(data.id, {
+      title: values.title,
+      description: values.description,
+      location: values.location || null,
+    }).catch(() => {});
+
     router.push("/admin/events");
     router.refresh();
   }

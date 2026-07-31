@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import Autoplay from "embla-carousel-autoplay";
+import { useTranslations } from "next-intl";
 import { Star } from "lucide-react";
 import {
   Carousel,
@@ -62,6 +63,7 @@ interface TestimonialSectionProps {
 }
 
 export default function TestimonialSection({ testimonials: testimonialRows }: TestimonialSectionProps) {
+  const t = useTranslations("Testimonial");
   const testimonials = (testimonialRows ?? []).map(mapTestimonialRow);
   const section = useRef<HTMLElement>(null);
   const eyebrowRef = useRef<HTMLSpanElement>(null);
@@ -153,21 +155,21 @@ export default function TestimonialSection({ testimonials: testimonialRows }: Te
             ref={eyebrowRef}
             className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary"
           >
-            Testimonials
+            {t("eyebrow")}
           </span>
 
           <h2 ref={titleRef} className="mt-6 text-4xl lg:text-5xl font-bold">
-            {splitWords("What Our Clients Say")}
+            {splitWords(t("title"))}
           </h2>
 
           <p ref={subRef} className="mt-4 text-muted-foreground">
-            Trusted by hundreds of happy customers around the world.
+            {t("subtitle")}
           </p>
         </div>
 
         {testimonials.length === 0 ? (
           <p className="mx-auto max-w-md text-center text-muted-foreground">
-            Testimonials will show up here once they&apos;re added.
+            {t("empty")}
           </p>
         ) : (
         <>
@@ -247,7 +249,7 @@ export default function TestimonialSection({ testimonials: testimonialRows }: Te
             <button
               key={item.id}
               type="button"
-              aria-label={`Go to testimonial ${index + 1}`}
+              aria-label={t("goTo", { number: index + 1 })}
               onClick={() => api?.scrollTo(index)}
               className="h-1.5 w-8 overflow-hidden rounded-full bg-muted"
             >

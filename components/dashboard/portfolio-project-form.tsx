@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { translatePortfolioProject } from "@/app/actions/translate-cms";
 import { createClient } from "@/lib/supabase/client";
 import { portfolioProjectSchema, type PortfolioProjectFormData } from "@/schemas/portfolio-project-schema";
 import type { PortfolioProjectRow } from "@/components/shadn/PortfolioSection";
@@ -122,9 +123,9 @@ export function PortfolioProjectForm({ project }: PortfolioProjectFormProps) {
       sort_order: values.sortOrder,
     };
 
-    const { error } = isEditing
-      ? await supabase.from("portfolio_projects").update(record).eq("id", project!.id)
-      : await supabase.from("portfolio_projects").insert(record);
+    const { data, error } = isEditing
+      ? await supabase.from("portfolio_projects").update(record).eq("id", project!.id).select().single()
+      : await supabase.from("portfolio_projects").insert(record).select().single();
 
     if (error) {
       toast.error(error.message);
@@ -132,6 +133,13 @@ export function PortfolioProjectForm({ project }: PortfolioProjectFormProps) {
     }
 
     toast.success(isEditing ? "Project updated." : "Project added.");
+
+    translatePortfolioProject(data.id, {
+      title: values.title,
+      description: values.description || null,
+      role: values.role || null,
+    }).catch(() => {});
+
     router.push("/admin/portfolio");
     router.refresh();
   }

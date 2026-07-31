@@ -7,6 +7,7 @@ import {
   MapPin,
   Clock,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -26,39 +27,26 @@ import { createClient } from "@/lib/supabase/client";
 import type { SiteSettings } from "@/types/site-settings";
 
 const processSteps = [
-  {
-    number: 1,
-    title: "Share Your Vision",
-    description: "Tell us about your business, goals, and project requirements.",
-  },
-  {
-    number: 2,
-    title: "Free Consultation",
-    description:
-      "Our experts will discuss the best approach and recommend the right solution.",
-  },
-  {
-    number: 3,
-    title: "Receive Your Proposal",
-    description:
-      "Get a transparent quotation with pricing, timeline, and project roadmap.",
-  },
-];
+  { number: 1, key: "step1" },
+  { number: 2, key: "step2" },
+  { number: 3, key: "step3" },
+] as const;
 
 interface ContactSectionProps {
   settings?: SiteSettings | null;
 }
 
 export default function ContactSection({ settings }: ContactSectionProps) {
+  const t = useTranslations("Contact");
   const backgroundImageUrl =
     settings?.contact_background_image_url ||
     "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&q=80";
 
   const contactInfo = [
-    { icon: Phone, label: "Phone", value: settings?.contact_phone || "+1 (234) 567-8900" },
-    { icon: Mail, label: "Email", value: settings?.contact_email || "hello@company.com" },
-    { icon: MapPin, label: "Office", value: settings?.office_address || "New York, United States" },
-    { icon: Clock, label: "Working Hours", value: settings?.working_hours || "Mon - Fri • 9:00 AM - 6:00 PM" },
+    { icon: Phone, key: "phone", label: t("info.phone"), value: settings?.contact_phone || "+1 (234) 567-8900" },
+    { icon: Mail, key: "email", label: t("info.email"), value: settings?.contact_email || "hello@company.com" },
+    { icon: MapPin, key: "office", label: t("info.office"), value: settings?.office_address || "New York, United States" },
+    { icon: Clock, key: "hours", label: t("info.hours"), value: settings?.working_hours || "Mon - Fri • 9:00 AM - 6:00 PM" },
   ];
 
   const section = useRef<HTMLElement>(null);
@@ -161,21 +149,20 @@ export default function ContactSection({ settings }: ContactSectionProps) {
                 ref={eyebrowRef}
                 className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary"
               >
-                Contact Us
+                {t("eyebrow")}
               </span>
 
               <h2 ref={titleRef} className="mt-6 text-4xl font-bold">
-                {splitWords("Start Your Next Project")}
+                {splitWords(t("title"))}
               </h2>
 
               <p ref={paragraphRef} className="mt-4 leading-7 text-muted-foreground">
-                We&apos;d love to hear about your ideas. Fill out the form and
-                our team will get back to you within one business day.
+                {t("description")}
               </p>
 
               <form onSubmit={form.handleSubmit(onSubmit)} className="mt-10 space-y-5">
                 <div>
-                  <Input placeholder="Full Name"  {...form.register("fullName")} />
+                  <Input placeholder={t("form.fullName")}  {...form.register("fullName")} />
 
                   {form.formState.errors.fullName && (
                     <p className="mt-1 text-sm text-red-500">
@@ -185,18 +172,18 @@ export default function ContactSection({ settings }: ContactSectionProps) {
                 </div>
 
                 <div>
-                  <Input type="email" placeholder="Email Address" {...form.register("email")} />
+                  <Input type="email" placeholder={t("form.email")} {...form.register("email")} />
 
                   <p className="text-sm text-red-500">
                     {form.formState.errors.email?.message}
                   </p>
                 </div>
 
-                <Input placeholder="Company Name"  {...form.register("company")}/>
+                <Input placeholder={t("form.company")}  {...form.register("company")}/>
 
                 <div>
                   <Input
-                    placeholder="Phone Number"
+                    placeholder={t("form.phone")}
                     type="tel"
                     inputMode="numeric"
                     maxLength={10}
@@ -213,7 +200,7 @@ export default function ContactSection({ settings }: ContactSectionProps) {
                 </div>
 
                 <div>
-                  <Textarea rows={6}  placeholder="Tell us about your project..."  {...form.register("message")} />
+                  <Textarea rows={6}  placeholder={t("form.message")}  {...form.register("message")} />
 
                   <p className="text-sm text-red-500">
                     {form.formState.errors.message?.message}
@@ -222,7 +209,7 @@ export default function ContactSection({ settings }: ContactSectionProps) {
 
                 {status === "sent" && (
                   <p className="text-sm text-green-600">
-                    Thanks! We&apos;ll get back to you within one business day.
+                    {t("sentMessage")}
                   </p>
                 )}
                 {status === "error" && errorMessage && (
@@ -232,7 +219,7 @@ export default function ContactSection({ settings }: ContactSectionProps) {
                 <div className="relative">
                   <span className="cta-glow pointer-events-none absolute inset-x-6 top-1/2 -z-10 h-10 -translate-y-1/2 rounded-full bg-primary/30 opacity-25 blur-2xl" />
                   <Button type="submit" className="w-full rounded-full py-6" disabled={form.formState.isSubmitting} >
-                    {form.formState.isSubmitting  ? "Sending..."  : "Send Message"}
+                    {form.formState.isSubmitting  ? t("form.sending")  : t("form.submit")}
                   </Button>
                 </div>
               </form>
@@ -253,26 +240,24 @@ export default function ContactSection({ settings }: ContactSectionProps) {
 
               <div className="relative z-10">
                 <span className="rounded-full bg-white/15 px-4 py-2 text-sm backdrop-blur">
-                  Let&apos;s Connect
+                  {t("rightPanel.badge")}
                 </span>
 
                 <h2 className="mt-6 text-4xl font-bold leading-tight">
-                  Have an Idea?
+                  {t("rightPanel.titleLine1")}
                   <br />
-                  Let&apos;s Make It Reality.
+                  {t("rightPanel.titleLine2")}
                 </h2>
 
                 <p className="mt-6 leading-8 text-white/80">
-                  Whether you&apos;re launching a startup, redesigning your
-                  website, or building a custom application, our team is
-                  ready to help you achieve your goals.
+                  {t("rightPanel.description")}
                 </p>
 
                 {/* Process */}
                 <div className="mt-10 md:space-y-6 space-y-5">
                   {processSteps.map((step, index) => (
                     <div
-                      key={step.number}
+                      key={step.key}
                       ref={(el) => {
                         stepRefs.current[index] = el;
                       }}
@@ -284,11 +269,11 @@ export default function ContactSection({ settings }: ContactSectionProps) {
 
                       <div>
                         <h4 className="font-semibold">
-                          {step.title}
+                          {t(`processSteps.${step.key}.title`)}
                         </h4>
 
                         <p className="mt-1 text-white/70">
-                          {step.description}
+                          {t(`processSteps.${step.key}.description`)}
                         </p>
                       </div>
                     </div>
@@ -298,13 +283,13 @@ export default function ContactSection({ settings }: ContactSectionProps) {
                 {/* Contact Card */}
                 <div className="mt-12 rounded-3xl bg-white/10 p-6 backdrop-blur-md">
                   <h3 className="text-xl font-semibold">
-                    Contact Information
+                    {t("info.heading")}
                   </h3>
 
                   <div className="mt-6 space-y-5">
                     {contactInfo.map((item, index) => {
                       return (
-                        <div key={item.label} className="flex items-center gap-4">
+                        <div key={item.key} className="flex items-center gap-4">
                           <DrawIcon icon={item.icon} delay={index * 0.15} className="h-5 w-5" />
 
                           <div>

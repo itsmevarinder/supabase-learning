@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 
 import Header from "@/components/shadn/header";
@@ -12,7 +13,12 @@ export const metadata = {
 };
 
 export default async function AllProjectsPage() {
-  const [projects, siteSettings] = await Promise.all([getPortfolioProjects(), getSiteSettings()]);
+  const [projects, siteSettings, t, tCommon] = await Promise.all([
+    getPortfolioProjects(),
+    getSiteSettings(),
+    getTranslations("Portfolio"),
+    getTranslations("Common"),
+  ]);
 
   return (
     <main className="overflow-x-clip">
@@ -25,23 +31,23 @@ export default async function AllProjectsPage() {
             className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to home
+            {tCommon("backToHome")}
           </Link>
 
           <div className="mx-auto mt-10 max-w-2xl border-b pb-16 text-center">
             <span className="inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-              Our Portfolio
+              {t("eyebrow")}
             </span>
 
-            <h1 className="mt-6 text-4xl font-bold leading-tight lg:text-5xl">All Projects</h1>
+            <h1 className="mt-6 text-4xl font-bold leading-tight lg:text-5xl">{t("allProjects")}</h1>
             <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">
-              Every project we&apos;ve crafted with creativity, innovation, and attention to detail.
+              {t("allProjectsDescription")}
             </p>
           </div>
 
           {projects.length === 0 ? (
             <p className="mt-12 text-center text-muted-foreground">
-              Projects will show up here once they&apos;re added.
+              {t("empty")}
             </p>
           ) : (
             <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -60,7 +66,7 @@ export default async function AllProjectsPage() {
                     />
                     <div className="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/40" />
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100">
-                      <Button className="rounded-full">View Project</Button>
+                      <Button className="rounded-full">{t("viewProject")}</Button>
                     </div>
                   </div>
 
@@ -68,7 +74,7 @@ export default async function AllProjectsPage() {
                     <span className="text-sm font-medium text-primary">{project.category}</span>
                     <h3 className="mt-2 text-xl font-semibold">{project.title}</h3>
                     <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-primary">
-                      Learn More
+                      {t("learnMore")}
                       <ArrowRight className="h-4 w-4" />
                     </span>
                   </div>

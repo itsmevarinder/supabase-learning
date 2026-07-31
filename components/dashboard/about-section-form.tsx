@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { translateAboutSection } from "@/app/actions/translate-cms";
 import { createClient } from "@/lib/supabase/client";
 import { aboutSectionSchema, type AboutSectionFormData } from "@/schemas/about-section-schema";
 import type { AboutSectionRow } from "@/components/shadn/AboutSection";
@@ -120,6 +121,11 @@ export function AboutSectionForm({ about }: AboutSectionFormProps) {
 
   async function onSubmit(values: AboutSectionFormData) {
     const supabase = createClient();
+    const features = values.features
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+
     const { error } = await supabase
       .from("about_section")
       .update({
@@ -130,10 +136,7 @@ export function AboutSectionForm({ about }: AboutSectionFormProps) {
         description: values.description,
         years_experience: values.yearsExperience,
         button_text: values.buttonText,
-        features: values.features
-          .split("\n")
-          .map((line) => line.trim())
-          .filter(Boolean),
+        features,
       })
       .eq("id", 1);
 
@@ -144,6 +147,14 @@ export function AboutSectionForm({ about }: AboutSectionFormProps) {
 
     toast.success("About section saved.");
     router.refresh();
+
+    translateAboutSection({
+      eyebrow_text: values.eyebrowText,
+      title: values.title,
+      description: values.description,
+      button_text: values.buttonText,
+      features,
+    }).catch(() => {});
   }
 
   return (

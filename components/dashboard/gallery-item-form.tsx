@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { translateGalleryItem } from "@/app/actions/translate-cms";
 import { createClient } from "@/lib/supabase/client";
 import { getYouTubeId, getYouTubeThumbnail } from "@/lib/youtube";
 import { galleryItemSchema, type GalleryItemFormData } from "@/schemas/gallery-item-schema";
@@ -147,9 +148,9 @@ export function GalleryItemForm({ item }: GalleryItemFormProps) {
       sort_order: values.sortOrder,
     };
 
-    const { error } = isEditing
-      ? await supabase.from("gallery_items").update(record).eq("id", item!.id)
-      : await supabase.from("gallery_items").insert(record);
+    const { data, error } = isEditing
+      ? await supabase.from("gallery_items").update(record).eq("id", item!.id).select().single()
+      : await supabase.from("gallery_items").insert(record).select().single();
 
     if (error) {
       toast.error(error.message);
@@ -157,6 +158,11 @@ export function GalleryItemForm({ item }: GalleryItemFormProps) {
     }
 
     toast.success(isEditing ? "Gallery item updated." : "Gallery item added.");
+
+    if (values.title) {
+      translateGalleryItem(data.id, { title: values.title }).catch(() => {});
+    }
+
     router.push("/admin/gallery");
     router.refresh();
   }

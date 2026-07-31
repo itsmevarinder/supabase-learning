@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { MailCheck, Send } from "lucide-react";
 
@@ -17,6 +18,7 @@ interface NewsletterSectionProps {
 }
 
 export default function NewsletterSection({ backgroundImageUrl }: NewsletterSectionProps) {
+  const t = useTranslations("Newsletter");
   const bgImage =
     backgroundImageUrl || "https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=1600&q=80";
   const section = useRef<HTMLElement>(null);
@@ -83,22 +85,21 @@ export default function NewsletterSection({ backgroundImageUrl }: NewsletterSect
             ref={eyebrowRef}
             className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm"
           >
-            Stay In Touch
+            {t("eyebrow")}
           </span>
 
           <h2 ref={titleRef} className="mt-6 text-4xl font-bold leading-tight text-white lg:text-5xl">
-            {splitWords("Never Miss An Update")}
+            {splitWords(t("title"))}
           </h2>
 
           <p ref={paragraphRef} className="mt-6 text-lg leading-8 text-white/80">
-            Drop your email and we&apos;ll let you know about new events, updates, and news — no spam,
-            unsubscribe anytime.
+            {t("description")}
           </p>
 
           {status === "success" ? (
             <div className="mt-8 flex items-center justify-center gap-2 rounded-full bg-white/10 px-6 py-3 text-white backdrop-blur-sm">
               <MailCheck className="h-5 w-5" />
-              <span className="font-medium">You&apos;re subscribed — thank you!</span>
+              <span className="font-medium">{t("success")}</span>
             </div>
           ) : (
             <form
@@ -122,17 +123,17 @@ export default function NewsletterSection({ backgroundImageUrl }: NewsletterSect
                 className="h-12 shrink-0 rounded-full px-8"
                 disabled={form.formState.isSubmitting}
               >
-                {form.formState.isSubmitting ? "Subscribing…" : "Subscribe"}
+                {form.formState.isSubmitting ? t("subscribing") : t("subscribe")}
                 <Send className="h-4 w-4" />
               </Button>
             </form>
           )}
 
           {status === "duplicate" && (
-            <p className="mt-4 text-sm text-white/70">Looks like you&apos;re already on the list!</p>
+            <p className="mt-4 text-sm text-white/70">{t("duplicate")}</p>
           )}
           {status === "error" && (
-            <p className="mt-4 text-sm text-red-300">Something went wrong — please try again.</p>
+            <p className="mt-4 text-sm text-red-300">{t("error")}</p>
           )}
         </div>
       </div>

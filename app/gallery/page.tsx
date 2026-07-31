@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 
 import Header from "@/components/shadn/header";
@@ -12,7 +13,11 @@ export const metadata = {
 };
 
 export default async function AllGalleryPage() {
-  const [galleryItems, siteSettings] = await Promise.all([getGalleryItems(), getSiteSettings()]);
+  const [galleryItems, siteSettings, tCommon] = await Promise.all([
+    getGalleryItems(),
+    getSiteSettings(),
+    getTranslations("Common"),
+  ]);
 
   return (
     <main className="overflow-x-clip">
@@ -25,7 +30,7 @@ export default async function AllGalleryPage() {
             className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to home
+            {tCommon("backToHome")}
           </Link>
         </div>
 

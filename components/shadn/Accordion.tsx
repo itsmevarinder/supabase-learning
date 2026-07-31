@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { useTranslations } from "next-intl";
 import { CircleCheck, Headphones, ShieldCheck, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { splitWords } from "@/components/shadn/split-words";
@@ -37,17 +38,18 @@ function mapFaqRow(row: FaqRow): Faq {
 }
 
 const checklist = [
-  { icon: CircleCheck, label: "24/7 Customer Support" },
-  { icon: ShieldCheck, label: "100% Secure Platform" },
-  { icon: Clock, label: "Fast Response Time" },
-  { icon: Headphones, label: "Dedicated Support Team" },
-];
+  { icon: CircleCheck, key: "support" },
+  { icon: ShieldCheck, key: "secure" },
+  { icon: Clock, key: "response" },
+  { icon: Headphones, key: "team" },
+] as const;
 
 interface FAQSectionProps {
   faqs?: FaqRow[];
 }
 
 export default function FAQSection({ faqs: faqRows }: FAQSectionProps) {
+  const t = useTranslations("Faq");
   const faqs = (faqRows ?? []).map(mapFaqRow);
   const section = useRef<HTMLElement>(null);
   const eyebrowRef = useRef<HTMLSpanElement>(null);
@@ -126,24 +128,22 @@ export default function FAQSection({ faqs: faqRows }: FAQSectionProps) {
               ref={eyebrowRef}
               className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary"
             >
-              Frequently Asked Questions
+              {t("eyebrow")}
             </span>
 
             <h2 ref={titleRef} className="mt-6 text-4xl font-bold leading-tight lg:text-5xl">
-              {splitWords("Everything You Need To Know")}
+              {splitWords(t("title"))}
             </h2>
 
             <p ref={paragraphRef} className="mt-6 text-lg leading-8 text-muted-foreground">
-              Find answers to the most common questions about our services.
-              Can&apos;t find what you&apos;re looking for? Our team is always ready to
-              help.
+              {t("description")}
             </p>
 
             <div className="mt-10 space-y-5">
               {checklist.map((item, index) => {
                 return (
                   <div
-                    key={item.label}
+                    key={item.key}
                     ref={(el) => {
                       checklistRefs.current[index] = el;
                     }}
@@ -154,7 +154,7 @@ export default function FAQSection({ faqs: faqRows }: FAQSectionProps) {
                       delay={index * 0.15}
                       className="h-5 w-5 text-green-600"
                     />
-                    <span>{item.label}</span>
+                    <span>{t(`checklist.${item.key}`)}</span>
                   </div>
                 );
               })}
@@ -164,7 +164,7 @@ export default function FAQSection({ faqs: faqRows }: FAQSectionProps) {
               <span className="cta-glow pointer-events-none absolute left-1/2 top-1/2 -z-10 h-16 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/30 opacity-30 blur-2xl" />
               <a href="#contact">
                 <Button className="rounded-full px-8 py-5">
-                  Contact Support
+                  {t("contactSupport")}
                 </Button>
               </a>
             </div>
@@ -173,7 +173,7 @@ export default function FAQSection({ faqs: faqRows }: FAQSectionProps) {
           {/* Right Side */}
           <div>
             {faqs.length === 0 ? (
-              <p className="text-muted-foreground">FAQs will show up here once they&apos;re added.</p>
+              <p className="text-muted-foreground">{t("empty")}</p>
             ) : (
               <Accordion
                 defaultValue={[faqs[0].value]}

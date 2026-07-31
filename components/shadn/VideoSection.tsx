@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Play } from "lucide-react";
 
 import { splitWords } from "@/components/shadn/split-words";
@@ -21,6 +22,7 @@ interface VideoSectionProps {
 }
 
 export default function VideoSection({ video }: VideoSectionProps) {
+  const t = useTranslations("Video");
   const [playing, setPlaying] = useState(false);
 
   const section = useRef<HTMLElement>(null);
@@ -123,7 +125,7 @@ export default function VideoSection({ video }: VideoSectionProps) {
             ref={eyebrowRef}
             className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary"
           >
-            Watch Our Story
+            {t("eyebrow")}
           </span>
 
           <h2 ref={titleRef} className="mt-6 text-4xl font-bold leading-tight lg:text-5xl">
@@ -150,7 +152,7 @@ export default function VideoSection({ video }: VideoSectionProps) {
                 <button
                   type="button"
                   onClick={() => setPlaying(true)}
-                  aria-label={`Play video: ${video.title}`}
+                  aria-label={t("playVideo", { title: video.title })}
                   className="group relative h-full w-full"
                 >
                   <img src={thumbnail} alt={video.title} className="h-full w-full object-cover" />

@@ -1,0 +1,205 @@
+{
+  "Header": {
+    "services": "Services",
+    "serviceLinks": {
+      "webDev": { "title": "Web Development", "description": "Modern websites built with Next.js." },
+      "mobileApps": { "title": "Mobile Apps", "description": "Android & iOS applications." },
+      "uiUx": { "title": "UI / UX Design", "description": "Beautiful user experiences." },
+      "marketing": { "title": "Digital Marketing", "description": "Grow your online business." }
+    },
+    "nav": {
+      "about": "About",
+      "portfolio": "Portfolio",
+      "donate": "Donate",
+      "contact": "Contact"
+    },
+    "login": "Login",
+    "getStarted": "Get Started",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "Footer": {
+    "tagline": "We build modern digital experiences that help businesses grow through innovation, creativity, and technology.",
+    "copyright": "© {year} CMS. All rights reserved.",
+    "devNote": "(For development purposes only)"
+  },
+  "Newsletter": {
+    "eyebrow": "Stay In Touch",
+    "title": "Never Miss An Update",
+    "description": "Drop your email and we'll let you know about new events, updates, and news — no spam, unsubscribe anytime.",
+    "success": "You're subscribed — thank you!",
+    "subscribing": "Subscribing…",
+    "subscribe": "Subscribe",
+    "duplicate": "Looks like you're already on the list!",
+    "error": "Something went wrong — please try again."
+  },
+  "TrustedBy": {
+    "heading": "Trusted by teams at"
+  },
+  "Portfolio": {
+    "eyebrow": "Our Portfolio",
+    "title": "Featured Projects",
+    "subtitle": "Explore some of our recent work crafted with creativity, innovation, and attention to detail.",
+    "viewAll": "View All Projects",
+    "empty": "Projects will show up here once they're added.",
+    "viewProject": "View Project",
+    "learnMore": "Learn More",
+    "allProjects": "All Projects",
+    "allProjectsDescription": "Every project we've crafted with creativity, innovation, and attention to detail."
+  },
+  "Faq": {
+    "eyebrow": "Frequently Asked Questions",
+    "title": "Everything You Need To Know",
+    "description": "Find answers to the most common questions about our services. Can't find what you're looking for? Our team is always ready to help.",
+    "checklist": {
+      "support": "24/7 Customer Support",
+      "secure": "100% Secure Platform",
+      "response": "Fast Response Time",
+      "team": "Dedicated Support Team"
+    },
+    "contactSupport": "Contact Support",
+    "empty": "FAQs will show up here once they're added."
+  },
+  "Gallery": {
+    "eyebrow": "Our Gallery",
+    "title": "Moments Worth Sharing",
+    "description": "A look behind the scenes — photos and videos from our work, our team, and our events.",
+    "empty": "Gallery items will show up here once they're added.",
+    "viewAll": "View All Gallery",
+    "playVideo": "Play video",
+    "viewImage": "View image",
+    "galleryItem": "Gallery item",
+    "video": "Video",
+    "close": "Close",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "Audio": {
+    "eyebrow": "Listen In",
+    "title": "Sounds From Our Studio",
+    "description": "Podcast episodes, interviews, and audio stories worth a listen — press play and listen right here, no app required.",
+    "checklist": {
+      "newEpisodes": "New Episodes Weekly",
+      "onDemand": "Listen On-Demand, Anytime",
+      "free": "Free To Stream",
+      "noSignUp": "No Sign-Up Required"
+    },
+    "empty": "Audio tracks will show up here once they're added.",
+    "pause": "Pause",
+    "play": "Play",
+    "previousTracks": "Previous tracks",
+    "page": "Page {number}",
+    "nextTracks": "Next tracks"
+  },
+  "Events": {
+    "eyebrow": "Upcoming Events",
+    "title": "Join Us At Our Next Event",
+    "description": "Workshops, meetups, and launches — see what we're hosting next and save your spot.",
+    "empty": "No upcoming events right now — check back soon.",
+    "learnMore": "Learn More",
+    "previousEvents": "Previous events",
+    "page": "Page {number}",
+    "nextEvents": "Next events"
+  },
+  "Video": {
+    "eyebrow": "Watch Our Story",
+    "playVideo": "Play video: {title}"
+  },
+  "Donate": {
+    "fallbackTitle": "Support Our Mission",
+    "fallbackSubtitle": "Give Back Today",
+    "fallbackDescription": "Your generosity helps us keep building things that matter — every contribution, big or small, makes a real difference.",
+    "donateNow": "Donate Now",
+    "qrError": "Couldn't create the QR code. Please try again.",
+    "scanToDonate": "Scan to Donate",
+    "scanDescription": "Scan this QR code with any UPI app to complete your donation.",
+    "scanAmount": "Scan this QR code with any UPI app to pay ₹{amount}.",
+    "qrAlt": "Donation QR code",
+    "close": "Close"
+  },
+  "Testimonial": {
+    "eyebrow": "Testimonials",
+    "title": "What Our Clients Say",
+    "subtitle": "Trusted by hundreds of happy customers around the world.",
+    "empty": "Testimonials will show up here once they're added.",
+    "goTo": "Go to testimonial {number}"
+  },
+  "Hero": {
+    "stats": {
+      "projectsDelivered": "Projects Delivered",
+      "teamMembers": "Team Members",
+      "clientSatisfaction": "Client Satisfaction"
+    },
+    "fallback": {
+      "slide1": {
+        "badge": "✨ Trusted by 10,000+ Clients",
+        "title": "Create Experiences That Inspire",
+        "subtitle": "Build beautiful digital products that engage customers and grow your business."
+      },
+      "slide2": {
+        "badge": "🚀 Innovative Solutions",
+        "title": "Turn Your Ideas Into Reality",
+        "subtitle": "Modern websites, scalable applications, and premium digital experiences."
+      },
+      "slide3": {
+        "badge": "💡 Smart Digital Agency",
+        "title": "We Design. We Develop. We Deliver.",
+        "subtitle": "Helping startups and enterprises build the next generation of digital products."
+      }
+    },
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "goToSlide": "Go to slide {number}"
+  },
+  "Contact": {
+    "eyebrow": "Contact Us",
+    "title": "Start Your Next Project",
+    "description": "We'd love to hear about your ideas. Fill out the form and our team will get back to you within one business day.",
+    "form": {
+      "fullName": "Full Name",
+      "email": "Email Address",
+      "company": "Company Name",
+      "phone": "Phone Number",
+      "message": "Tell us about your project...",
+      "sending": "Sending...",
+      "submit": "Send Message"
+    },
+    "sentMessage": "Thanks! We'll get back to you within one business day.",
+    "rightPanel": {
+      "badge": "Let's Connect",
+      "titleLine1": "Have an Idea?",
+      "titleLine2": "Let's Make It Reality.",
+      "description": "Whether you're launching a startup, redesigning your website, or building a custom application, our team is ready to help you achieve your goals."
+    },
+    "processSteps": {
+      "step1": { "title": "Share Your Vision", "description": "Tell us about your business, goals, and project requirements." },
+      "step2": { "title": "Free Consultation", "description": "Our experts will discuss the best approach and recommend the right solution." },
+      "step3": { "title": "Receive Your Proposal", "description": "Get a transparent quotation with pricing, timeline, and project roadmap." }
+    },
+    "info": {
+      "heading": "Contact Information",
+      "phone": "Phone",
+      "email": "Email",
+      "office": "Office",
+      "hours": "Working Hours"
+    }
+  },
+  "Common": {
+    "backToHome": "Back to home"
+  },
+  "ProjectDetail": {
+    "backToProjects": "Back to all projects",
+    "projectDetails": "Project details",
+    "category": "Category",
+    "client": "Client",
+    "ourRole": "Our role",
+    "completed": "Completed",
+    "status": "Status",
+    "statusLive": "Live",
+    "statusInPortfolio": "In portfolio",
+    "visitLiveSite": "Visit live site",
+    "likeWhatYouSee": "Like what you see?",
+    "likeDescription": "We'd love to build something just as good for you.",
+    "startProject": "Start your project"
+  }
+}
