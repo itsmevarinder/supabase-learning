@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { Code2, Languages, Megaphone, Menu, Palette, Smartphone, X } from "lucide-react";
+import { ArrowRight, Code2, Languages, LogIn, Megaphone, Menu, Palette, Smartphone, X } from "lucide-react";
 
 import { setLocale } from "@/app/actions/set-locale";
 import { Button } from "@/components/ui/button";
@@ -57,7 +57,7 @@ interface HeaderProps {
   showLoginButton?: boolean;
 }
 
-function LanguageSwitcher({ variant = "pill" }: { variant?: "pill" | "full" }) {
+function LanguageSwitcher({ variant = "pill" }: { variant?: "pill" | "full" | "icon" }) {
   const locale = useLocale() as AppLocale;
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -73,14 +73,25 @@ function LanguageSwitcher({ variant = "pill" }: { variant?: "pill" | "full" }) {
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button
-            variant="ghost"
-            disabled={isPending}
-            className={variant === "full" ? "w-full justify-center rounded-full" : "rounded-full"}
-          >
-            <Languages className="size-4" />
-            {variant === "full" ? LOCALE_LABELS[locale] : LOCALE_SHORT[locale]}
-          </Button>
+          variant === "icon" ? (
+            <button
+              type="button"
+              disabled={isPending}
+              aria-label={LOCALE_LABELS[locale]}
+              className="flex size-9 items-center justify-center rounded-lg border transition-colors hover:bg-primary/10 hover:text-primary disabled:opacity-50"
+            >
+              <Languages className="size-4" />
+            </button>
+          ) : (
+            <Button
+              variant="ghost"
+              disabled={isPending}
+              className={variant === "full" ? "w-full justify-center rounded-full" : "rounded-full"}
+            >
+              <Languages className="size-4" />
+              {variant === "full" ? LOCALE_LABELS[locale] : LOCALE_SHORT[locale]}
+            </Button>
+          )
         }
       />
       <DropdownMenuContent align="end">
@@ -301,16 +312,37 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
               </a>
             </div>
 
-            {/* Mobile Menu Button */}
-            <button
-              type="button"
-              onClick={() => setIsOpen(true)}
-              aria-label={t("openMenu")}
-              aria-expanded={isOpen}
-              className="rounded-lg border p-2 transition-colors hover:bg-primary/10 hover:text-primary xl:hidden"
-            >
-              <Menu className="h-5 w-5" />
-            </button>
+            {/* Mobile: language switcher, login, get started, menu toggle — all live outside the drawer */}
+            <div className="flex items-center gap-1.5 xl:hidden">
+              <LanguageSwitcher variant="icon" />
+
+              {showLoginButton && (
+                <Link
+                  href="/login"
+                  aria-label={t("login")}
+                  className="flex size-9 items-center justify-center rounded-lg border transition-colors hover:bg-primary/10 hover:text-primary"
+                >
+                  <LogIn className="size-4" />
+                </Link>
+              )}
+
+              <a href="#contact">
+                <Button size="sm" className="h-9 gap-1 rounded-full px-3 text-xs">
+                  {t("getStarted")}
+                  <ArrowRight className="size-3" />
+                </Button>
+              </a>
+
+              <button
+                type="button"
+                onClick={() => setIsOpen(true)}
+                aria-label={t("openMenu")}
+                aria-expanded={isOpen}
+                className="flex size-9 items-center justify-center rounded-lg border transition-colors hover:bg-primary/10 hover:text-primary"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -389,21 +421,6 @@ export default function Header({ showLoginButton = true }: HeaderProps) {
                 );
               })}
             </nav>
-
-            <div className="mt-auto flex flex-col gap-3 border-t pt-6">
-              <LanguageSwitcher variant="full" />
-
-              {showLoginButton && (
-                <Link href="/login" onClick={closeDrawer}>
-                  <Button variant="ghost" className="w-full rounded-full">
-                    {t("login")}
-                  </Button>
-                </Link>
-              )}
-              <a href="#contact" onClick={closeDrawer}>
-                <Button className="w-full rounded-full">{t("getStarted")}</Button>
-              </a>
-            </div>
           </div>
         </div>
       </header>
